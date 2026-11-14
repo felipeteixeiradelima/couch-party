@@ -1,9 +1,8 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { COLORS } from '@/constants/theme';
-import { PlayersProvider } from '@/contexts/PlayersContext';
+import { COLORS } from "@/constants/theme";
+import { PlayersProvider } from "@/contexts/PlayersContext";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
@@ -14,14 +13,14 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: COLORS.background },
-            animation: 'slide_from_right',
+            animation: "slide_from_right",
           }}
         >
           <Stack.Screen name="index" />
           <Stack.Screen name="players" />
           <Stack.Screen
             name="rules"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: "modal", animation: "slide_from_bottom" }}
           />
           <Stack.Screen name="games/impostor" />
           <Stack.Screen name="games/cidade-dorme" />

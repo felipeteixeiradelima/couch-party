@@ -1,6 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { COLORS, RADIUS } from '@/constants/theme';
+import { RADIUS } from "@/constants/theme";
+import { StyleSheet, Text, View } from "react-native";
 
 interface PlayerAvatarProps {
   name: string;
@@ -9,7 +8,7 @@ interface PlayerAvatarProps {
 }
 
 export function PlayerAvatar({ name, color, size = 36 }: PlayerAvatarProps) {
-  const initial = name.trim().charAt(0).toUpperCase() || '?';
+  const initial = name.trim().charAt(0).toUpperCase() || "?";
 
   return (
     <View
@@ -25,7 +24,9 @@ export function PlayerAvatar({ name, color, size = 36 }: PlayerAvatarProps) {
       ]}
       accessible={false}
     >
-      <Text style={[styles.initial, { color, fontSize: Math.round(size * 0.44) }]}>
+      <Text
+        style={[styles.initial, { color, fontSize: Math.round(size * 0.44) }]}
+      >
         {initial}
       </Text>
     </View>
@@ -35,10 +36,10 @@ export function PlayerAvatar({ name, color, size = 36 }: PlayerAvatarProps) {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   initial: {
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

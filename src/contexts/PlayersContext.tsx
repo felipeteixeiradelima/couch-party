@@ -1,11 +1,6 @@
-import React, {
-  createContext,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { PLAYER_COLORS } from '@/constants/theme';
-import { Player, PlayerActionResult } from '@/types/player';
+import { PLAYER_COLORS } from "@/constants/theme";
+import { Player, PlayerActionResult } from "@/types/player";
+import React, { createContext, useCallback, useMemo, useState } from "react";
 
 export const MAX_PLAYERS = 20;
 export const MAX_PLAYER_NAME_LENGTH = 24;
@@ -27,12 +22,12 @@ function createPlayerId(): string {
 function validatePlayerName(
   rawName: string,
   existingPlayers: Player[],
-  ignoreId?: string
+  ignoreId?: string,
 ): { valid: true; normalized: string } | { valid: false; error: string } {
-  const normalized = rawName.trim().replace(/\s+/g, ' ');
+  const normalized = rawName.trim().replace(/\s+/g, " ");
 
   if (!normalized) {
-    return { valid: false, error: 'Digite o nome do jogador.' };
+    return { valid: false, error: "Digite o nome do jogador." };
   }
 
   if (normalized.length > MAX_PLAYER_NAME_LENGTH) {
@@ -44,11 +39,11 @@ function validatePlayerName(
 
   const lower = normalized.toLowerCase();
   const hasDuplicate = existingPlayers.some(
-    (player) => player.id !== ignoreId && player.name.toLowerCase() === lower
+    (player) => player.id !== ignoreId && player.name.toLowerCase() === lower,
   );
 
   if (hasDuplicate) {
-    return { valid: false, error: 'Já existe um jogador com esse nome.' };
+    return { valid: false, error: "Já existe um jogador com esse nome." };
   }
 
   return { valid: true, normalized };
@@ -85,7 +80,7 @@ export function PlayersProvider({ children }: PlayersProviderProps) {
       setPlayers((prev) => [...prev, newPlayer]);
       return { ok: true };
     },
-    [players]
+    [players],
   );
 
   const removePlayer = useCallback((id: string) => {
@@ -101,12 +96,14 @@ export function PlayersProvider({ children }: PlayersProviderProps) {
 
       setPlayers((prev) =>
         prev.map((player) =>
-          player.id === id ? { ...player, name: validation.normalized } : player
-        )
+          player.id === id
+            ? { ...player, name: validation.normalized }
+            : player,
+        ),
       );
       return { ok: true };
     },
-    [players]
+    [players],
   );
 
   const clearPlayers = useCallback(() => {
@@ -121,7 +118,7 @@ export function PlayersProvider({ children }: PlayersProviderProps) {
       updatePlayerName,
       clearPlayers,
     }),
-    [players, addPlayer, removePlayer, updatePlayerName, clearPlayers]
+    [players, addPlayer, removePlayer, updatePlayerName, clearPlayers],
   );
 
   return (

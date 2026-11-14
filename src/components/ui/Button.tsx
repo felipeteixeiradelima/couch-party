@@ -1,17 +1,11 @@
-import React from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import React from "react";
+import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface ButtonProps {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
   icon?: React.ReactNode;
   style?: ViewStyle;
@@ -21,7 +15,7 @@ interface ButtonProps {
 export function Button({
   label,
   onPress,
-  variant = 'primary',
+  variant = "primary",
   disabled = false,
   icon,
   style,
@@ -36,9 +30,9 @@ export function Button({
       accessibilityState={{ disabled }}
       style={({ pressed }) => [
         styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'secondary' && styles.secondary,
-        variant === 'danger' && styles.danger,
+        variant === "primary" && styles.primary,
+        variant === "secondary" && styles.secondary,
+        variant === "danger" && styles.danger,
         pressed && !disabled && styles.pressed,
         disabled && styles.disabled,
         style,
@@ -48,8 +42,8 @@ export function Button({
       <Text
         style={[
           styles.label,
-          variant === 'secondary' && styles.secondaryLabel,
-          variant === 'danger' && styles.dangerLabel,
+          variant === "secondary" && styles.secondaryLabel,
+          variant === "danger" && styles.dangerLabel,
         ]}
       >
         {label}
@@ -64,9 +58,9 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   primary: {
     backgroundColor: COLORS.primary,
@@ -94,7 +88,7 @@ const styles = StyleSheet.create({
   label: {
     color: COLORS.white,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   secondaryLabel: {
     color: COLORS.textPrimary,

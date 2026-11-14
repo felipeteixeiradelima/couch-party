@@ -1,13 +1,12 @@
-import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { GameCard } from '@/components/games/GameCard';
-import { Button } from '@/components/ui/Button';
-import { GAMES } from '@/constants/games';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
-import { usePlayers } from '@/hooks/usePlayers';
+import { GameCard } from "@/components/games/GameCard";
+import { Button } from "@/components/ui/Button";
+import { GAMES } from "@/constants/games";
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { usePlayers } from "@/hooks/usePlayers";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { players } = usePlayers();
@@ -15,10 +14,10 @@ export default function HomeScreen() {
   const playersButtonLabel =
     players.length > 0
       ? `Configurar Jogadores (${players.length})`
-      : 'Configurar Jogadores';
+      : "Configurar Jogadores";
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.brand}>
@@ -33,7 +32,7 @@ export default function HomeScreen() {
           </View>
 
           <Pressable
-            onPress={() => router.push('/rules')}
+            onPress={() => router.push("/rules")}
             accessibilityRole="button"
             accessibilityLabel="Abrir regras dos jogos"
             style={({ pressed }) => [
@@ -77,13 +76,9 @@ export default function HomeScreen() {
         <View style={styles.footer}>
           <Button
             label={playersButtonLabel}
-            onPress={() => router.push('/players')}
+            onPress={() => router.push("/players")}
             icon={
-              <Ionicons
-                name="people-outline"
-                size={20}
-                color={COLORS.white}
-              />
+              <Ionicons name="people-outline" size={20} color={COLORS.white} />
             }
           />
         </View>
@@ -101,16 +96,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: SPACING.xl,
     paddingTop: SPACING.sm,
     paddingBottom: SPACING.md,
   },
   brand: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.md,
   },
   logoBox: {
@@ -118,18 +113,18 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   brandTitle: {
     color: COLORS.textPrimary,
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: -0.3,
   },
   rulesButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
@@ -145,7 +140,7 @@ const styles = StyleSheet.create({
   rulesButtonText: {
     color: COLORS.textPrimary,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   scroll: {
     flex: 1,
@@ -161,14 +156,14 @@ const styles = StyleSheet.create({
   eyebrow: {
     color: COLORS.primaryText,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1.4,
     marginBottom: SPACING.xs,
   },
   heading: {
     color: COLORS.textPrimary,
     fontSize: 30,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: -0.5,
     marginBottom: SPACING.xs,
   },

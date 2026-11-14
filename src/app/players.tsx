@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import { Button } from "@/components/ui/Button";
+import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { MAX_PLAYER_NAME_LENGTH, MAX_PLAYERS } from "@/contexts/PlayersContext";
+import { usePlayers } from "@/hooks/usePlayers";
+import { Player } from "@/types/player";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -9,43 +18,26 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '@/components/ui/Button';
-import { PlayerAvatar } from '@/components/ui/PlayerAvatar';
-import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
-import {
-  MAX_PLAYER_NAME_LENGTH,
-  MAX_PLAYERS,
-} from '@/contexts/PlayersContext';
-import { usePlayers } from '@/hooks/usePlayers';
-import { Player } from '@/types/player';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PlayersScreen() {
-  const {
-    players,
-    addPlayer,
-    removePlayer,
-    updatePlayerName,
-    clearPlayers,
-  } = usePlayers();
+  const { players, addPlayer, removePlayer, updatePlayerName, clearPlayers } =
+    usePlayers();
 
-  const [nameInput, setNameInput] = useState('');
+  const [nameInput, setNameInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState('');
+  const [editingName, setEditingName] = useState("");
 
   const handleAddPlayer = () => {
     const result = addPlayer(nameInput);
     if (!result.ok) {
-      setErrorMessage(result.error ?? 'Não foi possível adicionar o jogador.');
+      setErrorMessage(result.error ?? "Não foi possível adicionar o jogador.");
       return;
     }
 
-    setNameInput('');
+    setNameInput("");
     setErrorMessage(null);
   };
 
@@ -60,41 +52,47 @@ export default function PlayersScreen() {
 
     const result = updatePlayerName(editingId, editingName);
     if (!result.ok) {
-      setErrorMessage(result.error ?? 'Não foi possível atualizar o nome.');
+      setErrorMessage(result.error ?? "Não foi possível atualizar o nome.");
       return;
     }
 
     setEditingId(null);
-    setEditingName('');
+    setEditingName("");
     setErrorMessage(null);
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setEditingName('');
+    setEditingName("");
     setErrorMessage(null);
   };
 
   const handleClearAll = () => {
     Alert.alert(
-      'Limpar jogadores',
-      'Deseja remover todos os jogadores da lista?',
+      "Limpar jogadores",
+      "Deseja remover todos os jogadores da lista?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Remover todos',
-          style: 'destructive',
+          text: "Remover todos",
+          style: "destructive",
           onPress: () => {
             clearPlayers();
             setEditingId(null);
             setErrorMessage(null);
           },
         },
-      ]
+      ],
     );
   };
 
-  const renderPlayerItem = ({ item, index }: { item: Player; index: number }) => {
+  const renderPlayerItem = ({
+    item,
+    index,
+  }: {
+    item: Player;
+    index: number;
+  }) => {
     const isEditing = editingId === item.id;
 
     return (
@@ -191,10 +189,10 @@ export default function PlayersScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScreenHeader
           title="Jogadores"
@@ -305,22 +303,22 @@ const styles = StyleSheet.create({
   clearButton: {
     minHeight: 36,
     paddingHorizontal: SPACING.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: RADIUS.sm,
     backgroundColor: COLORS.dangerSoft,
   },
   clearButtonText: {
     color: COLORS.danger,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   inputSection: {
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.md,
   },
   inputRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: SPACING.sm,
   },
   input: {
@@ -339,22 +337,22 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   pressed: {
     opacity: 0.78,
   },
   errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.xs,
     marginTop: SPACING.sm,
   },
   errorText: {
     color: COLORS.danger,
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   listContent: {
     paddingHorizontal: SPACING.xl,
@@ -362,14 +360,14 @@ const styles = StyleSheet.create({
   },
   emptyListContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   separator: {
     height: SPACING.sm,
   },
   playerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: COLORS.surface,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -383,7 +381,7 @@ const styles = StyleSheet.create({
   playerName: {
     color: COLORS.textPrimary,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   playerOrder: {
     color: COLORS.textMuted,
@@ -391,13 +389,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: SPACING.xs,
   },
   editContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.xs,
   },
   editInput: {
@@ -416,8 +414,8 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: RADIUS.sm,
     backgroundColor: COLORS.surfaceElevated,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   confirmIconButton: {
     backgroundColor: COLORS.successSoft,
@@ -426,7 +424,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.dangerSoft,
   },
   emptyState: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: SPACING.xl,
   },
   emptyIconBox: {
@@ -434,22 +432,22 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: RADIUS.xl,
     backgroundColor: COLORS.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: SPACING.lg,
   },
   emptyTitle: {
     color: COLORS.textPrimary,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: SPACING.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptyDescription: {
     color: COLORS.textSecondary,
     fontSize: 14,
     lineHeight: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   footer: {
     paddingHorizontal: SPACING.xl,

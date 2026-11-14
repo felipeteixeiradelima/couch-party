@@ -1,8 +1,8 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ScreenHeaderProps {
   title: string;
@@ -49,8 +49,8 @@ export function ScreenHeader({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.md,
     gap: SPACING.md,
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 1,
     borderColor: COLORS.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   pressed: {
     opacity: 0.75,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   title: {
     color: COLORS.textPrimary,
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   subtitle: {
     color: COLORS.textSecondary,
@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
   },
   rightSlot: {
     minWidth: 44,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 });

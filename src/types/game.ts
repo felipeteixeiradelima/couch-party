@@ -1,9 +1,9 @@
-export type GameId = 'impostor' | 'cidade-dorme' | 'perguntas';
+export type GameId = "impostor" | "cidade-dorme" | "perguntas";
 
 export type GameRoute =
-  | '/games/impostor'
-  | '/games/cidade-dorme'
-  | '/games/perguntas';
+  | "/games/impostor"
+  | "/games/cidade-dorme"
+  | "/games/perguntas";
 
 export interface GameMetadata {
   id: GameId;

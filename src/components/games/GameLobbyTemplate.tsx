@@ -1,15 +1,14 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '@/components/ui/Button';
-import { PlayerAvatar } from '@/components/ui/PlayerAvatar';
-import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { GAMES_BY_ID } from '@/constants/games';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
-import { usePlayers } from '@/hooks/usePlayers';
-import { GameId } from '@/types/game';
+import { Button } from "@/components/ui/Button";
+import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { GAMES_BY_ID } from "@/constants/games";
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { usePlayers } from "@/hooks/usePlayers";
+import { GameId } from "@/types/game";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface GameLobbyTemplateProps {
   gameId: GameId;
@@ -27,7 +26,7 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
   const excessCount = Math.max(0, players.length - game.maxPlayers);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScreenHeader
         title={game.title}
         subtitle={`${game.minPlayers}–${game.maxPlayers} jogadores`}
@@ -45,11 +44,7 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
           ]}
         >
           <Ionicons
-            name={
-              isReady
-                ? 'checkmark-circle-outline'
-                : 'alert-circle-outline'
-            }
+            name={isReady ? "checkmark-circle-outline" : "alert-circle-outline"}
             size={22}
             color={isReady ? COLORS.success : COLORS.warning}
           />
@@ -58,12 +53,12 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
               {isReady
                 ? `${players.length} jogadores prontos`
                 : hasTooManyPlayers
-                  ? `Remova ${excessCount} jogador${excessCount > 1 ? 'es' : ''}`
-                  : `Adicione mais ${missingCount} jogador${missingCount > 1 ? 'es' : ''}`}
+                  ? `Remova ${excessCount} jogador${excessCount > 1 ? "es" : ""}`
+                  : `Adicione mais ${missingCount} jogador${missingCount > 1 ? "es" : ""}`}
             </Text>
             <Text style={styles.statusDescription}>
               {isReady
-                ? 'A quantidade de jogadores está dentro do ideal para começar.'
+                ? "A quantidade de jogadores está dentro do ideal para começar."
                 : `${game.title} aceita de ${game.minPlayers} a ${game.maxPlayers} jogadores.`}
             </Text>
           </View>
@@ -118,13 +113,9 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
         {!isReady ? (
           <Button
             label="Configurar Jogadores"
-            onPress={() => router.push('/players')}
+            onPress={() => router.push("/players")}
             icon={
-              <Ionicons
-                name="people-outline"
-                size={20}
-                color={COLORS.white}
-              />
+              <Ionicons name="people-outline" size={20} color={COLORS.white} />
             }
           />
         ) : (
@@ -132,7 +123,7 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
             <Button
               label="Ajustar Jogadores"
               variant="secondary"
-              onPress={() => router.push('/players')}
+              onPress={() => router.push("/players")}
             />
             <Button
               label="Fluxo da partida em desenvolvimento"
@@ -160,8 +151,8 @@ const styles = StyleSheet.create({
     gap: SPACING.xl,
   },
   statusCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: SPACING.md,
     borderRadius: RADIUS.lg,
     borderWidth: 1,
@@ -169,11 +160,11 @@ const styles = StyleSheet.create({
   },
   statusReady: {
     backgroundColor: COLORS.successSoft,
-    borderColor: 'rgba(16, 185, 129, 0.35)',
+    borderColor: "rgba(16, 185, 129, 0.35)",
   },
   statusWarning: {
     backgroundColor: COLORS.warningSoft,
-    borderColor: 'rgba(245, 158, 11, 0.35)',
+    borderColor: "rgba(245, 158, 11, 0.35)",
   },
   statusTextBlock: {
     flex: 1,
@@ -181,7 +172,7 @@ const styles = StyleSheet.create({
   statusTitle: {
     color: COLORS.textPrimary,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 2,
   },
   statusDescription: {
@@ -193,19 +184,19 @@ const styles = StyleSheet.create({
     gap: SPACING.md,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   sectionTitle: {
     color: COLORS.textPrimary,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   sectionCount: {
     color: COLORS.textSecondary,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   emptyBox: {
     backgroundColor: COLORS.surface,
@@ -213,20 +204,20 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     borderRadius: RADIUS.lg,
     padding: SPACING.lg,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyText: {
     color: COLORS.textSecondary,
     fontSize: 14,
   },
   playersGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: SPACING.sm,
   },
   playerChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.sm,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
@@ -234,12 +225,12 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
-    maxWidth: '48%',
+    maxWidth: "48%",
   },
   playerChipName: {
     color: COLORS.textPrimary,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     flexShrink: 1,
   },
   rulesCard: {
@@ -251,12 +242,12 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   ruleRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: SPACING.sm,
   },
   ruleIndex: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     width: 18,
   },
   ruleText: {

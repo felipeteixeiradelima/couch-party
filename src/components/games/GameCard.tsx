@@ -1,8 +1,7 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
-import { GameId, GameMetadata } from '@/types/game';
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { GameId, GameMetadata } from "@/types/game";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface GameCardProps {
   game: GameMetadata;
@@ -11,18 +10,14 @@ interface GameCardProps {
 
 function renderGameIcon(id: GameId, color: string) {
   switch (id) {
-    case 'impostor':
+    case "impostor":
       return (
         <MaterialCommunityIcons name="drama-masks" size={24} color={color} />
       );
-    case 'cidade-dorme':
-      return (
-        <Ionicons name="moon-outline" size={22} color={color} />
-      );
-    case 'perguntas':
-      return (
-        <Ionicons name="help-circle-outline" size={24} color={color} />
-      );
+    case "cidade-dorme":
+      return <Ionicons name="moon-outline" size={22} color={color} />;
+    case "perguntas":
+      return <Ionicons name="help-circle-outline" size={24} color={color} />;
   }
 }
 
@@ -84,21 +79,21 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: SPACING.lg,
   },
   iconBox: {
     width: 48,
     height: 48,
     borderRadius: RADIUS.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     backgroundColor: COLORS.surfaceElevated,
     borderRadius: RADIUS.full,
@@ -108,18 +103,18 @@ const styles = StyleSheet.create({
   badgeText: {
     color: COLORS.textSecondary,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   title: {
     color: COLORS.textPrimary,
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: SPACING.xs,
   },
   bottomRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
     gap: SPACING.md,
   },
   description: {
@@ -133,7 +128,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.surfaceElevated,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

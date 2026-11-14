@@ -1,14 +1,13 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { GAMES } from '@/constants/games';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { GAMES } from "@/constants/games";
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RulesScreen() {
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScreenHeader title="Regras" subtitle="Como funciona o Couch Party" />
 
       <ScrollView
@@ -73,20 +72,20 @@ const styles = StyleSheet.create({
   introCard: {
     backgroundColor: COLORS.primarySoft,
     borderWidth: 1,
-    borderColor: 'rgba(139, 61, 255, 0.35)',
+    borderColor: "rgba(139, 61, 255, 0.35)",
     borderRadius: RADIUS.xl,
     padding: SPACING.lg,
   },
   introHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: SPACING.sm,
     marginBottom: SPACING.xs,
   },
   introTitle: {
     color: COLORS.textPrimary,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   introText: {
     color: COLORS.textSecondary,
@@ -101,20 +100,20 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
   },
   gameHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: SPACING.md,
   },
   gameTitle: {
     color: COLORS.textPrimary,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   gamePlayers: {
     color: COLORS.textSecondary,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     backgroundColor: COLORS.surfaceElevated,
     paddingHorizontal: SPACING.md,
     paddingVertical: 4,
@@ -124,12 +123,12 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   ruleRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: SPACING.sm,
   },
   ruleIndex: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     width: 18,
   },
   ruleText: {
