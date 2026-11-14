@@ -6,7 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: COLORS.background }}>
       <PlayersProvider>
         <StatusBar style="light" />
         <Stack
@@ -20,7 +20,7 @@ export default function RootLayout() {
           <Stack.Screen name="players" />
           <Stack.Screen
             name="rules"
-            options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            options={{ presentation: "modal", animation: "fade_from_bottom" }}
           />
           <Stack.Screen name="games/impostor" />
           <Stack.Screen name="games/cidade-dorme" />
