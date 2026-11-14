@@ -22,10 +22,10 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "start": "expo start --tunnel ngrok",
+    "android": "expo start --android --tunnel ngrok",
+    "ios": "expo start --ios --tunnel ngrok",
+    "web": "expo start --web --tunnel ngrok"
   },
   "private": true
 }
