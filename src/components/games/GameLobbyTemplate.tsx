@@ -4,17 +4,56 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { GAMES_BY_ID } from "@/constants/games";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { usePlayers } from "@/hooks/usePlayers";
-import { GameId } from "@/types/game";
+import { GameCategorySummary, GameId, GameSettings } from "@/types/game";
+import { clampImpostorCount, formatDurationLabel } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+interface GameLobbyConfigProps {
+  settings: GameSettings;
+  categories: GameCategorySummary[];
+  onOpenSettings: () => void;
+  onStartGame: () => void;
+}
 
 interface GameLobbyTemplateProps {
   gameId: GameId;
+  lobbyConfig?: GameLobbyConfigProps;
 }
 
-export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
+function getCategorySummaryLabel(
+  settings: GameSettings,
+  categories: GameCategorySummary[],
+): string {
+  if (settings.selectedCategoryIds.length === 0) {
+    return "Aleatória (todas)";
+  }
+
+  const selectedNames = categories
+    .filter((cat) => settings.selectedCategoryIds.includes(cat.id))
+    .map((cat) => cat.name);
+
+  if (selectedNames.length === 0) {
+    return "Aleatória (todas)";
+  }
+
+  if (selectedNames.length === 1) {
+    return selectedNames[0];
+  }
+
+  if (selectedNames.length === 2) {
+    return `${selectedNames[0]} e ${selectedNames[1]}`;
+  }
+
+  return `${selectedNames.length} selecionadas (sorteio)`;
+}
+
+export function GameLobbyTemplate({
+  gameId,
+  lobbyConfig,
+}: GameLobbyTemplateProps) {
   const { players } = usePlayers();
   const game = GAMES_BY_ID[gameId];
 
@@ -25,11 +64,35 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
   const missingCount = Math.max(0, game.minPlayers - players.length);
   const excessCount = Math.max(0, players.length - game.maxPlayers);
 
+  const effectiveImpostorCount = lobbyConfig
+    ? clampImpostorCount(lobbyConfig.settings.impostorCount, players.length)
+    : 1;
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScreenHeader
         title={game.title}
         subtitle={`${game.minPlayers}–${game.maxPlayers} jogadores`}
+        rightSlot={
+          lobbyConfig ? (
+            <Pressable
+              onPress={lobbyConfig.onOpenSettings}
+              accessibilityRole="button"
+              accessibilityLabel="Abrir configurações do jogo"
+              style={({ pressed }) => [
+                styles.headerActionButton,
+                pressed && styles.pressed,
+              ]}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="settings-outline"
+                size={20}
+                color={COLORS.textPrimary}
+              />
+            </Pressable>
+          ) : null
+        }
       />
 
       <ScrollView
@@ -94,6 +157,78 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
           )}
         </View>
 
+        {lobbyConfig ? (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Configurações do jogo</Text>
+              <Pressable
+                onPress={lobbyConfig.onOpenSettings}
+                accessibilityRole="button"
+                accessibilityLabel="Personalizar configurações do jogo"
+                style={({ pressed }) => [
+                  styles.editSettingsLink,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text style={styles.editSettingsLinkText}>Personalizar</Text>
+              </Pressable>
+            </View>
+
+            <Pressable
+              onPress={lobbyConfig.onOpenSettings}
+              accessibilityRole="button"
+              accessibilityLabel="Abrir configurações da partida"
+              style={({ pressed }) => [
+                styles.settingsCard,
+                pressed && styles.settingsCardPressed,
+              ]}
+            >
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>Impostores</Text>
+                <Text style={styles.settingValue}>
+                  {effectiveImpostorCount}
+                </Text>
+              </View>
+
+              <View style={styles.settingDivider} />
+
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>Categoria</Text>
+                <Text style={styles.settingValue} numberOfLines={1}>
+                  {getCategorySummaryLabel(
+                    lobbyConfig.settings,
+                    lobbyConfig.categories,
+                  )}
+                </Text>
+              </View>
+
+              <View style={styles.settingDivider} />
+
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>Dica para o impostor</Text>
+                <Text style={styles.settingValue}>
+                  {lobbyConfig.settings.hintEnabled
+                    ? "Ativada"
+                    : "Desativada"}
+                </Text>
+              </View>
+
+              <View style={styles.settingDivider} />
+
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>Tempo de votação</Text>
+                <Text style={styles.settingValue}>
+                  {lobbyConfig.settings.votingTimerEnabled
+                    ? formatDurationLabel(
+                        lobbyConfig.settings.votingDurationSeconds,
+                      )
+                    : "Desativado"}
+                </Text>
+              </View>
+            </Pressable>
+          </View>
+        ) : null}
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Como jogar</Text>
           <View style={styles.rulesCard}>
@@ -125,11 +260,21 @@ export function GameLobbyTemplate({ gameId }: GameLobbyTemplateProps) {
               variant="secondary"
               onPress={() => router.push("/players")}
             />
-            <Button
-              label="Fluxo da partida em desenvolvimento"
-              disabled
-              onPress={() => {}}
-            />
+            {lobbyConfig ? (
+              <Button
+                label="Iniciar Partida"
+                onPress={lobbyConfig.onStartGame}
+                icon={
+                  <Ionicons name="play" size={18} color={COLORS.white} />
+                }
+              />
+            ) : (
+              <Button
+                label="Fluxo da partida em desenvolvimento"
+                disabled
+                onPress={() => {}}
+              />
+            )}
           </View>
         )}
       </View>
@@ -141,6 +286,19 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  headerActionButton: {
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pressed: {
+    opacity: 0.78,
   },
   scroll: {
     flex: 1,
@@ -197,6 +355,48 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: "600",
+  },
+  editSettingsLink: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+  },
+  editSettingsLinkText: {
+    color: COLORS.primaryText,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  settingsCard: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+  },
+  settingsCardPressed: {
+    backgroundColor: COLORS.surfaceElevated,
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: SPACING.md,
+    paddingVertical: SPACING.md,
+  },
+  settingLabel: {
+    color: COLORS.textSecondary,
+    fontSize: 14,
+  },
+  settingValue: {
+    color: COLORS.textPrimary,
+    fontSize: 14,
+    fontWeight: "700",
+    flexShrink: 1,
+    textAlign: "right",
+  },
+  settingDivider: {
+    height: 1,
+    backgroundColor: COLORS.borderSubtle,
   },
   emptyBox: {
     backgroundColor: COLORS.surface,
