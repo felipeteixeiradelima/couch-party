@@ -20,7 +20,7 @@ export const VOTING_PRESET_SECONDS = [30, 60, 120, 180, 300, 600] as const;
 export type UsedHintHistory = Record<string, string[]>;
 
 export function getMaxImpostors(playerCount: number): number {
-  return Math.max(1, playerCount - 1);
+  return Math.max(1, Math.floor(playerCount / 3));
 }
 
 export function clampImpostorCount(count: number, playerCount: number): number {

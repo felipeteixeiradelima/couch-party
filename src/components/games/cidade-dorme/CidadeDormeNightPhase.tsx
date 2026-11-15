@@ -21,8 +21,8 @@ const NIGHT = CIDADE_DORME_THEMES.night;
 
 export interface NightCompletionPayload {
   assassinVotes: Record<string, string>;
-  guardianTargetId: string | null;
-  detectiveInvestigatedId: string | null;
+  guardianTargetIds: string[];
+  detectiveInvestigatedIds: string[];
 }
 
 interface CidadeDormeNightPhaseProps {
@@ -57,18 +57,18 @@ export function CidadeDormeNightPhase({
   const [assassinVotes, setAssassinVotes] = useState<Record<string, string>>(
     {},
   );
-  const [guardianTargetId, setGuardianTargetId] = useState<string | null>(null);
-  const [detectiveInvestigatedId, setDetectiveInvestigatedId] = useState<
-    string | null
-  >(null);
+  const [guardianTargetIds, setGuardianTargetIds] = useState<string[]>([]);
+  const [detectiveInvestigatedIds, setDetectiveInvestigatedIds] = useState<
+    string[]
+  >([]);
 
   const currentEntry = alivePlayers[playerIndex];
   const isLastPlayer = playerIndex >= alivePlayers.length - 1;
 
   const advanceTurn = (
     nextAssassinVotes: Record<string, string>,
-    nextGuardianId: string | null,
-    nextDetectiveId: string | null,
+    nextGuardianIds: string[],
+    nextDetectiveIds: string[],
   ) => {
     setIsUnlocked(false);
     setSelectedTargetId(null);
@@ -77,8 +77,8 @@ export function CidadeDormeNightPhase({
     if (isLastPlayer) {
       onCompleteNight({
         assassinVotes: nextAssassinVotes,
-        guardianTargetId: nextGuardianId,
-        detectiveInvestigatedId: nextDetectiveId,
+        guardianTargetIds: nextGuardianIds,
+        detectiveInvestigatedIds: nextDetectiveIds,
       });
       return;
     }
@@ -268,8 +268,8 @@ export function CidadeDormeNightPhase({
             onPress={() =>
               advanceTurn(
                 assassinVotes,
-                guardianTargetId,
-                detectiveInvestigatedId,
+                guardianTargetIds,
+                detectiveInvestigatedIds,
               )
             }
             style={styles.nightPrimaryButton}
@@ -372,8 +372,8 @@ export function CidadeDormeNightPhase({
               onPress={() =>
                 advanceTurn(
                   assassinVotes,
-                  guardianTargetId,
-                  detectiveRevealedId,
+                  guardianTargetIds,
+                  detectiveInvestigatedIds,
                 )
               }
               style={styles.nightPrimaryButton}
@@ -407,7 +407,7 @@ export function CidadeDormeNightPhase({
         confirmLabel="Investigar jogador"
         onConfirm={() => {
           if (!selectedTargetId) return;
-          setDetectiveInvestigatedId(selectedTargetId);
+          setDetectiveInvestigatedIds((prev) => [...prev, selectedTargetId]);
           setDetectiveRevealedId(selectedTargetId);
         }}
         onRequestExit={onRequestExit}
@@ -433,8 +433,9 @@ export function CidadeDormeNightPhase({
         }
         onConfirm={() => {
           if (!selectedTargetId) return;
-          setGuardianTargetId(selectedTargetId);
-          advanceTurn(assassinVotes, selectedTargetId, detectiveInvestigatedId);
+          const nextGuardianIds = [...guardianTargetIds, selectedTargetId];
+          setGuardianTargetIds(nextGuardianIds);
+          advanceTurn(assassinVotes, nextGuardianIds, detectiveInvestigatedIds);
         }}
         onRequestExit={onRequestExit}
       />
@@ -488,7 +489,7 @@ export function CidadeDormeNightPhase({
           [currentEntry.player.id]: selectedTargetId,
         };
         setAssassinVotes(nextVotes);
-        advanceTurn(nextVotes, guardianTargetId, detectiveInvestigatedId);
+        advanceTurn(nextVotes, guardianTargetIds, detectiveInvestigatedIds);
       }}
       onRequestExit={onRequestExit}
     />

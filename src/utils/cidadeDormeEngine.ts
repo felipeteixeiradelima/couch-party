@@ -81,12 +81,24 @@ export const CIDADE_DORME_ROLE_META: Record<
 };
 
 export function getMaxAssassins(playerCount: number): number {
-  return Math.max(1, playerCount - 1);
+  return Math.max(1, Math.floor(playerCount / 3));
 }
 
 export function clampAssassinCount(count: number, playerCount: number): number {
   const maxAssassins = getMaxAssassins(playerCount);
   return Math.min(Math.max(1, Math.round(count)), maxAssassins);
+}
+
+export function getMaxSpecialInnocentRole(playerCount: number): number {
+  return Math.max(0, Math.ceil(playerCount / 6));
+}
+
+export function clampSpecialInnocentCount(
+  count: number,
+  playerCount: number,
+): number {
+  const maxCount = getMaxSpecialInnocentRole(playerCount);
+  return Math.min(Math.max(0, Math.round(count)), maxCount);
 }
 
 /**
@@ -101,19 +113,19 @@ export function normalizeCidadeDormeSettings(
     settings.assassinCount,
     safePlayerCount,
   );
-  let detectiveCount = settings.detectiveCount > 0 ? 1 : 0;
-  let guardianAngelCount = settings.guardianAngelCount > 0 ? 1 : 0;
+  let detectiveCount = clampSpecialInnocentCount(
+    settings.detectiveCount,
+    safePlayerCount,
+  );
+  let guardianAngelCount = clampSpecialInnocentCount(
+    settings.guardianAngelCount,
+    safePlayerCount,
+  );
 
   let remainingInnocentSlots = Math.max(0, safePlayerCount - assassinCount);
-
-  if (detectiveCount > remainingInnocentSlots) {
-    detectiveCount = 0;
-  }
+  detectiveCount = Math.min(detectiveCount, remainingInnocentSlots);
   remainingInnocentSlots -= detectiveCount;
-
-  if (guardianAngelCount > remainingInnocentSlots) {
-    guardianAngelCount = 0;
-  }
+  guardianAngelCount = Math.min(guardianAngelCount, remainingInnocentSlots);
 
   return {
     assassinCount,
@@ -259,13 +271,13 @@ function selectNightVictimId(
 export function resolveNightActions({
   match,
   assassinVotes,
-  guardianTargetId,
-  detectiveInvestigatedId,
+  guardianTargetIds,
+  detectiveInvestigatedIds,
 }: {
   match: CidadeDormeMatchState;
   assassinVotes: Record<string, string>;
-  guardianTargetId: string | null;
-  detectiveInvestigatedId: string | null;
+  guardianTargetIds: readonly string[];
+  detectiveInvestigatedIds: readonly string[];
 }): CidadeDormeMatchState {
   const validVictimIds = new Set(
     match.players
@@ -274,10 +286,9 @@ export function resolveNightActions({
   );
 
   const attackedPlayerId = selectNightVictimId(assassinVotes, validVictimIds);
+  const protectedIds = new Set(guardianTargetIds);
   const wasSaved =
-    attackedPlayerId !== null &&
-    guardianTargetId !== null &&
-    attackedPlayerId === guardianTargetId;
+    attackedPlayerId !== null && protectedIds.has(attackedPlayerId);
 
   const killedPlayerId = wasSaved ? null : attackedPlayerId;
 
@@ -292,12 +303,12 @@ export function resolveNightActions({
   );
 
   const nextDetectiveKnowledge = { ...match.detectiveKnowledge };
-  if (detectiveInvestigatedId) {
+  for (const investigatedId of detectiveInvestigatedIds) {
     const target = match.players.find(
-      (entry) => entry.player.id === detectiveInvestigatedId,
+      (entry) => entry.player.id === investigatedId,
     );
     if (target) {
-      nextDetectiveKnowledge[detectiveInvestigatedId] =
+      nextDetectiveKnowledge[investigatedId] =
         target.role === "assassin" ? "assassin" : "innocent";
     }
   }
@@ -341,7 +352,9 @@ export function resolveNightActions({
     lastNightSummary: {
       nightNumber: match.roundNumber,
       attackedPlayerId,
-      protectedPlayerId: guardianTargetId,
+      protectedPlayerId: wasSaved
+        ? attackedPlayerId
+        : (guardianTargetIds[0] ?? null),
       killedPlayerId,
       wasSaved,
     },
