@@ -3,8 +3,10 @@ import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { CidadeDormeSettings } from "@/types/cidadeDorme";
 import {
   clampAssassinCount,
+  clampSpecialInnocentCount,
   getCitizenCount,
   getMaxAssassins,
+  getMaxSpecialInnocentRole,
   normalizeCidadeDormeSettings,
 } from "@/utils/cidadeDormeEngine";
 import {
@@ -63,6 +65,7 @@ function CidadeDormeSettingsContent({
 
   const safePlayerCount = Math.max(2, playerCount);
   const maxAssassins = getMaxAssassins(safePlayerCount);
+  const maxSpecialInnocentRole = getMaxSpecialInnocentRole(safePlayerCount);
   const citizenCount = getCitizenCount(draft, safePlayerCount);
   const hasAssassinMajorityStart =
     draft.assassinCount >= Math.ceil(safePlayerCount / 2);
@@ -82,50 +85,29 @@ function CidadeDormeSettingsContent({
     );
   };
 
-  const handleSetDetective = (nextValue: number) => {
+  const handleChangeSpecialRole = (
+    roleKey: "detectiveCount" | "guardianAngelCount",
+    delta: number,
+  ) => {
     setDraft((prev) => {
-      const clamped = nextValue > 0 ? 1 : 0;
-      let nextAssassins = prev.assassinCount;
-      if (
-        clamped === 1 &&
-        nextAssassins + clamped + prev.guardianAngelCount > safePlayerCount
-      ) {
-        nextAssassins = Math.max(
-          1,
-          safePlayerCount - clamped - prev.guardianAngelCount,
-        );
-      }
-
-      return normalizeCidadeDormeSettings(
-        {
-          ...prev,
-          assassinCount: nextAssassins,
-          detectiveCount: clamped,
-        },
+      const otherRoleKey =
+        roleKey === "detectiveCount" ? "guardianAngelCount" : "detectiveCount";
+      const nextValue = clampSpecialInnocentCount(
+        prev[roleKey] + delta,
         safePlayerCount,
       );
-    });
-  };
-
-  const handleSetGuardianAngel = (nextValue: number) => {
-    setDraft((prev) => {
-      const clamped = nextValue > 0 ? 1 : 0;
-      let nextAssassins = prev.assassinCount;
-      if (
-        clamped === 1 &&
-        nextAssassins + prev.detectiveCount + clamped > safePlayerCount
-      ) {
-        nextAssassins = Math.max(
-          1,
-          safePlayerCount - prev.detectiveCount - clamped,
-        );
-      }
+      const overflow =
+        prev.assassinCount + prev[otherRoleKey] + nextValue - safePlayerCount;
+      const nextAssassins =
+        overflow > 0
+          ? Math.max(1, prev.assassinCount - overflow)
+          : prev.assassinCount;
 
       return normalizeCidadeDormeSettings(
         {
           ...prev,
           assassinCount: nextAssassins,
-          guardianAngelCount: clamped,
+          [roleKey]: nextValue,
         },
         safePlayerCount,
       );
@@ -196,11 +178,13 @@ function CidadeDormeSettingsContent({
               <View style={[styles.summaryBadge, styles.detectiveBadge]}>
                 <Text style={styles.summaryBadgeText}>
                   {draft.detectiveCount} Detetive
+                  {draft.detectiveCount !== 1 ? "s" : ""}
                 </Text>
               </View>
               <View style={[styles.summaryBadge, styles.angelBadge]}>
                 <Text style={styles.summaryBadgeText}>
                   {draft.guardianAngelCount} Anjo
+                  {draft.guardianAngelCount !== 1 ? "s" : ""}
                 </Text>
               </View>
               <View style={[styles.summaryBadge, styles.citizenBadge]}>
@@ -281,17 +265,18 @@ function CidadeDormeSettingsContent({
               <View style={styles.labelBlock}>
                 <Text style={styles.optionTitle}>Detetives</Text>
                 <Text style={styles.optionDescription}>
-                  Mínimo 0, máximo 1. Investiga se um jogador é inocente ou
-                  assassino à noite.
+                  Mínimo 0, máximo {maxSpecialInnocentRole} ({safePlayerCount}{" "}
+                  jogadores). Investiga se um jogador é inocente ou assassino à
+                  noite.
                 </Text>
               </View>
 
               <View style={styles.stepper}>
                 <Pressable
-                  onPress={() => handleSetDetective(0)}
+                  onPress={() => handleChangeSpecialRole("detectiveCount", -1)}
                   disabled={draft.detectiveCount <= 0}
                   accessibilityRole="button"
-                  accessibilityLabel="Remover detetive"
+                  accessibilityLabel="Diminuir quantidade de detetives"
                   style={({ pressed }) => [
                     styles.stepperButton,
                     draft.detectiveCount <= 0 && styles.stepperDisabled,
@@ -308,13 +293,14 @@ function CidadeDormeSettingsContent({
                 <Text style={styles.stepperValue}>{draft.detectiveCount}</Text>
 
                 <Pressable
-                  onPress={() => handleSetDetective(1)}
-                  disabled={draft.detectiveCount >= 1}
+                  onPress={() => handleChangeSpecialRole("detectiveCount", 1)}
+                  disabled={draft.detectiveCount >= maxSpecialInnocentRole}
                   accessibilityRole="button"
-                  accessibilityLabel="Adicionar detetive"
+                  accessibilityLabel="Aumentar quantidade de detetives"
                   style={({ pressed }) => [
                     styles.stepperButton,
-                    draft.detectiveCount >= 1 && styles.stepperDisabled,
+                    draft.detectiveCount >= maxSpecialInnocentRole &&
+                      styles.stepperDisabled,
                     pressed && styles.pressed,
                   ]}
                 >
@@ -330,17 +316,19 @@ function CidadeDormeSettingsContent({
               <View style={styles.labelBlock}>
                 <Text style={styles.optionTitle}>Anjos da Guarda</Text>
                 <Text style={styles.optionDescription}>
-                  Mínimo 0, máximo 1. Protege um jogador contra o ataque
-                  noturno.
+                  Mínimo 0, máximo {maxSpecialInnocentRole} ({safePlayerCount}{" "}
+                  jogadores). Protege um jogador contra o ataque noturno.
                 </Text>
               </View>
 
               <View style={styles.stepper}>
                 <Pressable
-                  onPress={() => handleSetGuardianAngel(0)}
+                  onPress={() =>
+                    handleChangeSpecialRole("guardianAngelCount", -1)
+                  }
                   disabled={draft.guardianAngelCount <= 0}
                   accessibilityRole="button"
-                  accessibilityLabel="Remover anjo da guarda"
+                  accessibilityLabel="Diminuir quantidade de anjos da guarda"
                   style={({ pressed }) => [
                     styles.stepperButton,
                     draft.guardianAngelCount <= 0 && styles.stepperDisabled,
@@ -359,13 +347,16 @@ function CidadeDormeSettingsContent({
                 </Text>
 
                 <Pressable
-                  onPress={() => handleSetGuardianAngel(1)}
-                  disabled={draft.guardianAngelCount >= 1}
+                  onPress={() =>
+                    handleChangeSpecialRole("guardianAngelCount", 1)
+                  }
+                  disabled={draft.guardianAngelCount >= maxSpecialInnocentRole}
                   accessibilityRole="button"
-                  accessibilityLabel="Adicionar anjo da guarda"
+                  accessibilityLabel="Aumentar quantidade de anjos da guarda"
                   style={({ pressed }) => [
                     styles.stepperButton,
-                    draft.guardianAngelCount >= 1 && styles.stepperDisabled,
+                    draft.guardianAngelCount >= maxSpecialInnocentRole &&
+                      styles.stepperDisabled,
                     pressed && styles.pressed,
                   ]}
                 >

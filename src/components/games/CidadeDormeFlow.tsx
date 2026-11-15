@@ -65,8 +65,8 @@ export function CidadeDormeFlow() {
       const updated = resolveNightActions({
         match,
         assassinVotes: payload.assassinVotes,
-        guardianTargetId: payload.guardianTargetId,
-        detectiveInvestigatedId: payload.detectiveInvestigatedId,
+        guardianTargetIds: payload.guardianTargetIds,
+        detectiveInvestigatedIds: payload.detectiveInvestigatedIds,
       });
       setMatch(updated);
       setPhase("day-discussion");
@@ -137,16 +137,16 @@ export function CidadeDormeFlow() {
               {
                 label: "Detetives",
                 value:
-                  effectiveSettings.detectiveCount === 1
-                    ? "1 (Ativado)"
-                    : "0 (Desativado)",
+                  effectiveSettings.detectiveCount === 0
+                    ? "0 (Desativado)"
+                    : String(effectiveSettings.detectiveCount),
               },
               {
                 label: "Anjos da Guarda",
                 value:
-                  effectiveSettings.guardianAngelCount === 1
-                    ? "1 (Ativado)"
-                    : "0 (Desativado)",
+                  effectiveSettings.guardianAngelCount === 0
+                    ? "0 (Desativado)"
+                    : String(effectiveSettings.guardianAngelCount),
               },
               {
                 label: "Cidadãos",
