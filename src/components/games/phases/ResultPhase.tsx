@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { ActiveRoundState, RoundResult } from "@/types/game";
+import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -28,6 +29,12 @@ export function ResultPhase({
 
   const { prompt } = round;
   const hasMultipleImpostors = result.impostors.length > 1;
+  const votedNames = formatPlayerNames(
+    result.votedPlayers.map((assignment) => assignment.player),
+  );
+  const innocentVotes = result.votedPlayers.filter(
+    (assignment) => assignment.role === "innocent",
+  );
 
   const outcomeTitle = innocentsWon
     ? "Inocentes venceram!"
@@ -36,10 +43,16 @@ export function ResultPhase({
       : "Impostor venceu!";
 
   const outcomeDescription = innocentsWon
-    ? `${result.votedPlayer?.name ?? "O jogador votado"} era ${hasMultipleImpostors ? "um dos impostores" : "o impostor"}!`
+    ? hasMultipleImpostors
+      ? `Todos os impostores (${votedNames}) foram descobertos!`
+      : `${votedNames} era o impostor!`
     : result.isWalkover
       ? "Nenhum jogador foi votado antes do encerramento (vitória por W.O.)."
-      : `${result.votedPlayer?.name ?? "O jogador votado"} era inocente e o verdadeiro impostor escapou.`;
+      : innocentVotes.length > 0
+        ? hasMultipleImpostors
+          ? `${formatPlayerNames(innocentVotes.map((a) => a.player))} ${innocentVotes.length > 1 ? "eram inocentes" : "era inocente"} e os impostores venceram.`
+          : `${votedNames} era inocente e o verdadeiro impostor escapou.`
+        : `A votação encerrou antes de selecionar todos os ${result.impostors.length} impostores.`;
 
   return (
     <View style={styles.container}>
@@ -164,23 +177,30 @@ export function ResultPhase({
         {/* Vote summary */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Resultado da votação</Text>
-          {result.votedPlayer ? (
-            <View style={styles.voteRow}>
-              <PlayerAvatar
-                name={result.votedPlayer.name}
-                color={result.votedPlayer.color}
-                size={34}
-              />
-              <View style={styles.voteInfo}>
-                <Text style={styles.votePlayerName}>
-                  {result.votedPlayer.name}
-                </Text>
-                <Text style={styles.votePlayerRole}>
-                  {result.votedPlayerRole === "impostor"
-                    ? "Era impostor"
-                    : "Era inocente"}
-                </Text>
-              </View>
+          {result.votedPlayers.length > 0 ? (
+            <View style={styles.voteList}>
+              {result.votedPlayers.map(({ player, role }) => (
+                <View key={player.id} style={styles.voteRow}>
+                  <PlayerAvatar
+                    name={player.name}
+                    color={player.color}
+                    size={34}
+                  />
+                  <View style={styles.voteInfo}>
+                    <Text style={styles.votePlayerName}>{player.name}</Text>
+                    <Text
+                      style={[
+                        styles.votePlayerRole,
+                        role === "impostor"
+                          ? styles.voteRoleImpostor
+                          : styles.voteRoleInnocent,
+                      ]}
+                    >
+                      {role === "impostor" ? "Era impostor" : "Era inocente"}
+                    </Text>
+                  </View>
+                </View>
+              ))}
             </View>
           ) : (
             <Text style={styles.noVoteText}>
@@ -368,6 +388,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
   },
+  voteList: {
+    gap: SPACING.md,
+  },
   voteRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -384,7 +407,14 @@ const styles = StyleSheet.create({
   votePlayerRole: {
     color: COLORS.textSecondary,
     fontSize: 13,
+    fontWeight: "600",
     marginTop: 2,
+  },
+  voteRoleImpostor: {
+    color: COLORS.success,
+  },
+  voteRoleInnocent: {
+    color: COLORS.danger,
   },
   noVoteText: {
     color: COLORS.textSecondary,

@@ -74,9 +74,9 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
   }, [gameId, players, settings, usedHintHistory, roundNumber]);
 
   const handleFinishVoting = useCallback(
-    (votedPlayerId: string | null) => {
+    (votedPlayerIds: readonly string[]) => {
       if (!activeRound) return;
-      const result = resolveRoundResult(activeRound, votedPlayerId);
+      const result = resolveRoundResult(activeRound, votedPlayerIds);
       setRoundResult(result);
       setPhase("result");
     },

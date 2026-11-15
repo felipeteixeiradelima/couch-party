@@ -11,7 +11,10 @@ interface CircularTimerProps {
   strokeWidth?: number;
 }
 
-function getTimerColor(remainingSeconds: number, totalSeconds: number): string {
+export function getTimerColor(
+  remainingSeconds: number,
+  totalSeconds: number,
+): string {
   if (remainingSeconds <= 10) {
     return COLORS.danger;
   }

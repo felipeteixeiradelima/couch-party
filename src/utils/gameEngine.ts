@@ -265,48 +265,57 @@ export function createRound({
 }
 
 /**
- * Resolves the match outcome from the group's vote (or walkover when no player was selected).
+ * Formats a list of player names in natural Portuguese (e.g. "Ana, Bruno e Carla").
+ */
+export function formatPlayerNames(players: readonly Player[]): string {
+  if (players.length === 0) return "";
+  if (players.length === 1) return players[0].name;
+  if (players.length === 2) return `${players[0].name} e ${players[1].name}`;
+
+  const head = players
+    .slice(0, -1)
+    .map((player) => player.name)
+    .join(", ");
+  return `${head} e ${players[players.length - 1].name}`;
+}
+
+/**
+ * Resolves the match outcome from the group's votes (or walkover when no player was selected).
  */
 export function resolveRoundResult(
   round: ActiveRoundState,
-  votedPlayerId: string | null,
+  votedPlayerIds: readonly string[],
 ): RoundResult {
   const impostors = round.assignments
     .filter((assignment) => assignment.role === "impostor")
     .map((assignment) => assignment.player);
 
-  if (!votedPlayerId) {
+  const uniqueVoteIds = Array.from(new Set(votedPlayerIds));
+  const votedAssignments = uniqueVoteIds
+    .map((id) =>
+      round.assignments.find((assignment) => assignment.player.id === id),
+    )
+    .filter((assignment): assignment is PlayerAssignment => assignment != null);
+
+  if (votedAssignments.length === 0) {
     return {
       outcome: "impostors_wo",
       winningRole: "impostor",
-      votedPlayer: null,
-      votedPlayerRole: null,
+      votedPlayers: [],
       impostors,
       isWalkover: true,
     };
   }
 
-  const votedAssignment = round.assignments.find(
-    (assignment) => assignment.player.id === votedPlayerId,
-  );
+  const innocentsWon =
+    votedAssignments.length === impostors.length &&
+    votedAssignments.every((assignment) => assignment.role === "impostor");
 
-  if (!votedAssignment) {
-    return {
-      outcome: "impostors_wo",
-      winningRole: "impostor",
-      votedPlayer: null,
-      votedPlayerRole: null,
-      impostors,
-      isWalkover: true,
-    };
-  }
-
-  if (votedAssignment.role === "impostor") {
+  if (innocentsWon) {
     return {
       outcome: "innocents",
       winningRole: "innocent",
-      votedPlayer: votedAssignment.player,
-      votedPlayerRole: "impostor",
+      votedPlayers: votedAssignments,
       impostors,
       isWalkover: false,
     };
@@ -315,8 +324,7 @@ export function resolveRoundResult(
   return {
     outcome: "impostors_wrong_vote",
     winningRole: "impostor",
-    votedPlayer: votedAssignment.player,
-    votedPlayerRole: "innocent",
+    votedPlayers: votedAssignments,
     impostors,
     isWalkover: false,
   };

@@ -2,8 +2,18 @@ import { Button } from "@/components/ui/Button";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { ActiveRoundState } from "@/types/game";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  AppState,
+  GestureResponderEvent,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+const PRESS_RETENTION_OFFSET = { top: 40, left: 40, bottom: 40, right: 40 };
 
 interface SecretRolePhaseProps {
   round: ActiveRoundState;
@@ -26,6 +36,70 @@ export function SecretRolePhase({
     setHasViewedCurrent(false);
   }, [round.roundNumber]);
 
+  const handlePressIn = useCallback(() => {
+    setIsHolding(true);
+    setHasViewedCurrent(true);
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    setIsHolding(false);
+  }, []);
+
+  const handleTouchEnd = useCallback((event: GestureResponderEvent) => {
+    if ((event.nativeEvent.touches?.length ?? 0) === 0) {
+      setIsHolding(false);
+    }
+  }, []);
+
+  // Hide immediately if the app loses focus or goes to background.
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState !== "active") {
+        setIsHolding(false);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  // On web, ensure releasing outside the card or browser window always hides.
+  useEffect(() => {
+    if (Platform.OS !== "web" || !isHolding || typeof window === "undefined") {
+      return;
+    }
+
+    const handleGlobalRelease = () => setIsHolding(false);
+    const handleVisibilityChange = () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        setIsHolding(false);
+      }
+    };
+
+    window.addEventListener("pointerup", handleGlobalRelease);
+    window.addEventListener("pointercancel", handleGlobalRelease);
+    window.addEventListener("mouseup", handleGlobalRelease);
+    window.addEventListener("touchend", handleGlobalRelease);
+    window.addEventListener("touchcancel", handleGlobalRelease);
+    window.addEventListener("blur", handleGlobalRelease);
+    window.addEventListener("contextmenu", handleGlobalRelease);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+
+    return () => {
+      window.removeEventListener("pointerup", handleGlobalRelease);
+      window.removeEventListener("pointercancel", handleGlobalRelease);
+      window.removeEventListener("mouseup", handleGlobalRelease);
+      window.removeEventListener("touchend", handleGlobalRelease);
+      window.removeEventListener("touchcancel", handleGlobalRelease);
+      window.removeEventListener("blur", handleGlobalRelease);
+      window.removeEventListener("contextmenu", handleGlobalRelease);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
+    };
+  }, [isHolding]);
+
   const totalPlayers = round.assignments.length;
   const currentAssignment = round.assignments[currentIndex];
   const isLastPlayer = currentIndex >= totalPlayers - 1;
@@ -36,15 +110,6 @@ export function SecretRolePhase({
 
   const isImpostor = currentAssignment.role === "impostor";
   const { prompt } = round;
-
-  const handlePressIn = () => {
-    setIsHolding(true);
-    setHasViewedCurrent(true);
-  };
-
-  const handlePressOut = () => {
-    setIsHolding(false);
-  };
 
   const handleNextPlayer = () => {
     setIsHolding(false);
@@ -127,16 +192,23 @@ export function SecretRolePhase({
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          pressRetentionOffset={{ top: 40, left: 40, bottom: 40, right: 40 }}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handlePressOut}
+          cancelable={false}
+          pressRetentionOffset={PRESS_RETENTION_OFFSET}
+          pointerEvents="box-only"
           accessibilityRole="button"
           accessibilityLabel={`Carta secreta de ${currentAssignment.player.name}. Pressione e segure para revelar.`}
-          style={({ pressed }) => [
+          style={[
             styles.outerCard,
             { borderColor: cardBorderColor },
-            pressed && !isHolding && styles.outerCardPressed,
+            isHolding && styles.outerCardPressed,
           ]}
         >
-          <View style={[styles.innerFrame, { borderColor: cardBorderColor }]}>
+          <View
+            pointerEvents="none"
+            style={[styles.innerFrame, { borderColor: cardBorderColor }]}
+          >
             <View style={styles.cardTopRow}>
               <MaterialCommunityIcons
                 name="drama-masks"
@@ -324,6 +396,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: SPACING.sm,
     paddingTop: SPACING.sm,
     paddingBottom: SPACING.md,
   },
@@ -332,6 +405,7 @@ const styles = StyleSheet.create({
   },
   progressBlock: {
     flex: 1,
+    minWidth: 0,
     alignItems: "center",
     gap: SPACING.xs,
   },
@@ -342,11 +416,15 @@ const styles = StyleSheet.create({
   },
   progressTrack: {
     flexDirection: "row",
-    gap: 6,
+    justifyContent: "center",
+    width: "100%",
     maxWidth: 220,
+    gap: 4,
   },
   progressSegment: {
-    width: 18,
+    flex: 1,
+    minWidth: 4,
+    maxWidth: 22,
     height: 4,
     borderRadius: RADIUS.full,
     backgroundColor: COLORS.border,

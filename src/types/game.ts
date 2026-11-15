@@ -110,8 +110,7 @@ export type RoundOutcome = "innocents" | "impostors_wrong_vote" | "impostors_wo"
 export interface RoundResult {
   outcome: RoundOutcome;
   winningRole: PlayerRole;
-  votedPlayer: Player | null;
-  votedPlayerRole: PlayerRole | null;
+  votedPlayers: PlayerAssignment[];
   impostors: Player[];
   isWalkover: boolean;
 }
