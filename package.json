@@ -5,11 +5,14 @@
   "dependencies": {
     "@expo/ngrok": "^4.1.3",
     "@expo/vector-icons": "^15.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
     "expo": "~58.0.25",
     "expo-constants": "~58.0.16",
     "expo-linking": "~58.0.17",
     "expo-router": "~58.0.31",
     "expo-status-bar": "~58.0.5",
+    "prettier": "^3.10.1",
     "react": "19.3.0",
     "react-native": "0.88.1",
     "react-native-safe-area-context": "~5.11.1",
@@ -17,7 +20,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^9.39.5",
+    "eslint-config-eslint": "^14.0.0",
     "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3"
   },
@@ -25,7 +29,8 @@
     "start": "expo start --tunnel ngrok",
     "android": "expo start --android --tunnel ngrok",
     "ios": "expo start --ios --tunnel ngrok",
-    "web": "expo start --web --tunnel ngrok"
+    "web": "expo start --web --tunnel ngrok",
+    "lint": "expo lint"
   },
   "private": true
 }
