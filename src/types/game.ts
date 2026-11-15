@@ -5,9 +5,7 @@ export type GameId = "impostor" | "cidade-dorme" | "perguntas";
 export type SupportedPartyGameId = "impostor" | "perguntas";
 
 export type GameRoute =
-  | "/games/impostor"
-  | "/games/cidade-dorme"
-  | "/games/perguntas";
+  "/games/impostor" | "/games/cidade-dorme" | "/games/perguntas";
 
 export interface GameMetadata {
   id: GameId;
@@ -105,7 +103,8 @@ export interface ActiveRoundState {
 
 export type GamePhase = "lobby" | "reveal" | "discussion" | "voting" | "result";
 
-export type RoundOutcome = "innocents" | "impostors_wrong_vote" | "impostors_wo";
+export type RoundOutcome =
+  "innocents" | "impostors_wrong_vote" | "impostors_wo";
 
 export interface RoundResult {
   outcome: RoundOutcome;

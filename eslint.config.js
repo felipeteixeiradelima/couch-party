@@ -4,9 +4,19 @@ const expoConfig = require("eslint-config-expo/flat");
 const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
 
 module.exports = defineConfig([
+  {
+    ignores: ["dist/*", ".expo/*", "web-build/*", "src/data/mock-data.json"],
+  },
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ["dist/*"],
+    rules: {
+      "prettier/prettier": [
+        "error",
+        {
+          endOfLine: "auto",
+        },
+      ],
+    },
   },
 ]);

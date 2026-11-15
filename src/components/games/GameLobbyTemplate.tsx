@@ -207,9 +207,7 @@ export function GameLobbyTemplate({
               <View style={styles.settingRow}>
                 <Text style={styles.settingLabel}>Dica para o impostor</Text>
                 <Text style={styles.settingValue}>
-                  {lobbyConfig.settings.hintEnabled
-                    ? "Ativada"
-                    : "Desativada"}
+                  {lobbyConfig.settings.hintEnabled ? "Ativada" : "Desativada"}
                 </Text>
               </View>
 
@@ -264,9 +262,7 @@ export function GameLobbyTemplate({
               <Button
                 label="Iniciar Partida"
                 onPress={lobbyConfig.onStartGame}
-                icon={
-                  <Ionicons name="play" size={18} color={COLORS.white} />
-                }
+                icon={<Ionicons name="play" size={18} color={COLORS.white} />}
               />
             ) : (
               <Button

@@ -12,7 +12,7 @@ import {
   VOTING_STEP_SECONDS,
 } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Pressable,
@@ -32,27 +32,34 @@ interface GameSettingsModalProps {
   onClose: () => void;
 }
 
-export function GameSettingsModal({
-  visible,
+export function GameSettingsModal(props: GameSettingsModalProps) {
+  const { visible, onClose } = props;
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      {visible ? <GameSettingsModalContent {...props} /> : null}
+    </Modal>
+  );
+}
+
+function GameSettingsModalContent({
   settings,
   categories,
   playerCount,
   onSave,
   onClose,
 }: GameSettingsModalProps) {
-  const [draft, setDraft] = useState<GameSettings>(settings);
-
-  useEffect(() => {
-    if (visible) {
-      setDraft({
-        ...settings,
-        impostorCount: clampImpostorCount(settings.impostorCount, playerCount),
-        votingDurationSeconds: clampVotingSeconds(
-          settings.votingDurationSeconds,
-        ),
-      });
-    }
-  }, [visible, settings, playerCount]);
+  const [draft, setDraft] = useState<GameSettings>(() => ({
+    ...settings,
+    impostorCount: clampImpostorCount(settings.impostorCount, playerCount),
+    votingDurationSeconds: clampVotingSeconds(settings.votingDurationSeconds),
+  }));
 
   const maxImpostors = getMaxImpostors(playerCount);
   const isRandomCategory = draft.selectedCategoryIds.length === 0;
@@ -100,308 +107,292 @@ export function GameSettingsModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      statusBarTranslucent
-      onRequestClose={onClose}
-    >
-      <View style={styles.overlay} accessibilityViewIsModal>
-        <Pressable
-          style={styles.backdrop}
-          onPress={onClose}
-          accessibilityRole="button"
-          accessibilityLabel="Fechar configurações"
-        />
+    <View style={styles.overlay} accessibilityViewIsModal>
+      <Pressable
+        style={styles.backdrop}
+        onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Fechar configurações"
+      />
 
-        <View style={styles.sheet}>
-          <View style={styles.sheetHeader}>
-            <View>
-              <Text style={styles.sheetTitle}>Configurações do jogo</Text>
-              <Text style={styles.sheetSubtitle}>
-                Personalize as regras desta partida
-              </Text>
-            </View>
-            <Pressable
-              onPress={onClose}
-              accessibilityRole="button"
-              accessibilityLabel="Fechar"
-              style={({ pressed }) => [
-                styles.closeButton,
-                pressed && styles.pressed,
-              ]}
-              hitSlop={8}
-            >
-              <Ionicons name="close" size={20} color={COLORS.textPrimary} />
-            </Pressable>
+      <View style={styles.sheet}>
+        <View style={styles.sheetHeader}>
+          <View>
+            <Text style={styles.sheetTitle}>Configurações do jogo</Text>
+            <Text style={styles.sheetSubtitle}>
+              Personalize as regras desta partida
+            </Text>
           </View>
-
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Fechar"
+            style={({ pressed }) => [
+              styles.closeButton,
+              pressed && styles.pressed,
+            ]}
+            hitSlop={8}
           >
-            {/* Quantidade de impostores */}
-            <View style={styles.card}>
-              <View style={styles.rowBetween}>
-                <View style={styles.labelBlock}>
-                  <Text style={styles.optionTitle}>
-                    Quantidade de impostores
-                  </Text>
-                  <Text style={styles.optionDescription}>
-                    Mínimo 1, máximo {maxImpostors} ({playerCount} jogadores)
-                  </Text>
-                </View>
+            <Ionicons name="close" size={20} color={COLORS.textPrimary} />
+          </Pressable>
+        </View>
 
-                <View style={styles.stepper}>
-                  <Pressable
-                    onPress={() => handleChangeImpostors(-1)}
-                    disabled={draft.impostorCount <= 1}
-                    accessibilityRole="button"
-                    accessibilityLabel="Diminuir quantidade de impostores"
-                    style={({ pressed }) => [
-                      styles.stepperButton,
-                      draft.impostorCount <= 1 && styles.stepperDisabled,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Ionicons
-                      name="remove"
-                      size={18}
-                      color={COLORS.textPrimary}
-                    />
-                  </Pressable>
-
-                  <Text style={styles.stepperValue}>{draft.impostorCount}</Text>
-
-                  <Pressable
-                    onPress={() => handleChangeImpostors(1)}
-                    disabled={draft.impostorCount >= maxImpostors}
-                    accessibilityRole="button"
-                    accessibilityLabel="Aumentar quantidade de impostores"
-                    style={({ pressed }) => [
-                      styles.stepperButton,
-                      draft.impostorCount >= maxImpostors &&
-                        styles.stepperDisabled,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Ionicons name="add" size={18} color={COLORS.textPrimary} />
-                  </Pressable>
-                </View>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Quantidade de impostores */}
+          <View style={styles.card}>
+            <View style={styles.rowBetween}>
+              <View style={styles.labelBlock}>
+                <Text style={styles.optionTitle}>Quantidade de impostores</Text>
+                <Text style={styles.optionDescription}>
+                  Mínimo 1, máximo {maxImpostors} ({playerCount} jogadores)
+                </Text>
               </View>
-            </View>
 
-            {/* Categoria */}
-            <View style={styles.card}>
-              <Text style={styles.optionTitle}>Categorias</Text>
-              <Text style={styles.optionDescription}>
-                Escolha uma ou mais categorias ou deixe aleatório. Se escolher
-                várias, uma será sorteada por rodada.
-              </Text>
-
-              <View style={styles.chipsWrap}>
+              <View style={styles.stepper}>
                 <Pressable
-                  onPress={handleSelectRandomCategory}
+                  onPress={() => handleChangeImpostors(-1)}
+                  disabled={draft.impostorCount <= 1}
                   accessibilityRole="button"
-                  accessibilityState={{ selected: isRandomCategory }}
+                  accessibilityLabel="Diminuir quantidade de impostores"
                   style={({ pressed }) => [
-                    styles.chip,
-                    isRandomCategory && styles.chipSelected,
+                    styles.stepperButton,
+                    draft.impostorCount <= 1 && styles.stepperDisabled,
                     pressed && styles.pressed,
                   ]}
                 >
                   <Ionicons
-                    name="shuffle-outline"
-                    size={15}
-                    color={
-                      isRandomCategory ? COLORS.white : COLORS.textSecondary
-                    }
+                    name="remove"
+                    size={18}
+                    color={COLORS.textPrimary}
                   />
-                  <Text
-                    style={[
-                      styles.chipText,
-                      isRandomCategory && styles.chipTextSelected,
-                    ]}
-                  >
-                    Aleatória (Todas)
-                  </Text>
                 </Pressable>
 
-                {categories.map((category) => {
-                  const isSelected = draft.selectedCategoryIds.includes(
-                    category.id,
-                  );
+                <Text style={styles.stepperValue}>{draft.impostorCount}</Text>
 
-                  return (
-                    <Pressable
-                      key={category.id}
-                      onPress={() => handleToggleCategory(category.id)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: isSelected }}
-                      style={({ pressed }) => [
-                        styles.chip,
-                        isSelected && styles.chipSelected,
-                        pressed && styles.pressed,
+                <Pressable
+                  onPress={() => handleChangeImpostors(1)}
+                  disabled={draft.impostorCount >= maxImpostors}
+                  accessibilityRole="button"
+                  accessibilityLabel="Aumentar quantidade de impostores"
+                  style={({ pressed }) => [
+                    styles.stepperButton,
+                    draft.impostorCount >= maxImpostors &&
+                      styles.stepperDisabled,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Ionicons name="add" size={18} color={COLORS.textPrimary} />
+                </Pressable>
+              </View>
+            </View>
+          </View>
+
+          {/* Categoria */}
+          <View style={styles.card}>
+            <Text style={styles.optionTitle}>Categorias</Text>
+            <Text style={styles.optionDescription}>
+              Escolha uma ou mais categorias ou deixe aleatório. Se escolher
+              várias, uma será sorteada por rodada.
+            </Text>
+
+            <View style={styles.chipsWrap}>
+              <Pressable
+                onPress={handleSelectRandomCategory}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isRandomCategory }}
+                style={({ pressed }) => [
+                  styles.chip,
+                  isRandomCategory && styles.chipSelected,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Ionicons
+                  name="shuffle-outline"
+                  size={15}
+                  color={isRandomCategory ? COLORS.white : COLORS.textSecondary}
+                />
+                <Text
+                  style={[
+                    styles.chipText,
+                    isRandomCategory && styles.chipTextSelected,
+                  ]}
+                >
+                  Aleatória (Todas)
+                </Text>
+              </Pressable>
+
+              {categories.map((category) => {
+                const isSelected = draft.selectedCategoryIds.includes(
+                  category.id,
+                );
+
+                return (
+                  <Pressable
+                    key={category.id}
+                    onPress={() => handleToggleCategory(category.id)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isSelected }}
+                    style={({ pressed }) => [
+                      styles.chip,
+                      isSelected && styles.chipSelected,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.chipText,
+                        isSelected && styles.chipTextSelected,
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.chipText,
-                          isSelected && styles.chipTextSelected,
+                      {category.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Dica de impostor */}
+          <View style={styles.card}>
+            <View style={styles.rowBetween}>
+              <View style={styles.labelBlock}>
+                <Text style={styles.optionTitle}>Dica para o impostor</Text>
+                <Text style={styles.optionDescription}>
+                  Se ativada, todos os impostores recebem a mesma dica na
+                  rodada.
+                </Text>
+              </View>
+
+              <Switch
+                value={draft.hintEnabled}
+                onValueChange={(value) =>
+                  setDraft((prev) => ({ ...prev, hintEnabled: value }))
+                }
+                trackColor={{
+                  false: COLORS.border,
+                  true: COLORS.primary,
+                }}
+                thumbColor={COLORS.white}
+                accessibilityLabel="Habilitar dica para o impostor"
+              />
+            </View>
+          </View>
+
+          {/* Tempo de votação */}
+          <View style={styles.card}>
+            <View style={styles.rowBetween}>
+              <View style={styles.labelBlock}>
+                <Text style={styles.optionTitle}>Tempo de votação</Text>
+                <Text style={styles.optionDescription}>
+                  Cronômetro entre 30s e 10min durante a votação.
+                </Text>
+              </View>
+
+              <Switch
+                value={draft.votingTimerEnabled}
+                onValueChange={(value) =>
+                  setDraft((prev) => ({
+                    ...prev,
+                    votingTimerEnabled: value,
+                  }))
+                }
+                trackColor={{
+                  false: COLORS.border,
+                  true: COLORS.primary,
+                }}
+                thumbColor={COLORS.white}
+                accessibilityLabel="Habilitar tempo de votação"
+              />
+            </View>
+
+            {draft.votingTimerEnabled ? (
+              <View style={styles.timerConfigBlock}>
+                <View style={styles.timerStepperRow}>
+                  <Pressable
+                    onPress={() =>
+                      handleChangeVotingDuration(-VOTING_STEP_SECONDS)
+                    }
+                    disabled={draft.votingDurationSeconds <= MIN_VOTING_SECONDS}
+                    accessibilityRole="button"
+                    accessibilityLabel="Diminuir tempo de votação em 30 segundos"
+                    style={({ pressed }) => [
+                      styles.durationStepButton,
+                      draft.votingDurationSeconds <= MIN_VOTING_SECONDS &&
+                        styles.stepperDisabled,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.durationStepText}>-30s</Text>
+                  </Pressable>
+
+                  <Text style={styles.durationValue}>
+                    {formatDurationLabel(draft.votingDurationSeconds)}
+                  </Text>
+
+                  <Pressable
+                    onPress={() =>
+                      handleChangeVotingDuration(VOTING_STEP_SECONDS)
+                    }
+                    disabled={draft.votingDurationSeconds >= MAX_VOTING_SECONDS}
+                    accessibilityRole="button"
+                    accessibilityLabel="Aumentar tempo de votação em 30 segundos"
+                    style={({ pressed }) => [
+                      styles.durationStepButton,
+                      draft.votingDurationSeconds >= MAX_VOTING_SECONDS &&
+                        styles.stepperDisabled,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.durationStepText}>+30s</Text>
+                  </Pressable>
+                </View>
+
+                <View style={styles.presetsRow}>
+                  {VOTING_PRESET_SECONDS.map((preset) => {
+                    const isActive = draft.votingDurationSeconds === preset;
+                    return (
+                      <Pressable
+                        key={preset}
+                        onPress={() =>
+                          setDraft((prev) => ({
+                            ...prev,
+                            votingDurationSeconds: preset,
+                          }))
+                        }
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: isActive }}
+                        style={({ pressed }) => [
+                          styles.presetChip,
+                          isActive && styles.presetChipActive,
+                          pressed && styles.pressed,
                         ]}
                       >
-                        {category.name}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* Dica de impostor */}
-            <View style={styles.card}>
-              <View style={styles.rowBetween}>
-                <View style={styles.labelBlock}>
-                  <Text style={styles.optionTitle}>Dica para o impostor</Text>
-                  <Text style={styles.optionDescription}>
-                    Se ativada, todos os impostores recebem a mesma dica na
-                    rodada.
-                  </Text>
-                </View>
-
-                <Switch
-                  value={draft.hintEnabled}
-                  onValueChange={(value) =>
-                    setDraft((prev) => ({ ...prev, hintEnabled: value }))
-                  }
-                  trackColor={{
-                    false: COLORS.border,
-                    true: COLORS.primary,
-                  }}
-                  thumbColor={COLORS.white}
-                  accessibilityLabel="Habilitar dica para o impostor"
-                />
-              </View>
-            </View>
-
-            {/* Tempo de votação */}
-            <View style={styles.card}>
-              <View style={styles.rowBetween}>
-                <View style={styles.labelBlock}>
-                  <Text style={styles.optionTitle}>Tempo de votação</Text>
-                  <Text style={styles.optionDescription}>
-                    Cronômetro entre 30s e 10min durante a votação.
-                  </Text>
-                </View>
-
-                <Switch
-                  value={draft.votingTimerEnabled}
-                  onValueChange={(value) =>
-                    setDraft((prev) => ({
-                      ...prev,
-                      votingTimerEnabled: value,
-                    }))
-                  }
-                  trackColor={{
-                    false: COLORS.border,
-                    true: COLORS.primary,
-                  }}
-                  thumbColor={COLORS.white}
-                  accessibilityLabel="Habilitar tempo de votação"
-                />
-              </View>
-
-              {draft.votingTimerEnabled ? (
-                <View style={styles.timerConfigBlock}>
-                  <View style={styles.timerStepperRow}>
-                    <Pressable
-                      onPress={() =>
-                        handleChangeVotingDuration(-VOTING_STEP_SECONDS)
-                      }
-                      disabled={
-                        draft.votingDurationSeconds <= MIN_VOTING_SECONDS
-                      }
-                      accessibilityRole="button"
-                      accessibilityLabel="Diminuir tempo de votação em 30 segundos"
-                      style={({ pressed }) => [
-                        styles.durationStepButton,
-                        draft.votingDurationSeconds <= MIN_VOTING_SECONDS &&
-                          styles.stepperDisabled,
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Text style={styles.durationStepText}>-30s</Text>
-                    </Pressable>
-
-                    <Text style={styles.durationValue}>
-                      {formatDurationLabel(draft.votingDurationSeconds)}
-                    </Text>
-
-                    <Pressable
-                      onPress={() =>
-                        handleChangeVotingDuration(VOTING_STEP_SECONDS)
-                      }
-                      disabled={
-                        draft.votingDurationSeconds >= MAX_VOTING_SECONDS
-                      }
-                      accessibilityRole="button"
-                      accessibilityLabel="Aumentar tempo de votação em 30 segundos"
-                      style={({ pressed }) => [
-                        styles.durationStepButton,
-                        draft.votingDurationSeconds >= MAX_VOTING_SECONDS &&
-                          styles.stepperDisabled,
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Text style={styles.durationStepText}>+30s</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.presetsRow}>
-                    {VOTING_PRESET_SECONDS.map((preset) => {
-                      const isActive = draft.votingDurationSeconds === preset;
-                      return (
-                        <Pressable
-                          key={preset}
-                          onPress={() =>
-                            setDraft((prev) => ({
-                              ...prev,
-                              votingDurationSeconds: preset,
-                            }))
-                          }
-                          accessibilityRole="button"
-                          accessibilityState={{ selected: isActive }}
-                          style={({ pressed }) => [
-                            styles.presetChip,
-                            isActive && styles.presetChipActive,
-                            pressed && styles.pressed,
+                        <Text
+                          style={[
+                            styles.presetChipText,
+                            isActive && styles.presetChipTextActive,
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.presetChipText,
-                              isActive && styles.presetChipTextActive,
-                            ]}
-                          >
-                            {formatDurationLabel(preset)}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
+                          {formatDurationLabel(preset)}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
-              ) : null}
-            </View>
-          </ScrollView>
-
-          <View style={styles.footer}>
-            <Button label="Salvar configurações" onPress={handleSave} />
+              </View>
+            ) : null}
           </View>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <Button label="Salvar configurações" onPress={handleSave} />
         </View>
       </View>
-    </Modal>
+    </View>
   );
 }
 

@@ -1,33 +1,37 @@
 # Couch Party - App Mobile de Party Games
 
 ## Integrantes
+
 - Amanda Jen - SP3154068
 - Felipe Teixeira de Lima - SP3155048
 - Rafael Teixeira Paulino - SP3163636
 - Vinicius Tiago de Santana - SP3154726
 
 ## Proposta
+
 **Ideia de Aplicativo:** Party Games
 
 A proposta consiste no desenvolvimento de um aplicativo mobile focado em jogos do estilo party games, ou seja, jogos rápidos, dinâmicos e interativos que podem ser jogados presencialmente entre amigos, familiares ou grupos de pessoas, utilizando apenas um celular. A ideia é transformar o smartphone em uma ferramenta de entretenimento coletivo, incentivando a interação social, a criatividade e a diversão, sem a necessidade de tabuleiros, cartas físicas ou outros acessórios.
 
 ## Jogos
+
 - Impostor
 - Cidade dorme
 - Werewolf (ações à noite e votações feitas no celular?)
 - Jogo de perguntas (cada pessoa recebe uma pergunta e o impostor recebe uma pergunta diferente ou um range de valor para resposta)
-
 
 # Regras e boas práticas para desenvolvimento
 
 Estas orientações se aplicam a agentes de IA que atuem neste repositório:
 
 ## Antes de alterar o código
+
 - Entenda o fluxo existente e siga os padrões já adotados no projeto. Mantenha cada mudança pequena e diretamente relacionada ao pedido.
 - Consulte `package.json` para confirmar versões e ferramentas. Para APIs do Expo, EAS ou React Native, siga as instruções da seção **Expo has changed** abaixo.
 - Confira se já existe uma solução no projeto antes de adicionar dependências. Não invente requisitos, scripts ou estruturas de pastas.
 
 ## React Native, Expo e TypeScript
+
 - Priorize interfaces mobile-first, acessíveis e compatíveis com iOS e Android. Considere telas pequenas, áreas seguras, teclado e tamanhos de texto variados.
 - Use APIs compatíveis com o SDK instalado. Verifique a disponibilidade de módulos nativos no Expo Go antes de depender deles.
 - Mantenha o TypeScript preciso: prefira tipos explícitos, evite `any` e não oculte erros com casts ou supressões sem justificativa.
@@ -37,12 +41,14 @@ Estas orientações se aplicam a agentes de IA que atuem neste repositório:
 - Inclua rótulos acessíveis, alvos de toque adequados e contraste suficiente; não comunique informações apenas por cor.
 
 ## Segurança e escopo
+
 - Não inclua segredos, credenciais ou dados pessoais reais no código, logs ou exemplos. Valide entradas do usuário e dados externos.
 - Não presuma permissões ou comportamentos específicos de uma plataforma; preserve a compatibilidade entre iOS e Android.
 - Não edite manualmente `ios/` ou `android/` se forem gerados pelo Expo. Configure comportamento nativo por `app.json` ou config plugins.
 - Altere somente o necessário para atender ao pedido. Preserve mudanças existentes do usuário e evite reformatações amplas sem necessidade.
 
 ## Verificação
+
 - Após alterações de código, execute `npx expo lint` e `npx tsc --noEmit`, quando disponíveis. Se houver `bun.lock`, use `bunx` no lugar de `npx`.
 - Corrija problemas introduzidos pela mudança e informe verificações que não puderam ser executadas. Nunca afirme ter executado comandos que não foram rodados.
 - Ao realizar commits, siga o padrão **Conventional Commits**:

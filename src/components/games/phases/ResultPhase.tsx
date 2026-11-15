@@ -57,7 +57,9 @@ export function ResultPhase({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>RESULTADO DA RODADA {round.roundNumber}</Text>
+        <Text style={styles.eyebrow}>
+          RESULTADO DA RODADA {round.roundNumber}
+        </Text>
         <Text style={styles.headerTitle}>Fim de jogo</Text>
       </View>
 
@@ -109,7 +111,9 @@ export function ResultPhase({
                 : "Perguntas da rodada"}
             </Text>
             <View style={styles.categoryBadge}>
-              <Text style={styles.categoryBadgeText}>{prompt.categoryName}</Text>
+              <Text style={styles.categoryBadgeText}>
+                {prompt.categoryName}
+              </Text>
             </View>
           </View>
 
@@ -158,7 +162,9 @@ export function ResultPhase({
         {/* Impostors reveal */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>
-            {hasMultipleImpostors ? "Impostores da rodada" : "Impostor da rodada"}
+            {hasMultipleImpostors
+              ? "Impostores da rodada"
+              : "Impostor da rodada"}
           </Text>
           <View style={styles.playersList}>
             {result.impostors.map((impostor) => (

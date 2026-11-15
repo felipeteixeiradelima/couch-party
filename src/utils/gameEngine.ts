@@ -115,9 +115,7 @@ function selectNonRepeatingHint(
   } else {
     const lastUsedHint = usedForItem[usedForItem.length - 1];
     const fallbackPool =
-      hints.length > 1
-        ? hints.filter((hint) => hint !== lastUsedHint)
-        : hints;
+      hints.length > 1 ? hints.filter((hint) => hint !== lastUsedHint) : hints;
     chosenHint = pickRandomElement(fallbackPool);
     updatedUsedList = [chosenHint];
   }
@@ -131,10 +129,9 @@ function selectNonRepeatingHint(
   };
 }
 
-function selectCategoryPool<T extends { id: string; items: readonly unknown[] }>(
-  categories: readonly T[],
-  selectedCategoryIds: readonly string[],
-): T[] {
+function selectCategoryPool<
+  T extends { id: string; items: readonly unknown[] },
+>(categories: readonly T[], selectedCategoryIds: readonly string[]): T[] {
   const nonEmptyCategories = categories.filter((c) => c.items.length > 0);
   if (selectedCategoryIds.length === 0) {
     return nonEmptyCategories;
