@@ -30,12 +30,6 @@ export function SecretRolePhase({
   const [isHolding, setIsHolding] = useState(false);
   const [hasViewedCurrent, setHasViewedCurrent] = useState(false);
 
-  useEffect(() => {
-    setCurrentIndex(0);
-    setIsHolding(false);
-    setHasViewedCurrent(false);
-  }, [round.roundNumber]);
-
   const handlePressIn = useCallback(() => {
     setIsHolding(true);
     setHasViewedCurrent(true);
@@ -95,7 +89,10 @@ export function SecretRolePhase({
       window.removeEventListener("blur", handleGlobalRelease);
       window.removeEventListener("contextmenu", handleGlobalRelease);
       if (typeof document !== "undefined") {
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange,
+        );
       }
     };
   }, [isHolding]);
@@ -182,9 +179,7 @@ export function SecretRolePhase({
         <Text style={styles.playerName} numberOfLines={1}>
           {currentAssignment.player.name}
         </Text>
-        <Text style={styles.playerSubtitle}>
-          Só você pode ver esta carta.
-        </Text>
+        <Text style={styles.playerSubtitle}>Só você pode ver esta carta.</Text>
       </View>
 
       {/* Central press-and-hold card */}
@@ -350,9 +345,7 @@ export function SecretRolePhase({
           <Ionicons
             name="lock-closed-outline"
             size={14}
-            color={
-              hasViewedCurrent ? COLORS.textSecondary : COLORS.primaryText
-            }
+            color={hasViewedCurrent ? COLORS.textSecondary : COLORS.primaryText}
           />
           <Text
             style={[
@@ -368,9 +361,7 @@ export function SecretRolePhase({
 
         <Button
           label={
-            isLastPlayer
-              ? "Ir para a rodada"
-              : "Passar para o próximo jogador"
+            isLastPlayer ? "Ir para a rodada" : "Passar para o próximo jogador"
           }
           onPress={handleNextPlayer}
           disabled={!hasViewedCurrent}

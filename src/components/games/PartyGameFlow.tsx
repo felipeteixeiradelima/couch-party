@@ -46,22 +46,19 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [usedHintHistory, setUsedHintHistory] = useState<UsedHintHistory>({});
 
-  // Keep impostorCount valid if the player list changes in /players.
-  useEffect(() => {
-    setSettings((prev) => {
-      const clamped = clampImpostorCount(prev.impostorCount, players.length);
-      return clamped === prev.impostorCount
-        ? prev
-        : { ...prev, impostorCount: clamped };
-    });
-  }, [players.length]);
+  const effectiveSettings = useMemo(() => {
+    const clamped = clampImpostorCount(settings.impostorCount, players.length);
+    return clamped === settings.impostorCount
+      ? settings
+      : { ...settings, impostorCount: clamped };
+  }, [settings, players.length]);
 
   const startNewRound = useCallback(() => {
     const nextRoundNumber = roundNumber + 1;
     const { round, nextHintHistory } = createRound({
       gameId,
       players,
-      settings,
+      settings: effectiveSettings,
       usedHintHistory,
       roundNumber: nextRoundNumber,
     });
@@ -71,7 +68,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
     setActiveRound(round);
     setRoundResult(null);
     setPhase("reveal");
-  }, [gameId, players, settings, usedHintHistory, roundNumber]);
+  }, [gameId, players, effectiveSettings, usedHintHistory, roundNumber]);
 
   const handleFinishVoting = useCallback(
     (votedPlayerIds: readonly string[]) => {
@@ -117,7 +114,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
         <GameLobbyTemplate
           gameId={gameId}
           lobbyConfig={{
-            settings,
+            settings: effectiveSettings,
             categories,
             onOpenSettings: () => setSettingsModalVisible(true),
             onStartGame: startNewRound,
@@ -126,7 +123,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
 
         <GameSettingsModal
           visible={settingsModalVisible}
-          settings={settings}
+          settings={effectiveSettings}
           categories={categories}
           playerCount={players.length}
           onSave={(nextSettings) => {
@@ -143,6 +140,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       {phase === "reveal" ? (
         <SecretRolePhase
+          key={activeRound.roundNumber}
           round={activeRound}
           onCompleteReveal={() => setPhase("discussion")}
           onRequestExit={() => setExitConfirmVisible(true)}
@@ -151,6 +149,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
 
       {phase === "discussion" ? (
         <DiscussionWaitingPhase
+          key={activeRound.roundNumber}
           round={activeRound}
           onAdvanceToVoting={() => setPhase("voting")}
           onRequestExit={() => setExitConfirmVisible(true)}
@@ -159,6 +158,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
 
       {phase === "voting" ? (
         <VotingPhase
+          key={activeRound.roundNumber}
           round={activeRound}
           onFinishVoting={handleFinishVoting}
           onRequestExit={() => setExitConfirmVisible(true)}
@@ -167,6 +167,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
 
       {phase === "result" && roundResult ? (
         <ResultPhase
+          key={activeRound.roundNumber}
           round={activeRound}
           result={roundResult}
           onPlayAgain={startNewRound}

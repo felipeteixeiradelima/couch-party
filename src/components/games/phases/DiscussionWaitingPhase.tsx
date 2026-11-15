@@ -86,11 +86,7 @@ export function DiscussionWaitingPhase({
           </Text>
 
           <View style={styles.infoBanner}>
-            <Ionicons
-              name="eye-off-outline"
-              size={16}
-              color={COLORS.warning}
-            />
+            <Ionicons name="eye-off-outline" size={16} color={COLORS.warning} />
             <Text style={styles.infoBannerText}>
               {impostorCount === 1
                 ? "Há 1 impostor escondido no grupo."

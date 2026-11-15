@@ -6,7 +6,13 @@ import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { ActiveRoundState } from "@/types/game";
 import { formatPlayerNames, formatTimer } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   NativeScrollEvent,
@@ -44,7 +50,7 @@ export function VotingPhase({
 
   const selectedPlayerIdsRef = useRef<string[]>([]);
   const hasFinishedRef = useRef(false);
-  const stickyAnim = useRef(new Animated.Value(0)).current;
+  const [stickyAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     selectedPlayerIdsRef.current = selectedPlayerIds;
@@ -60,16 +66,6 @@ export function VotingPhase({
     },
     [onFinishVoting],
   );
-
-  useEffect(() => {
-    hasFinishedRef.current = false;
-    setSelectedPlayerIds([]);
-    selectedPlayerIdsRef.current = [];
-    setRemainingSeconds(votingDurationSeconds);
-    setEndConfirmVisible(false);
-    setVoteConfirmVisible(false);
-    setShowStickyTimer(false);
-  }, [round.roundNumber, votingDurationSeconds]);
 
   useEffect(() => {
     if (!votingTimerEnabled) {

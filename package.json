@@ -17,15 +17,21 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^9.39.5",
     "eslint-config-expo": "~58.0.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "prettier": "^3.10.1",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start --tunnel ngrok",
     "android": "expo start --android --tunnel ngrok",
     "ios": "expo start --ios --tunnel ngrok",
-    "web": "expo start --web --tunnel ngrok"
+    "web": "expo start --web --tunnel ngrok",
+    "lint": "expo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "private": true
 }

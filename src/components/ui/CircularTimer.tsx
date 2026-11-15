@@ -39,10 +39,8 @@ export function CircularTimer({
   const activeColor = getTimerColor(remainingSeconds, safeTotal);
 
   const halfSize = size / 2;
-  const rightRotationDeg =
-    progress >= 0.5 ? 45 : 45 - (0.5 - progress) * 360;
-  const leftRotationDeg =
-    progress <= 0.5 ? 45 : 45 + (progress - 0.5) * 360;
+  const rightRotationDeg = progress >= 0.5 ? 45 : 45 - (0.5 - progress) * 360;
+  const leftRotationDeg = progress <= 0.5 ? 45 : 45 + (progress - 0.5) * 360;
 
   return (
     <View
