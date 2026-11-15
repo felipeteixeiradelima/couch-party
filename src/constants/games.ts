@@ -21,17 +21,17 @@ export const GAMES: GameMetadata[] = [
   {
     id: "cidade-dorme",
     title: "Cidade Dorme",
-    description: "Mistério noturno, detetives e lobisomens.",
+    description: "Mistério noturno com assassinos, detetive e anjo da guarda.",
     minPlayers: 6,
     maxPlayers: 20,
     route: "/games/cidade-dorme",
     accentColor: "#60A5FA",
     iconBgColor: "rgba(59, 130, 246, 0.18)",
     rulesSummary: [
-      "Cada jogador recebe um papel secreto: Aldeão, Lobisomem, Detetive ou Médico.",
-      "Durante a noite, os papéis especiais agem em segredo no celular.",
-      "Ao amanhecer, a cidade descobre o que aconteceu e debate quem é suspeito.",
-      "A cidade vence se eliminar todos os lobisomens; os lobisomens vencem se igualarem em número.",
+      "Cada jogador recebe um papel secreto: Assassino, Detetive, Anjo da Guarda ou Cidadão.",
+      "À noite, o celular passa de mão em mão em privado e os papéis ativos fazem suas escolhas.",
+      "Ao amanhecer, a cidade descobre quem foi atacado (ou salvo pelo Anjo da Guarda) e debate em voz alta.",
+      "O grupo vota para eliminar um suspeito. Os Cidadãos vencem ao eliminar todos os Assassinos; os Assassinos vencem ao igualar em número.",
     ],
   },
   {

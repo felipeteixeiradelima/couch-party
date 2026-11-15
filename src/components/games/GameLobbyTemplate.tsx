@@ -11,9 +11,15 @@ import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+export interface GameLobbySettingRow {
+  label: string;
+  value: string;
+}
+
 interface GameLobbyConfigProps {
-  settings: GameSettings;
-  categories: GameCategorySummary[];
+  settings?: GameSettings;
+  categories?: GameCategorySummary[];
+  settingRows?: GameLobbySettingRow[];
   onOpenSettings: () => void;
   onStartGame: () => void;
 }
@@ -64,9 +70,43 @@ export function GameLobbyTemplate({
   const missingCount = Math.max(0, game.minPlayers - players.length);
   const excessCount = Math.max(0, players.length - game.maxPlayers);
 
-  const effectiveImpostorCount = lobbyConfig
-    ? clampImpostorCount(lobbyConfig.settings.impostorCount, players.length)
-    : 1;
+  const settingRows: GameLobbySettingRow[] = lobbyConfig
+    ? (lobbyConfig.settingRows ??
+      (lobbyConfig.settings
+        ? [
+            {
+              label: "Impostores",
+              value: String(
+                clampImpostorCount(
+                  lobbyConfig.settings.impostorCount,
+                  players.length,
+                ),
+              ),
+            },
+            {
+              label: "Categoria",
+              value: getCategorySummaryLabel(
+                lobbyConfig.settings,
+                lobbyConfig.categories ?? [],
+              ),
+            },
+            {
+              label: "Dica para o impostor",
+              value: lobbyConfig.settings.hintEnabled
+                ? "Ativada"
+                : "Desativada",
+            },
+            {
+              label: "Tempo de votação",
+              value: lobbyConfig.settings.votingTimerEnabled
+                ? formatDurationLabel(
+                    lobbyConfig.settings.votingDurationSeconds,
+                  )
+                : "Desativado",
+            },
+          ]
+        : []))
+    : [];
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -183,46 +223,17 @@ export function GameLobbyTemplate({
                 pressed && styles.settingsCardPressed,
               ]}
             >
-              <View style={styles.settingRow}>
-                <Text style={styles.settingLabel}>Impostores</Text>
-                <Text style={styles.settingValue}>
-                  {effectiveImpostorCount}
-                </Text>
-              </View>
-
-              <View style={styles.settingDivider} />
-
-              <View style={styles.settingRow}>
-                <Text style={styles.settingLabel}>Categoria</Text>
-                <Text style={styles.settingValue} numberOfLines={1}>
-                  {getCategorySummaryLabel(
-                    lobbyConfig.settings,
-                    lobbyConfig.categories,
-                  )}
-                </Text>
-              </View>
-
-              <View style={styles.settingDivider} />
-
-              <View style={styles.settingRow}>
-                <Text style={styles.settingLabel}>Dica para o impostor</Text>
-                <Text style={styles.settingValue}>
-                  {lobbyConfig.settings.hintEnabled ? "Ativada" : "Desativada"}
-                </Text>
-              </View>
-
-              <View style={styles.settingDivider} />
-
-              <View style={styles.settingRow}>
-                <Text style={styles.settingLabel}>Tempo de votação</Text>
-                <Text style={styles.settingValue}>
-                  {lobbyConfig.settings.votingTimerEnabled
-                    ? formatDurationLabel(
-                        lobbyConfig.settings.votingDurationSeconds,
-                      )
-                    : "Desativado"}
-                </Text>
-              </View>
+              {settingRows.map((row, index) => (
+                <View key={row.label}>
+                  {index > 0 ? <View style={styles.settingDivider} /> : null}
+                  <View style={styles.settingRow}>
+                    <Text style={styles.settingLabel}>{row.label}</Text>
+                    <Text style={styles.settingValue} numberOfLines={1}>
+                      {row.value}
+                    </Text>
+                  </View>
+                </View>
+              ))}
             </Pressable>
           </View>
         ) : null}
