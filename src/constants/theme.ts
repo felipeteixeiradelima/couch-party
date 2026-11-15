@@ -50,3 +50,28 @@ export const RADIUS = {
   xl: 20,
   full: 9999,
 } as const;
+
+export const CIDADE_DORME_THEMES = {
+  night: {
+    background: "#090D18",
+    surface: "#11172A",
+    surfaceElevated: "#18213B",
+    border: "#253154",
+    borderSubtle: "#1B2440",
+    accent: "#60A5FA",
+    accentSoft: "rgba(96, 165, 250, 0.16)",
+    accentBorder: "rgba(96, 165, 250, 0.4)",
+    secondaryAccent: "#818CF8",
+  },
+  day: {
+    background: "#161210",
+    surface: "#211B18",
+    surfaceElevated: "#2B231F",
+    border: "#3F322B",
+    borderSubtle: "#2E2520",
+    accent: "#F59E0B",
+    accentSoft: "rgba(245, 158, 11, 0.16)",
+    accentBorder: "rgba(245, 158, 11, 0.42)",
+    secondaryAccent: "#FB923C",
+  },
+} as const;

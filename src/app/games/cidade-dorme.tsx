@@ -1,5 +1,5 @@
-import { GameLobbyTemplate } from "@/components/games/GameLobbyTemplate";
+import { CidadeDormeFlow } from "@/components/games/CidadeDormeFlow";
 
-export default function CidadeDormeLobbyScreen() {
-  return <GameLobbyTemplate gameId="cidade-dorme" />;
+export default function CidadeDormeGameScreen() {
+  return <CidadeDormeFlow />;
 }
