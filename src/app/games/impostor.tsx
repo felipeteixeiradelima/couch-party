@@ -1,5 +1,5 @@
-import { GameLobbyTemplate } from "@/components/games/GameLobbyTemplate";
+import { PartyGameFlow } from "@/components/games/PartyGameFlow";
 
-export default function ImpostorLobbyScreen() {
-  return <GameLobbyTemplate gameId="impostor" />;
+export default function ImpostorGameScreen() {
+  return <PartyGameFlow gameId="impostor" />;
 }

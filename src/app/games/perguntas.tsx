@@ -1,5 +1,5 @@
-import { GameLobbyTemplate } from "@/components/games/GameLobbyTemplate";
+import { PartyGameFlow } from "@/components/games/PartyGameFlow";
 
-export default function PerguntasLobbyScreen() {
-  return <GameLobbyTemplate gameId="perguntas" />;
+export default function PerguntasGameScreen() {
+  return <PartyGameFlow gameId="perguntas" />;
 }
