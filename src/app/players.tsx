@@ -3,6 +3,7 @@ import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { MAX_PLAYER_NAME_LENGTH, MAX_PLAYERS } from "@/contexts/PlayersContext";
+import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
 import { Player } from "@/types/player";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function PlayersScreen() {
   const { players, addPlayer, removePlayer, updatePlayerName, clearPlayers } =
     usePlayers();
+  const { triggerLightImpact, triggerError } = useHaptics();
 
   const [nameInput, setNameInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,10 +35,12 @@ export default function PlayersScreen() {
   const handleAddPlayer = () => {
     const result = addPlayer(nameInput);
     if (!result.ok) {
+      triggerError();
       setErrorMessage(result.error ?? "Não foi possível adicionar o jogador.");
       return;
     }
 
+    triggerLightImpact();
     setNameInput("");
     setErrorMessage(null);
   };
@@ -52,10 +56,12 @@ export default function PlayersScreen() {
 
     const result = updatePlayerName(editingId, editingName);
     if (!result.ok) {
+      triggerError();
       setErrorMessage(result.error ?? "Não foi possível atualizar o nome.");
       return;
     }
 
+    triggerLightImpact();
     setEditingId(null);
     setEditingName("");
     setErrorMessage(null);
@@ -166,7 +172,10 @@ export default function PlayersScreen() {
                 />
               </Pressable>
               <Pressable
-                onPress={() => removePlayer(item.id)}
+                onPress={() => {
+                  triggerLightImpact();
+                  removePlayer(item.id);
+                }}
                 accessibilityRole="button"
                 accessibilityLabel={`Remover ${item.name}`}
                 style={({ pressed }) => [

@@ -3,6 +3,8 @@ import { CircularTimer, getTimerColor } from "@/components/ui/CircularTimer";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import { useHaptics } from "@/hooks/useHaptics";
 import { ActiveRoundState } from "@/types/game";
 import { formatPlayerNames, formatTimer } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
@@ -35,6 +37,8 @@ export function VotingPhase({
   onFinishVoting,
   onRequestExit,
 }: VotingPhaseProps) {
+  const { animationsEnabled } = useAppSettings();
+  const { triggerSelection, triggerWarning } = useHaptics();
   const { votingTimerEnabled, votingDurationSeconds, impostorCount } =
     round.settingsSnapshot;
   const requiredVotes = Math.max(1, impostorCount);
@@ -50,6 +54,7 @@ export function VotingPhase({
 
   const selectedPlayerIdsRef = useRef<string[]>([]);
   const hasFinishedRef = useRef(false);
+  const warnedAtTenRef = useRef(false);
   const [stickyAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -72,6 +77,7 @@ export function VotingPhase({
       return;
     }
 
+    warnedAtTenRef.current = false;
     const interval = setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
@@ -86,18 +92,29 @@ export function VotingPhase({
   }, [votingTimerEnabled, round.roundNumber]);
 
   useEffect(() => {
-    if (votingTimerEnabled && remainingSeconds === 0) {
+    if (!votingTimerEnabled) return;
+    if (remainingSeconds === 10 && !warnedAtTenRef.current) {
+      warnedAtTenRef.current = true;
+      triggerWarning();
+    }
+    if (remainingSeconds === 0) {
+      triggerWarning();
       finishOnce(selectedPlayerIdsRef.current);
     }
-  }, [votingTimerEnabled, remainingSeconds, finishOnce]);
+  }, [votingTimerEnabled, remainingSeconds, finishOnce, triggerWarning]);
 
   useEffect(() => {
+    if (!animationsEnabled) {
+      stickyAnim.setValue(showStickyTimer ? 1 : 0);
+      return;
+    }
+
     Animated.timing(stickyAnim, {
       toValue: showStickyTimer ? 1 : 0,
       duration: 180,
       useNativeDriver: true,
     }).start();
-  }, [showStickyTimer, stickyAnim]);
+  }, [animationsEnabled, showStickyTimer, stickyAnim]);
 
   const selectedPlayers = useMemo(
     () =>
@@ -113,6 +130,7 @@ export function VotingPhase({
   const isAtSelectionLimit = selectedPlayerIds.length >= requiredVotes;
 
   const handleTogglePlayer = (playerId: string) => {
+    triggerSelection();
     setSelectedPlayerIds((prev) => {
       if (prev.includes(playerId)) {
         return prev.filter((id) => id !== playerId);

@@ -7,8 +7,11 @@ import {
 } from "@/components/games/cidade-dorme/CidadeDormeNightPhase";
 import { CidadeDormeResultPhase } from "@/components/games/cidade-dorme/CidadeDormeResultPhase";
 import { CidadeDormeRoleRevealPhase } from "@/components/games/cidade-dorme/CidadeDormeRoleRevealPhase";
+import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { CIDADE_DORME_THEMES, COLORS } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
 import {
   CidadeDormeMatchState,
@@ -24,12 +27,42 @@ import {
   resolveNightActions,
 } from "@/utils/cidadeDormeEngine";
 import { formatDurationLabel } from "@/utils/gameEngine";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { BackHandler, StyleSheet } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Animated, BackHandler, Easing, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView);
+
+function getThemeColorStep(phase: CidadeDormePhase): number {
+  if (phase === "night-intro" || phase === "night-pass") {
+    return 1;
+  }
+  if (
+    phase === "day-discussion" ||
+    phase === "day-voting" ||
+    phase === "day-elimination"
+  ) {
+    return 2;
+  }
+  return 0;
+}
 
 export function CidadeDormeFlow() {
   const { players } = usePlayers();
+  const { animationsEnabled } = useAppSettings();
+  const {
+    triggerDayTransition,
+    triggerNightTransition,
+    triggerSuccess,
+    triggerWarning,
+    cancelVibration,
+  } = useHaptics();
 
   const [phase, setPhase] = useState<CidadeDormePhase>("lobby");
   const [settings, setSettings] = useState<CidadeDormeSettings>(() =>
@@ -41,10 +74,72 @@ export function CidadeDormeFlow() {
   const [matchCounter, setMatchCounter] = useState(0);
   const [match, setMatch] = useState<CidadeDormeMatchState | null>(null);
 
+  const prevPhaseRef = useRef<CidadeDormePhase>(phase);
+  const [themeAnim] = useState(() => new Animated.Value(0));
+
   const effectiveSettings = useMemo(
     () => normalizeCidadeDormeSettings(settings, players.length),
     [settings, players.length],
   );
+
+  // Trigger day/night device vibrations and endgame haptics on phase transitions.
+  useEffect(() => {
+    const previousPhase = prevPhaseRef.current;
+    if (previousPhase === phase) {
+      return;
+    }
+    prevPhaseRef.current = phase;
+
+    if (phase === "night-intro") {
+      triggerNightTransition();
+    } else if (phase === "day-discussion") {
+      triggerDayTransition();
+    } else if (phase === "game-over" && match?.winner) {
+      if (match.winner === "citizens") {
+        triggerSuccess();
+      } else {
+        triggerWarning();
+      }
+    } else if (phase === "lobby") {
+      cancelVibration();
+    }
+  }, [
+    phase,
+    match?.winner,
+    triggerNightTransition,
+    triggerDayTransition,
+    triggerSuccess,
+    triggerWarning,
+    cancelVibration,
+  ]);
+
+  // Ensure any running vibration stops if the screen unmounts mid-transition.
+  useEffect(() => {
+    return () => {
+      cancelVibration();
+    };
+  }, [cancelVibration]);
+
+  // Smoothly animate background color between neutral, night, and day palettes.
+  useEffect(() => {
+    const targetStep = getThemeColorStep(phase);
+    if (!animationsEnabled) {
+      themeAnim.setValue(targetStep);
+      return;
+    }
+
+    const anim = Animated.timing(themeAnim, {
+      toValue: targetStep,
+      duration: 420,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: false,
+    });
+    anim.start();
+
+    return () => {
+      anim.stop();
+    };
+  }, [animationsEnabled, phase, themeAnim]);
 
   const startNewMatch = useCallback(() => {
     const nextMatchId = matchCounter + 1;
@@ -179,64 +274,88 @@ export function CidadeDormeFlow() {
   }
 
   const isNightPhase = phase === "night-intro" || phase === "night-pass";
-  const isDayPhase =
-    phase === "day-discussion" ||
-    phase === "day-voting" ||
-    phase === "day-elimination";
-
-  const backgroundColor = isNightPhase
-    ? CIDADE_DORME_THEMES.night.background
-    : isDayPhase
-      ? CIDADE_DORME_THEMES.day.background
-      : COLORS.background;
+  const animatedBackgroundColor = themeAnim.interpolate({
+    inputRange: [0, 1, 2],
+    outputRange: [
+      COLORS.background,
+      CIDADE_DORME_THEMES.night.background,
+      CIDADE_DORME_THEMES.day.background,
+    ],
+  });
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor }]}
+    <AnimatedSafeAreaView
+      style={[styles.safeArea, { backgroundColor: animatedBackgroundColor }]}
       edges={["top", "bottom"]}
     >
       {phase === "role-reveal" ? (
-        <CidadeDormeRoleRevealPhase
-          key={`reveal-${match.matchId}`}
-          match={match}
-          onCompleteReveal={() => setPhase("night-intro")}
-          onRequestExit={() => setExitConfirmVisible(true)}
-        />
+        <AnimatedPhaseView
+          key={`phase-reveal-${match.matchId}`}
+          style={styles.phaseFill}
+          variant="fade-up"
+        >
+          <CidadeDormeRoleRevealPhase
+            key={`reveal-${match.matchId}`}
+            match={match}
+            onCompleteReveal={() => setPhase("night-intro")}
+            onRequestExit={() => setExitConfirmVisible(true)}
+          />
+        </AnimatedPhaseView>
       ) : null}
 
       {isNightPhase ? (
-        <CidadeDormeNightPhase
-          key={`night-${match.matchId}-${match.roundNumber}`}
-          match={match}
-          startAtPass={phase === "night-pass"}
-          onBeginNightPass={() => setPhase("night-pass")}
-          onCompleteNight={handleCompleteNight}
-          onRequestExit={() => setExitConfirmVisible(true)}
-        />
+        <AnimatedPhaseView
+          key={`phase-night-${match.matchId}-${match.roundNumber}`}
+          style={styles.phaseFill}
+          variant="fade-up"
+          duration={300}
+        >
+          <CidadeDormeNightPhase
+            key={`night-${match.matchId}-${match.roundNumber}`}
+            match={match}
+            startAtPass={phase === "night-pass"}
+            onBeginNightPass={() => setPhase("night-pass")}
+            onCompleteNight={handleCompleteNight}
+            onRequestExit={() => setExitConfirmVisible(true)}
+          />
+        </AnimatedPhaseView>
       ) : null}
 
       {phase === "day-discussion" ||
       phase === "day-voting" ||
       phase === "day-elimination" ? (
-        <CidadeDormeDayPhase
-          key={`day-${match.matchId}-${match.roundNumber}`}
-          phase={phase}
-          match={match}
-          onAdvanceToVoting={() => setPhase("day-voting")}
-          onFinishVoting={handleFinishVoting}
-          onProceedToNextNight={handleProceedToNextNight}
-          onViewGameOver={() => setPhase("game-over")}
-          onRequestExit={() => setExitConfirmVisible(true)}
-        />
+        <AnimatedPhaseView
+          key={`phase-day-${match.matchId}-${match.roundNumber}`}
+          style={styles.phaseFill}
+          variant="fade-up"
+          duration={300}
+        >
+          <CidadeDormeDayPhase
+            key={`day-${match.matchId}-${match.roundNumber}`}
+            phase={phase}
+            match={match}
+            onAdvanceToVoting={() => setPhase("day-voting")}
+            onFinishVoting={handleFinishVoting}
+            onProceedToNextNight={handleProceedToNextNight}
+            onViewGameOver={() => setPhase("game-over")}
+            onRequestExit={() => setExitConfirmVisible(true)}
+          />
+        </AnimatedPhaseView>
       ) : null}
 
       {phase === "game-over" ? (
-        <CidadeDormeResultPhase
-          key={`result-${match.matchId}`}
-          match={match}
-          onPlayAgain={startNewMatch}
-          onBackToLobby={handleReturnToLobby}
-        />
+        <AnimatedPhaseView
+          key={`phase-result-${match.matchId}`}
+          style={styles.phaseFill}
+          variant="pop"
+        >
+          <CidadeDormeResultPhase
+            key={`result-${match.matchId}`}
+            match={match}
+            onPlayAgain={startNewMatch}
+            onBackToLobby={handleReturnToLobby}
+          />
+        </AnimatedPhaseView>
       ) : null}
 
       <ConfirmModal
@@ -250,12 +369,15 @@ export function CidadeDormeFlow() {
         onConfirm={handleReturnToLobby}
         onCancel={() => setExitConfirmVisible(false)}
       />
-    </SafeAreaView>
+    </AnimatedSafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
+    flex: 1,
+  },
+  phaseFill: {
     flex: 1,
   },
 });

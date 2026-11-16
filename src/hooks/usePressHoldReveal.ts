@@ -1,53 +1,86 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, GestureResponderEvent, Platform } from "react-native";
 
-export function usePressHoldReveal() {
+interface UsePressHoldRevealOptions {
+  onReveal?: () => void;
+  onHide?: () => void;
+}
+
+export function usePressHoldReveal(options?: UsePressHoldRevealOptions) {
   const [isHolding, setIsHolding] = useState(false);
   const [hasViewed, setHasViewed] = useState(false);
+  const isHoldingRef = useRef(false);
+  const onRevealRef = useRef(options?.onReveal);
+  const onHideRef = useRef(options?.onHide);
 
-  const handlePressIn = useCallback(() => {
-    setIsHolding(true);
-    setHasViewed(true);
-  }, []);
+  useEffect(() => {
+    onRevealRef.current = options?.onReveal;
+    onHideRef.current = options?.onHide;
+  }, [options?.onReveal, options?.onHide]);
 
-  const handlePressOut = useCallback(() => {
-    setIsHolding(false);
-  }, []);
+  const setHoldingState = useCallback((next: boolean, notify = true) => {
+    if (isHoldingRef.current === next) {
+      return;
+    }
 
-  const handleTouchEnd = useCallback((event: GestureResponderEvent) => {
-    if ((event.nativeEvent.touches?.length ?? 0) === 0) {
-      setIsHolding(false);
+    isHoldingRef.current = next;
+    setIsHolding(next);
+
+    if (notify) {
+      if (next) {
+        onRevealRef.current?.();
+      } else {
+        onHideRef.current?.();
+      }
     }
   }, []);
 
+  const handlePressIn = useCallback(() => {
+    setHasViewed(true);
+    setHoldingState(true);
+  }, [setHoldingState]);
+
+  const handlePressOut = useCallback(() => {
+    setHoldingState(false);
+  }, [setHoldingState]);
+
+  const handleTouchEnd = useCallback(
+    (event: GestureResponderEvent) => {
+      if ((event.nativeEvent.touches?.length ?? 0) === 0) {
+        setHoldingState(false);
+      }
+    },
+    [setHoldingState],
+  );
+
   const resetReveal = useCallback(() => {
-    setIsHolding(false);
+    setHoldingState(false, false);
     setHasViewed(false);
-  }, []);
+  }, [setHoldingState]);
 
   const hideOnly = useCallback(() => {
-    setIsHolding(false);
-  }, []);
+    setHoldingState(false, false);
+  }, [setHoldingState]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextState) => {
       if (nextState !== "active") {
-        setIsHolding(false);
+        setHoldingState(false);
       }
     });
 
     return () => subscription.remove();
-  }, []);
+  }, [setHoldingState]);
 
   useEffect(() => {
     if (Platform.OS !== "web" || !isHolding || typeof window === "undefined") {
       return;
     }
 
-    const handleGlobalRelease = () => setIsHolding(false);
+    const handleGlobalRelease = () => setHoldingState(false);
     const handleVisibilityChange = () => {
       if (typeof document !== "undefined" && document.hidden) {
-        setIsHolding(false);
+        setHoldingState(false);
       }
     };
 
@@ -77,7 +110,7 @@ export function usePressHoldReveal() {
         );
       }
     };
-  }, [isHolding]);
+  }, [isHolding, setHoldingState]);
 
   return {
     isHolding,

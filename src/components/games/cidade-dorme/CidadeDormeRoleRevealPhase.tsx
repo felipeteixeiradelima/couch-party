@@ -1,6 +1,9 @@
+import { SecretRevealCard } from "@/components/games/SecretRevealCard";
 import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
+import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useHaptics } from "@/hooks/useHaptics";
 import { usePressHoldReveal } from "@/hooks/usePressHoldReveal";
 import { CidadeDormeMatchState } from "@/types/cidadeDorme";
 import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
@@ -8,8 +11,6 @@ import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
-const PRESS_RETENTION_OFFSET = { top: 40, left: 40, bottom: 40, right: 40 };
 
 interface CidadeDormeRoleRevealPhaseProps {
   match: CidadeDormeMatchState;
@@ -23,6 +24,9 @@ export function CidadeDormeRoleRevealPhase({
   onRequestExit,
 }: CidadeDormeRoleRevealPhaseProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { triggerCardReveal, triggerCardHide, triggerLightImpact } =
+    useHaptics();
+
   const {
     isHolding,
     hasViewed,
@@ -30,7 +34,10 @@ export function CidadeDormeRoleRevealPhase({
     handlePressOut,
     handleTouchEnd,
     resetReveal,
-  } = usePressHoldReveal();
+  } = usePressHoldReveal({
+    onReveal: triggerCardReveal,
+    onHide: triggerCardHide,
+  });
 
   const totalPlayers = match.players.length;
   const currentEntry = match.players[currentIndex];
@@ -53,19 +60,15 @@ export function CidadeDormeRoleRevealPhase({
       : [];
 
   const handleNextPlayer = () => {
+    triggerLightImpact();
+    resetReveal();
     if (isLastPlayer) {
-      resetReveal();
       onCompleteReveal();
       return;
     }
 
-    resetReveal();
     setCurrentIndex((prev) => prev + 1);
   };
-
-  const cardAccent = isHolding ? roleMeta.accentColor : COLORS.primaryText;
-  const cardBorderColor = isHolding ? roleMeta.borderColor : COLORS.border;
-  const badgeBgColor = isHolding ? roleMeta.softBgColor : COLORS.primarySoft;
 
   return (
     <View style={styles.container}>
@@ -105,123 +108,93 @@ export function CidadeDormeRoleRevealPhase({
       </View>
 
       {/* Player header */}
-      <View style={styles.playerHeader}>
-        <Text style={styles.eyebrow}>DISTRIBUIÇÃO DE PAPÉIS</Text>
-        <Text style={styles.playerName} numberOfLines={1}>
-          {currentEntry.player.name}
-        </Text>
-        <Text style={styles.playerSubtitle}>Só você pode ver esta carta.</Text>
-      </View>
+      <AnimatedPhaseView
+        key={`cd-player-header-${currentEntry.player.id}`}
+        variant="slide-right"
+        duration={220}
+      >
+        <View style={styles.playerHeader}>
+          <Text style={styles.eyebrow}>DISTRIBUIÇÃO DE PAPÉIS</Text>
+          <Text style={styles.playerName} numberOfLines={1}>
+            {currentEntry.player.name}
+          </Text>
+          <Text style={styles.playerSubtitle}>
+            Só você pode ver esta carta.
+          </Text>
+        </View>
+      </AnimatedPhaseView>
 
       {/* Press-and-hold secret role card */}
       <View style={styles.cardArea}>
-        <Pressable
+        <SecretRevealCard
+          cardKey={currentEntry.player.id}
+          isHolding={isHolding}
+          accessibilityLabel={`Carta secreta de ${currentEntry.player.name}. Pressione e segure para revelar.`}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handlePressOut}
-          cancelable={false}
-          pressRetentionOffset={PRESS_RETENTION_OFFSET}
-          pointerEvents="box-only"
-          accessibilityRole="button"
-          accessibilityLabel={`Carta secreta de ${currentEntry.player.name}. Pressione e segure para revelar.`}
-          style={[
-            styles.outerCard,
-            { borderColor: cardBorderColor },
-            isHolding && styles.outerCardPressed,
-          ]}
-        >
-          <View
-            pointerEvents="none"
-            style={[styles.innerFrame, { borderColor: cardBorderColor }]}
-          >
-            <View style={styles.cardTopRow}>
-              <Ionicons name="moon-outline" size={18} color={cardAccent} />
-              <Text style={styles.cardTag}>PAPEL SECRETO</Text>
-              <View style={styles.cardCornerPlaceholder} />
-            </View>
-
-            {!isHolding ? (
-              <View style={styles.cardCenter}>
-                <View
-                  style={[styles.iconCircle, { backgroundColor: badgeBgColor }]}
-                  accessible={false}
-                >
-                  <Ionicons
-                    name="finger-print-outline"
-                    size={42}
-                    color={COLORS.primaryText}
-                  />
-                </View>
-
-                <Text style={styles.hiddenTitle}>Segure para revelar</Text>
-                <View
-                  style={[
-                    styles.dividerLine,
-                    { backgroundColor: COLORS.primary },
-                  ]}
+          renderCornerIcon={(color) => (
+            <Ionicons name="moon-outline" size={18} color={color} />
+          )}
+          revealedAccentColor={roleMeta.accentColor}
+          revealedBorderColor={roleMeta.borderColor}
+          hiddenHint="Pressione e segure este card para descobrir seu papel. Ao soltar, ele volta a ocultar."
+          revealedContent={
+            <>
+              <View
+                style={[
+                  styles.iconCircle,
+                  { backgroundColor: roleMeta.softBgColor },
+                ]}
+                accessible={false}
+              >
+                <RoleBadgeIcon
+                  role={currentEntry.role}
+                  size={42}
+                  color={roleMeta.accentColor}
                 />
-                <Text style={styles.hiddenHint}>
-                  Pressione e segure este card para descobrir seu papel. Ao
-                  soltar, ele volta a ocultar.
-                </Text>
               </View>
-            ) : (
-              <View style={styles.cardCenter}>
-                <View
-                  style={[styles.iconCircle, { backgroundColor: badgeBgColor }]}
-                  accessible={false}
-                >
-                  <RoleBadgeIcon
-                    role={currentEntry.role}
-                    size={42}
-                    color={roleMeta.accentColor}
-                  />
-                </View>
 
-                <Text style={[styles.rolePreTitle, { color: cardAccent }]}>
-                  Seu papel é
-                </Text>
-                <Text style={[styles.roleTitle, { color: cardAccent }]}>
-                  {roleMeta.title.toUpperCase()}
-                </Text>
-
-                <View
-                  style={[styles.dividerLine, { backgroundColor: cardAccent }]}
-                />
-
-                <Text style={styles.roleDescription}>
-                  {roleMeta.revealDescription}
-                </Text>
-
-                {currentEntry.role === "assassin" ? (
-                  <View style={styles.partnerBox}>
-                    <Text style={styles.partnerLabel}>
-                      {partnerAssassins.length > 0
-                        ? partnerAssassins.length > 1
-                          ? "SEUS PARCEIROS"
-                          : "SEU PARCEIRO"
-                        : "ATUAÇÃO"}
-                    </Text>
-                    <Text style={styles.partnerValue}>
-                      {partnerAssassins.length > 0
-                        ? formatPlayerNames(partnerAssassins)
-                        : "Você é o único assassino"}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-            )}
-
-            <View style={styles.cardBottomRow}>
-              <View style={styles.cardCornerPlaceholder} />
-              <Text style={styles.cardTag}>
-                {isHolding ? "GUARDE SEU SEGREDO" : "SOLTE PARA OCULTAR"}
+              <Text
+                style={[styles.rolePreTitle, { color: roleMeta.accentColor }]}
+              >
+                Seu papel é
               </Text>
-              <Ionicons name="moon-outline" size={18} color={cardAccent} />
-            </View>
-          </View>
-        </Pressable>
+              <Text style={[styles.roleTitle, { color: roleMeta.accentColor }]}>
+                {roleMeta.title.toUpperCase()}
+              </Text>
+
+              <View
+                style={[
+                  styles.dividerLine,
+                  { backgroundColor: roleMeta.accentColor },
+                ]}
+              />
+
+              <Text style={styles.roleDescription}>
+                {roleMeta.revealDescription}
+              </Text>
+
+              {currentEntry.role === "assassin" ? (
+                <View style={styles.partnerBox}>
+                  <Text style={styles.partnerLabel}>
+                    {partnerAssassins.length > 0
+                      ? partnerAssassins.length > 1
+                        ? "SEUS PARCEIROS"
+                        : "SEU PARCEIRO"
+                      : "ATUAÇÃO"}
+                  </Text>
+                  <Text style={styles.partnerValue}>
+                    {partnerAssassins.length > 0
+                      ? formatPlayerNames(partnerAssassins)
+                      : "Você é o único assassino"}
+                  </Text>
+                </View>
+              ) : null}
+            </>
+          }
+        />
       </View>
 
       {/* Footer */}
@@ -347,47 +320,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: SPACING.sm,
   },
-  outerCard: {
-    flex: 1,
-    maxHeight: 460,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.xl,
-    borderWidth: 1.5,
-    padding: 10,
-  },
-  outerCardPressed: {
-    backgroundColor: COLORS.surfaceElevated,
-  },
-  innerFrame: {
-    flex: 1,
-    borderRadius: RADIUS.lg,
-    borderWidth: 1,
-    padding: SPACING.lg,
-    justifyContent: "space-between",
-  },
-  cardTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardBottomRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardCornerPlaceholder: {
-    width: 18,
-  },
-  cardTag: {
-    color: COLORS.textSecondary,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.6,
-  },
-  cardCenter: {
-    alignItems: "center",
-    paddingHorizontal: SPACING.sm,
-  },
   iconCircle: {
     width: 84,
     height: 84,
@@ -395,19 +327,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: SPACING.lg,
-  },
-  hiddenTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  hiddenHint: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-    maxWidth: 260,
   },
   rolePreTitle: {
     fontSize: 15,

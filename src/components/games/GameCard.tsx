@@ -1,7 +1,9 @@
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { GameId, GameMetadata } from "@/types/game";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface GameCardProps {
   game: GameMetadata;
@@ -22,47 +24,68 @@ function renderGameIcon(id: GameId, color: string) {
 }
 
 export function GameCard({ game, onPress }: GameCardProps) {
+  const { animationsEnabled } = useAppSettings();
+  const [scaleAnim] = useState(() => new Animated.Value(1));
+
+  const animateScale = (toValue: number) => {
+    if (!animationsEnabled) {
+      scaleAnim.setValue(1);
+      return;
+    }
+
+    Animated.spring(scaleAnim, {
+      toValue,
+      friction: 7,
+      tension: 180,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${game.title}, ${game.minPlayers} a ${game.maxPlayers} jogadores. ${game.description}`}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-    >
-      <View style={styles.topRow}>
-        <View
-          style={[styles.iconBox, { backgroundColor: game.iconBgColor }]}
-          accessible={false}
-        >
-          {renderGameIcon(game.id, game.accentColor)}
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => animateScale(0.98)}
+        onPressOut={() => animateScale(1)}
+        accessibilityRole="button"
+        accessibilityLabel={`${game.title}, ${game.minPlayers} a ${game.maxPlayers} jogadores. ${game.description}`}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      >
+        <View style={styles.topRow}>
+          <View
+            style={[styles.iconBox, { backgroundColor: game.iconBgColor }]}
+            accessible={false}
+          >
+            {renderGameIcon(game.id, game.accentColor)}
+          </View>
+
+          <View style={styles.badge}>
+            <Ionicons
+              name="people-outline"
+              size={14}
+              color={COLORS.textSecondary}
+            />
+            <Text style={styles.badgeText}>
+              {game.minPlayers}–{game.maxPlayers} jogadores
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.badge}>
-          <Ionicons
-            name="people-outline"
-            size={14}
-            color={COLORS.textSecondary}
-          />
-          <Text style={styles.badgeText}>
-            {game.minPlayers}–{game.maxPlayers} jogadores
-          </Text>
+        <Text style={styles.title}>{game.title}</Text>
+
+        <View style={styles.bottomRow}>
+          <Text style={styles.description}>{game.description}</Text>
+
+          <View style={styles.chevronBox} accessible={false}>
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={COLORS.textSecondary}
+            />
+          </View>
         </View>
-      </View>
-
-      <Text style={styles.title}>{game.title}</Text>
-
-      <View style={styles.bottomRow}>
-        <Text style={styles.description}>{game.description}</Text>
-
-        <View style={styles.chevronBox} accessible={false}>
-          <Ionicons
-            name="chevron-forward"
-            size={18}
-            color={COLORS.textSecondary}
-          />
-        </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 

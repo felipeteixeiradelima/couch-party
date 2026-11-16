@@ -1,4 +1,5 @@
 import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
+import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import {
@@ -7,6 +8,8 @@ import {
   RADIUS,
   SPACING,
 } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import { useHaptics } from "@/hooks/useHaptics";
 import {
   CidadeDormeMatchState,
   CidadeDormePlayerState,
@@ -14,8 +17,16 @@ import {
 import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
 import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Animated,
+  Easing,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const NIGHT = CIDADE_DORME_THEMES.night;
 
@@ -40,6 +51,15 @@ export function CidadeDormeNightPhase({
   onCompleteNight,
   onRequestExit,
 }: CidadeDormeNightPhaseProps) {
+  const { animationsEnabled } = useAppSettings();
+  const {
+    triggerLightImpact,
+    triggerSelection,
+    triggerSuccess,
+    triggerWarning,
+  } = useHaptics();
+  const [moonPulseAnim] = useState(() => new Animated.Value(1));
+
   const alivePlayers = useMemo(
     () => match.players.filter((entry) => entry.alive),
     [match.players],
@@ -62,6 +82,35 @@ export function CidadeDormeNightPhase({
     string[]
   >([]);
 
+  useEffect(() => {
+    if (!animationsEnabled || inPassStage) {
+      moonPulseAnim.setValue(1);
+      return;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(moonPulseAnim, {
+          toValue: 1.06,
+          duration: 1300,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(moonPulseAnim, {
+          toValue: 1,
+          duration: 1300,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+
+    return () => {
+      loop.stop();
+    };
+  }, [animationsEnabled, inPassStage, moonPulseAnim]);
+
   const currentEntry = alivePlayers[playerIndex];
   const isLastPlayer = playerIndex >= alivePlayers.length - 1;
 
@@ -70,6 +119,7 @@ export function CidadeDormeNightPhase({
     nextGuardianIds: string[],
     nextDetectiveIds: string[],
   ) => {
+    triggerLightImpact();
     setIsUnlocked(false);
     setSelectedTargetId(null);
     setDetectiveRevealedId(null);
@@ -111,9 +161,15 @@ export function CidadeDormeNightPhase({
         </View>
 
         <View style={styles.introCenter}>
-          <View style={styles.moonHeroCircle} accessible={false}>
+          <Animated.View
+            style={[
+              styles.moonHeroCircle,
+              { transform: [{ scale: moonPulseAnim }] },
+            ]}
+            accessible={false}
+          >
             <Ionicons name="moon" size={48} color={NIGHT.accent} />
-          </View>
+          </Animated.View>
 
           <Text style={styles.introTitle}>Cidade Dorme!</Text>
           <Text style={styles.introSubtitle}>A cidade vai dormir...</Text>
@@ -141,6 +197,7 @@ export function CidadeDormeNightPhase({
                 : "Começar a noite"
             }
             onPress={() => {
+              triggerLightImpact();
               onBeginNightPass();
               setInPassStage(true);
             }}
@@ -161,7 +218,12 @@ export function CidadeDormeNightPhase({
   // Handoff privacy screen (identical for every role)
   if (!isUnlocked) {
     return (
-      <View style={styles.container}>
+      <AnimatedPhaseView
+        key={`night-handoff-${playerIndex}`}
+        style={styles.container}
+        variant="slide-right"
+        duration={230}
+      >
         <NightPassHeader
           roundNumber={match.roundNumber}
           currentIndex={playerIndex}
@@ -198,7 +260,10 @@ export function CidadeDormeNightPhase({
         <View style={styles.footer}>
           <Button
             label={`Sou ${currentEntry.player.name}`}
-            onPress={() => setIsUnlocked(true)}
+            onPress={() => {
+              triggerLightImpact();
+              setIsUnlocked(true);
+            }}
             style={styles.nightPrimaryButton}
             icon={
               <Ionicons
@@ -209,7 +274,7 @@ export function CidadeDormeNightPhase({
             }
           />
         </View>
-      </View>
+      </AnimatedPhaseView>
     );
   }
 
@@ -218,7 +283,12 @@ export function CidadeDormeNightPhase({
 
   if (currentEntry.role === "citizen") {
     return (
-      <View style={styles.container}>
+      <AnimatedPhaseView
+        key={`night-citizen-${playerIndex}`}
+        style={styles.container}
+        variant="fade-up"
+        duration={230}
+      >
         <NightPassHeader
           roundNumber={match.roundNumber}
           currentIndex={playerIndex}
@@ -282,7 +352,7 @@ export function CidadeDormeNightPhase({
             }
           />
         </View>
-      </View>
+      </AnimatedPhaseView>
     );
   }
 
@@ -297,7 +367,12 @@ export function CidadeDormeNightPhase({
     if (revealedTarget) {
       const isAssassin = revealedTarget.role === "assassin";
       return (
-        <View style={styles.container}>
+        <AnimatedPhaseView
+          key={`night-verdict-${playerIndex}-${revealedTarget.player.id}`}
+          style={styles.container}
+          variant="pop"
+          duration={240}
+        >
           <NightPassHeader
             roundNumber={match.roundNumber}
             currentIndex={playerIndex}
@@ -388,57 +463,89 @@ export function CidadeDormeNightPhase({
               }
             />
           </View>
-        </View>
+        </AnimatedPhaseView>
       );
     }
 
     return (
-      <NightTargetSelectionView
-        match={match}
-        playerIndex={playerIndex}
-        totalPlayers={alivePlayers.length}
-        role="detective"
-        title="Escolha quem investigar"
-        subtitle="Você descobrirá imediatamente se a pessoa investigada é inocente ou assassina."
-        targets={detectiveTargets}
-        selectedTargetId={selectedTargetId}
-        onSelectTarget={setSelectedTargetId}
-        detectiveKnowledge={match.detectiveKnowledge}
-        confirmLabel="Investigar jogador"
-        onConfirm={() => {
-          if (!selectedTargetId) return;
-          setDetectiveInvestigatedIds((prev) => [...prev, selectedTargetId]);
-          setDetectiveRevealedId(selectedTargetId);
-        }}
-        onRequestExit={onRequestExit}
-      />
+      <AnimatedPhaseView
+        key={`night-detective-${playerIndex}`}
+        style={styles.animatedFill}
+        variant="fade-up"
+        duration={230}
+      >
+        <NightTargetSelectionView
+          match={match}
+          playerIndex={playerIndex}
+          totalPlayers={alivePlayers.length}
+          role="detective"
+          title="Escolha quem investigar"
+          subtitle="Você descobrirá imediatamente se a pessoa investigada é inocente ou assassina."
+          targets={detectiveTargets}
+          selectedTargetId={selectedTargetId}
+          onSelectTarget={(id) => {
+            triggerSelection();
+            setSelectedTargetId(id);
+          }}
+          detectiveKnowledge={match.detectiveKnowledge}
+          confirmLabel="Investigar jogador"
+          onConfirm={() => {
+            if (!selectedTargetId) return;
+            const target = match.players.find(
+              (entry) => entry.player.id === selectedTargetId,
+            );
+            if (target?.role === "assassin") {
+              triggerWarning();
+            } else {
+              triggerSuccess();
+            }
+            setDetectiveInvestigatedIds((prev) => [...prev, selectedTargetId]);
+            setDetectiveRevealedId(selectedTargetId);
+          }}
+          onRequestExit={onRequestExit}
+        />
+      </AnimatedPhaseView>
     );
   }
 
   if (currentEntry.role === "guardian_angel") {
     return (
-      <NightTargetSelectionView
-        match={match}
-        playerIndex={playerIndex}
-        totalPlayers={alivePlayers.length}
-        role="guardian_angel"
-        title="Escolha quem proteger"
-        subtitle="Se os assassinos atacarem esta pessoa nesta noite, ninguém morrerá."
-        targets={alivePlayers}
-        selfPlayerId={currentEntry.player.id}
-        selectedTargetId={selectedTargetId}
-        onSelectTarget={setSelectedTargetId}
-        confirmLabel={
-          isLastPlayer ? "Proteger e amanhecer" : "Proteger e passar"
-        }
-        onConfirm={() => {
-          if (!selectedTargetId) return;
-          const nextGuardianIds = [...guardianTargetIds, selectedTargetId];
-          setGuardianTargetIds(nextGuardianIds);
-          advanceTurn(assassinVotes, nextGuardianIds, detectiveInvestigatedIds);
-        }}
-        onRequestExit={onRequestExit}
-      />
+      <AnimatedPhaseView
+        key={`night-guardian-${playerIndex}`}
+        style={styles.animatedFill}
+        variant="fade-up"
+        duration={230}
+      >
+        <NightTargetSelectionView
+          match={match}
+          playerIndex={playerIndex}
+          totalPlayers={alivePlayers.length}
+          role="guardian_angel"
+          title="Escolha quem proteger"
+          subtitle="Se os assassinos atacarem esta pessoa nesta noite, ninguém morrerá."
+          targets={alivePlayers}
+          selfPlayerId={currentEntry.player.id}
+          selectedTargetId={selectedTargetId}
+          onSelectTarget={(id) => {
+            triggerSelection();
+            setSelectedTargetId(id);
+          }}
+          confirmLabel={
+            isLastPlayer ? "Proteger e amanhecer" : "Proteger e passar"
+          }
+          onConfirm={() => {
+            if (!selectedTargetId) return;
+            const nextGuardianIds = [...guardianTargetIds, selectedTargetId];
+            setGuardianTargetIds(nextGuardianIds);
+            advanceTurn(
+              assassinVotes,
+              nextGuardianIds,
+              detectiveInvestigatedIds,
+            );
+          }}
+          onRequestExit={onRequestExit}
+        />
+      </AnimatedPhaseView>
     );
   }
 
@@ -468,31 +575,43 @@ export function CidadeDormeNightPhase({
       : "Escolha quem você deseja atacar esta noite.";
 
   return (
-    <NightTargetSelectionView
-      match={match}
-      playerIndex={playerIndex}
-      totalPlayers={alivePlayers.length}
-      role="assassin"
-      title="Escolha uma vítima"
-      subtitle={partnerSubtitle}
-      targets={assassinTargets}
-      selectedTargetId={selectedTargetId}
-      onSelectTarget={setSelectedTargetId}
-      partnerVotesByTarget={partnerVotedIds}
-      confirmLabel={
-        isLastPlayer ? "Confirmar alvo e amanhecer" : "Confirmar alvo e passar"
-      }
-      onConfirm={() => {
-        if (!selectedTargetId) return;
-        const nextVotes = {
-          ...assassinVotes,
-          [currentEntry.player.id]: selectedTargetId,
-        };
-        setAssassinVotes(nextVotes);
-        advanceTurn(nextVotes, guardianTargetIds, detectiveInvestigatedIds);
-      }}
-      onRequestExit={onRequestExit}
-    />
+    <AnimatedPhaseView
+      key={`night-assassin-${playerIndex}`}
+      style={styles.animatedFill}
+      variant="fade-up"
+      duration={230}
+    >
+      <NightTargetSelectionView
+        match={match}
+        playerIndex={playerIndex}
+        totalPlayers={alivePlayers.length}
+        role="assassin"
+        title="Escolha uma vítima"
+        subtitle={partnerSubtitle}
+        targets={assassinTargets}
+        selectedTargetId={selectedTargetId}
+        onSelectTarget={(id) => {
+          triggerSelection();
+          setSelectedTargetId(id);
+        }}
+        partnerVotesByTarget={partnerVotedIds}
+        confirmLabel={
+          isLastPlayer
+            ? "Confirmar alvo e amanhecer"
+            : "Confirmar alvo e passar"
+        }
+        onConfirm={() => {
+          if (!selectedTargetId) return;
+          const nextVotes = {
+            ...assassinVotes,
+            [currentEntry.player.id]: selectedTargetId,
+          };
+          setAssassinVotes(nextVotes);
+          advanceTurn(nextVotes, guardianTargetIds, detectiveInvestigatedIds);
+        }}
+        onRequestExit={onRequestExit}
+      />
+    </AnimatedPhaseView>
   );
 }
 
@@ -725,6 +844,9 @@ function NightTargetSelectionView({
 }
 
 const styles = StyleSheet.create({
+  animatedFill: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingHorizontal: SPACING.xl,
