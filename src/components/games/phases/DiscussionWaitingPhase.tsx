@@ -200,7 +200,11 @@ export function DiscussionWaitingPhase({
       <View style={styles.footer}>
         <Button
           label="Avançar para votação"
-          onPress={() => setConfirmModalVisible(true)}
+          onPress={
+            isImpostorGame
+              ? () => setConfirmModalVisible(true)
+              : onAdvanceToVoting
+          }
           icon={
             <Ionicons
               name="checkmark-done-outline"
@@ -211,20 +215,18 @@ export function DiscussionWaitingPhase({
         />
       </View>
 
-      <ConfirmModal
-        visible={confirmModalVisible}
-        title="Avançar para a votação?"
-        message={
-          isImpostorGame
-            ? "Confirme apenas quando todos os jogadores já tiverem falado suas dicas."
-            : "Confirme quando o grupo estiver pronto para votar em quem recebeu a pergunta diferente."
-        }
-        confirmLabel="Ir para votação"
-        cancelLabel="Continuar jogando"
-        iconName="people-outline"
-        onConfirm={handleConfirmAdvance}
-        onCancel={() => setConfirmModalVisible(false)}
-      />
+      {isImpostorGame ? (
+        <ConfirmModal
+          visible={confirmModalVisible}
+          title="Avançar para a votação?"
+          message="Confirme apenas quando todos os jogadores já tiverem falado suas dicas."
+          confirmLabel="Ir para votação"
+          cancelLabel="Continuar jogando"
+          iconName="people-outline"
+          onConfirm={handleConfirmAdvance}
+          onCancel={() => setConfirmModalVisible(false)}
+        />
+      ) : null}
     </View>
   );
 }

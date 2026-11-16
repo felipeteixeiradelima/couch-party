@@ -5,7 +5,7 @@ import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 import { useHaptics } from "@/hooks/useHaptics";
 import { ActiveRoundState } from "@/types/game";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { ComponentRef, useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -37,7 +37,22 @@ export function QuestionAnswerPhase({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isInputFocused, setIsInputFocused] = useState(false);
 
+  const scrollViewRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const { triggerLightImpact } = useHaptics();
+
+  useEffect(() => {
+    if (!isUnlocked) {
+      return;
+    }
+
+    const subscription = Keyboard.addListener("keyboardDidShow", () => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isUnlocked]);
 
   if (round.prompt.gameId !== "perguntas") {
     return null;
@@ -159,7 +174,7 @@ export function QuestionAnswerPhase({
   return (
     <KeyboardAvoidingView
       style={styles.flex}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <AnimatedPhaseView
         key={`question-answer-${currentAssignment.player.id}`}
@@ -174,6 +189,7 @@ export function QuestionAnswerPhase({
         />
 
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
@@ -220,13 +236,23 @@ export function QuestionAnswerPhase({
 
             <TextInput
               value={answerText}
-              onChangeText={setAnswerText}
-              onFocus={() => setIsInputFocused(true)}
+              onChangeText={(text) =>
+                setAnswerText(text.replace(/[\r\n]+/g, ""))
+              }
+              onFocus={() => {
+                setIsInputFocused(true);
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 120);
+              }}
               onBlur={() => setIsInputFocused(false)}
               placeholder="Digite sua resposta aqui..."
               placeholderTextColor={COLORS.textMuted}
               maxLength={MAX_ANSWER_LENGTH}
               multiline
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              onSubmitEditing={() => Keyboard.dismiss()}
               textAlignVertical="top"
               style={[
                 styles.answerInput,
