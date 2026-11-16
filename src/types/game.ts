@@ -35,7 +35,7 @@ export interface QuestionPairItem {
   id: string;
   innocentQuestion: string;
   impostorQuestion: string;
-  hints: string[];
+  hints?: string[];
 }
 
 export interface QuestionCategory {
@@ -91,7 +91,6 @@ export type RoundPrompt =
       itemId: string;
       innocentQuestion: string;
       impostorQuestion: string;
-      impostorHint: string | null;
     };
 
 export interface ActiveRoundState {
@@ -99,6 +98,8 @@ export interface ActiveRoundState {
   assignments: PlayerAssignment[];
   prompt: RoundPrompt;
   settingsSnapshot: GameSettings;
+  /** Recorded answers keyed by player ID (used in Perguntas). */
+  answers: Record<string, string>;
 }
 
 export type GamePhase = "lobby" | "reveal" | "discussion" | "voting" | "result";

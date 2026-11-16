@@ -44,10 +44,10 @@ export const GAMES: GameMetadata[] = [
     accentColor: COLORS.warning,
     iconBgColor: COLORS.warningSoft,
     rulesSummary: [
-      "A maioria dos jogadores recebe a mesma pergunta secreta.",
-      "Um jogador (ou mais) recebe uma pergunta diferente sobre o mesmo tema.",
-      "Todos respondem em voz alta ao mesmo tempo ou em sequência.",
-      "Pelas respostas dadas, o grupo tenta descobrir quem recebeu a pergunta diferente.",
+      "O celular passa de mão em mão: cada jogador confirma que é ele, lê sua pergunta em segredo e registra a resposta no aparelho.",
+      "A maioria recebe a mesma pergunta, enquanto um (ou mais) impostor recebe uma pergunta diferente — sem saber que é o impostor.",
+      "Depois que todos respondem, todas as respostas são reveladas na tela ao mesmo tempo.",
+      "O grupo compara as respostas e vota para descobrir quem recebeu a pergunta diferente.",
     ],
   },
 ];

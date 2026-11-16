@@ -307,6 +307,17 @@ export function VotingPhase({
 
           {/* Voting question & grid */}
           <View style={styles.votingSection}>
+            {round.prompt.gameId === "perguntas" ? (
+              <View style={styles.questionRecapBox}>
+                <Text style={styles.questionRecapLabel}>
+                  PERGUNTA DA MAIORIA
+                </Text>
+                <Text style={styles.questionRecapText}>
+                  {round.prompt.innocentQuestion}
+                </Text>
+              </View>
+            ) : null}
+
             <View style={styles.questionHeaderRow}>
               <Text style={styles.questionHeading}>
                 {requiredVotes > 1
@@ -333,11 +344,15 @@ export function VotingPhase({
             </View>
 
             <Text style={styles.questionSubtitle}>
-              {requiredVotes > 1
-                ? isAtSelectionLimit
-                  ? `${requiredVotes} jogadores selecionados. Toque em um selecionado para trocar.`
-                  : `Escolha ${requiredVotes} pessoas para votar.`
-                : "Escolha uma pessoa para votar."}
+              {round.prompt.gameId === "perguntas"
+                ? requiredVotes > 1
+                  ? `Escolha as ${requiredVotes} pessoas que receberam a pergunta diferente.`
+                  : "Escolha quem você acha que recebeu a pergunta diferente."
+                : requiredVotes > 1
+                  ? isAtSelectionLimit
+                    ? `${requiredVotes} jogadores selecionados. Toque em um selecionado para trocar.`
+                    : `Escolha ${requiredVotes} pessoas para votar.`
+                  : "Escolha uma pessoa para votar."}
             </Text>
 
             <View style={styles.playersGrid}>
@@ -345,6 +360,10 @@ export function VotingPhase({
                 const isSelected = selectedPlayerIds.includes(player.id);
                 const isLockedOut =
                   requiredVotes > 1 && isAtSelectionLimit && !isSelected;
+                const playerAnswer =
+                  round.prompt.gameId === "perguntas"
+                    ? round.answers[player.id]
+                    : undefined;
 
                 return (
                   <Pressable
@@ -391,6 +410,15 @@ export function VotingPhase({
                     <Text style={styles.playerName} numberOfLines={1}>
                       {player.name}
                     </Text>
+
+                    {playerAnswer ? (
+                      <Text
+                        style={styles.playerAnswerPreview}
+                        numberOfLines={3}
+                      >
+                        “{playerAnswer}”
+                      </Text>
+                    ) : null}
                   </Pressable>
                 );
               })}
@@ -612,6 +640,27 @@ const styles = StyleSheet.create({
   votingSection: {
     gap: SPACING.sm,
   },
+  questionRecapBox: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.35)",
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    gap: 4,
+    marginBottom: SPACING.xs,
+  },
+  questionRecapLabel: {
+    color: COLORS.warning,
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 1.2,
+  },
+  questionRecapText: {
+    color: COLORS.textPrimary,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
   questionHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -698,6 +747,11 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontSize: 15,
     fontWeight: "700",
+  },
+  playerAnswerPreview: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    lineHeight: 17,
   },
   footer: {
     paddingHorizontal: SPACING.xl,

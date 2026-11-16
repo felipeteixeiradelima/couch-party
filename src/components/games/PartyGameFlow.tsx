@@ -1,6 +1,7 @@
 import { GameLobbyTemplate } from "@/components/games/GameLobbyTemplate";
 import { GameSettingsModal } from "@/components/games/GameSettingsModal";
 import { DiscussionWaitingPhase } from "@/components/games/phases/DiscussionWaitingPhase";
+import { QuestionAnswerPhase } from "@/components/games/phases/QuestionAnswerPhase";
 import { ResultPhase } from "@/components/games/phases/ResultPhase";
 import { SecretRolePhase } from "@/components/games/phases/SecretRolePhase";
 import { VotingPhase } from "@/components/games/phases/VotingPhase";
@@ -107,6 +108,14 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
     [activeRound],
   );
 
+  const handleCompleteAnswers = useCallback(
+    (answers: Record<string, string>) => {
+      setActiveRound((prev) => (prev ? { ...prev, answers } : prev));
+      setPhase("discussion");
+    },
+    [],
+  );
+
   const handleReturnToLobby = useCallback(() => {
     setExitConfirmVisible(false);
     setActiveRound(null);
@@ -153,6 +162,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
           settings={effectiveSettings}
           categories={categories}
           playerCount={players.length}
+          showHintSetting={gameId === "impostor"}
           onSave={(nextSettings) => {
             setSettings(nextSettings);
             setSettingsModalVisible(false);
@@ -171,11 +181,19 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
           style={styles.phaseFill}
           variant="fade-up"
         >
-          <SecretRolePhase
-            round={activeRound}
-            onCompleteReveal={() => setPhase("discussion")}
-            onRequestExit={() => setExitConfirmVisible(true)}
-          />
+          {activeRound.prompt.gameId === "impostor" ? (
+            <SecretRolePhase
+              round={activeRound}
+              onCompleteReveal={() => setPhase("discussion")}
+              onRequestExit={() => setExitConfirmVisible(true)}
+            />
+          ) : (
+            <QuestionAnswerPhase
+              round={activeRound}
+              onCompleteAnswers={handleCompleteAnswers}
+              onRequestExit={() => setExitConfirmVisible(true)}
+            />
+          )}
         </AnimatedPhaseView>
       ) : null}
 
