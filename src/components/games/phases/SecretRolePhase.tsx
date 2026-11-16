@@ -200,23 +200,7 @@ export function SecretRolePhase({
                     <Text style={styles.secretValue}>{prompt.secretWord}</Text>
                   </View>
                 )
-              ) : (
-                <View style={styles.secretBox}>
-                  <Text style={styles.secretLabel}>
-                    {isImpostor ? "SUA PERGUNTA (IMPOSTOR)" : "SUA PERGUNTA"}
-                  </Text>
-                  <Text style={styles.questionValue}>
-                    {isImpostor
-                      ? prompt.impostorQuestion
-                      : prompt.innocentQuestion}
-                  </Text>
-                  {isImpostor && prompt.impostorHint ? (
-                    <Text style={styles.questionHint}>
-                      Dica: {prompt.impostorHint}
-                    </Text>
-                  ) : null}
-                </View>
-              )}
+              ) : null}
             </>
           }
         />
@@ -403,20 +387,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
     marginTop: 4,
-  },
-  questionValue: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    lineHeight: 25,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  questionHint: {
-    color: COLORS.warning,
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: "center",
-    marginTop: 6,
   },
   footer: {
     paddingTop: SPACING.md,

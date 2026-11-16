@@ -148,13 +148,6 @@ export function ResultPhase({
                   {prompt.impostorQuestion}
                 </Text>
               </View>
-
-              {prompt.impostorHint ? (
-                <View style={styles.revealSubItem}>
-                  <Text style={styles.revealLabel}>DICA DO IMPOSTOR</Text>
-                  <Text style={styles.revealValue}>{prompt.impostorHint}</Text>
-                </View>
-              ) : null}
             </View>
           )}
         </View>
@@ -167,16 +160,30 @@ export function ResultPhase({
               : "Impostor da rodada"}
           </Text>
           <View style={styles.playersList}>
-            {result.impostors.map((impostor) => (
-              <View key={impostor.id} style={styles.impostorChip}>
-                <PlayerAvatar
-                  name={impostor.name}
-                  color={impostor.color}
-                  size={30}
-                />
-                <Text style={styles.impostorName}>{impostor.name}</Text>
-              </View>
-            ))}
+            {result.impostors.map((impostor) => {
+              const impostorAnswer =
+                prompt.gameId === "perguntas"
+                  ? round.answers[impostor.id]
+                  : undefined;
+
+              return (
+                <View key={impostor.id} style={styles.impostorChip}>
+                  <PlayerAvatar
+                    name={impostor.name}
+                    color={impostor.color}
+                    size={30}
+                  />
+                  <View style={styles.impostorChipText}>
+                    <Text style={styles.impostorName}>{impostor.name}</Text>
+                    {impostorAnswer ? (
+                      <Text style={styles.impostorAnswer}>
+                        Respondeu: “{impostorAnswer}”
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
+              );
+            })}
           </View>
         </View>
 
@@ -388,11 +395,20 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     paddingVertical: SPACING.xs,
     paddingHorizontal: SPACING.md,
+    maxWidth: "100%",
+  },
+  impostorChipText: {
+    flexShrink: 1,
   },
   impostorName: {
     color: COLORS.textPrimary,
     fontSize: 14,
     fontWeight: "700",
+  },
+  impostorAnswer: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    marginTop: 1,
   },
   voteList: {
     gap: SPACING.md,

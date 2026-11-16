@@ -216,17 +216,6 @@ export function createRound({
     const chosenCategory = pickRandomElement(pool);
     const chosenItem = pickRandomElement(chosenCategory.items);
 
-    let impostorHint: string | null = null;
-    if (normalizedSettings.hintEnabled) {
-      const hintSelection = selectNonRepeatingHint(
-        chosenItem.id,
-        chosenItem.hints,
-        usedHintHistory,
-      );
-      impostorHint = hintSelection.hint;
-      nextHintHistory = hintSelection.nextHistory;
-    }
-
     prompt = {
       gameId: "perguntas",
       categoryId: chosenCategory.id,
@@ -234,7 +223,6 @@ export function createRound({
       itemId: chosenItem.id,
       innocentQuestion: chosenItem.innocentQuestion,
       impostorQuestion: chosenItem.impostorQuestion,
-      impostorHint,
     };
   }
 
@@ -256,6 +244,7 @@ export function createRound({
       assignments,
       prompt,
       settingsSnapshot: normalizedSettings,
+      answers: {},
     },
     nextHintHistory,
   };

@@ -90,12 +90,16 @@ export function GameLobbyTemplate({
                 lobbyConfig.categories ?? [],
               ),
             },
-            {
-              label: "Dica para o impostor",
-              value: lobbyConfig.settings.hintEnabled
-                ? "Ativada"
-                : "Desativada",
-            },
+            ...(gameId === "impostor"
+              ? [
+                  {
+                    label: "Dica para o impostor",
+                    value: lobbyConfig.settings.hintEnabled
+                      ? "Ativada"
+                      : "Desativada",
+                  },
+                ]
+              : []),
             {
               label: "Tempo de votação",
               value: lobbyConfig.settings.votingTimerEnabled

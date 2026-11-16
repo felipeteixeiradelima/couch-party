@@ -58,68 +58,153 @@ export function DiscussionWaitingPhase({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.heroCard}>
-          <View style={styles.heroIconCircle} accessible={false}>
-            <Ionicons
-              name="chatbubbles-outline"
-              size={34}
-              color={COLORS.primaryText}
-            />
-          </View>
-
-          <View style={styles.categoryPill}>
-            <Ionicons
-              name="pricetag-outline"
-              size={14}
-              color={COLORS.primaryText}
-            />
-            <Text style={styles.categoryPillText}>
-              Categoria: {round.prompt.categoryName}
-            </Text>
-          </View>
-
-          <Text style={styles.heroTitle}>Hora de jogar presencialmente!</Text>
-          <Text style={styles.heroDescription}>
-            {isImpostorGame
-              ? "Em roda, cada jogador deve falar uma palavra ou dica relacionada à palavra secreta, sem entregá-la de bandeja. O impostor precisa disfarçar!"
-              : "Todos respondem em voz alta à pergunta que receberam! Comparem as respostas e observem quem parece ter recebido uma pergunta diferente."}
-          </Text>
-
-          <View style={styles.infoBanner}>
-            <Ionicons name="eye-off-outline" size={16} color={COLORS.warning} />
-            <Text style={styles.infoBannerText}>
-              {impostorCount === 1
-                ? "Há 1 impostor escondido no grupo."
-                : `Há ${impostorCount} impostores escondidos no grupo.`}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.playersSection}>
-          <Text style={styles.sectionTitle}>
-            Jogadores na rodada ({round.assignments.length})
-          </Text>
-          <View style={styles.playersGrid}>
-            {round.assignments.map(({ player }) => (
-              <View key={player.id} style={styles.playerChip}>
-                <PlayerAvatar
-                  name={player.name}
-                  color={player.color}
-                  size={28}
+        {isImpostorGame ? (
+          <>
+            <View style={styles.heroCard}>
+              <View style={styles.heroIconCircle} accessible={false}>
+                <Ionicons
+                  name="chatbubbles-outline"
+                  size={34}
+                  color={COLORS.primaryText}
                 />
-                <Text style={styles.playerName} numberOfLines={1}>
-                  {player.name}
+              </View>
+
+              <View style={styles.categoryPill}>
+                <Ionicons
+                  name="pricetag-outline"
+                  size={14}
+                  color={COLORS.primaryText}
+                />
+                <Text style={styles.categoryPillText}>
+                  Categoria: {round.prompt.categoryName}
                 </Text>
               </View>
-            ))}
-          </View>
-        </View>
+
+              <Text style={styles.heroTitle}>
+                Hora de jogar presencialmente!
+              </Text>
+              <Text style={styles.heroDescription}>
+                Em roda, cada jogador deve falar uma palavra ou dica relacionada
+                à palavra secreta, sem entregá-la de bandeja. O impostor precisa
+                disfarçar!
+              </Text>
+
+              <View style={styles.infoBanner}>
+                <Ionicons
+                  name="eye-off-outline"
+                  size={16}
+                  color={COLORS.warning}
+                />
+                <Text style={styles.infoBannerText}>
+                  {impostorCount === 1
+                    ? "Há 1 impostor escondido no grupo."
+                    : `Há ${impostorCount} impostores escondidos no grupo.`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.playersSection}>
+              <Text style={styles.sectionTitle}>
+                Jogadores na rodada ({round.assignments.length})
+              </Text>
+              <View style={styles.playersGrid}>
+                {round.assignments.map(({ player }) => (
+                  <View key={player.id} style={styles.playerChip}>
+                    <PlayerAvatar
+                      name={player.name}
+                      color={player.color}
+                      size={28}
+                    />
+                    <Text style={styles.playerName} numberOfLines={1}>
+                      {player.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.questionRevealCard}>
+              <View style={styles.categoryPill}>
+                <Ionicons
+                  name="pricetag-outline"
+                  size={14}
+                  color={COLORS.primaryText}
+                />
+                <Text style={styles.categoryPillText}>
+                  Categoria: {round.prompt.categoryName}
+                </Text>
+              </View>
+
+              <Text style={styles.questionRevealEyebrow}>
+                PERGUNTA DA MAIORIA
+              </Text>
+              <Text style={styles.questionRevealText}>
+                {round.prompt.gameId === "perguntas"
+                  ? round.prompt.innocentQuestion
+                  : ""}
+              </Text>
+
+              <View style={styles.infoBanner}>
+                <Ionicons
+                  name="eye-off-outline"
+                  size={16}
+                  color={COLORS.warning}
+                />
+                <Text style={styles.infoBannerText}>
+                  {impostorCount === 1
+                    ? "1 jogador recebeu uma pergunta diferente!"
+                    : `${impostorCount} jogadores receberam uma pergunta diferente!`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.playersSection}>
+              <View style={styles.answersHeaderRow}>
+                <Text style={styles.sectionTitle}>
+                  Respostas reveladas ({round.assignments.length})
+                </Text>
+                <Text style={styles.answersSubtitle}>
+                  Comparem as respostas e debatam!
+                </Text>
+              </View>
+
+              <View style={styles.answersList}>
+                {round.assignments.map(({ player }) => {
+                  const answer = round.answers[player.id] ?? "";
+                  return (
+                    <View key={player.id} style={styles.answerCard}>
+                      <View style={styles.answerPlayerRow}>
+                        <PlayerAvatar
+                          name={player.name}
+                          color={player.color}
+                          size={32}
+                        />
+                        <Text style={styles.answerPlayerName} numberOfLines={1}>
+                          {player.name}
+                        </Text>
+                      </View>
+                      <Text style={styles.answerValue}>
+                        {answer.length > 0 ? answer : "Sem resposta"}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
         <Button
           label="Avançar para votação"
-          onPress={() => setConfirmModalVisible(true)}
+          onPress={
+            isImpostorGame
+              ? () => setConfirmModalVisible(true)
+              : onAdvanceToVoting
+          }
           icon={
             <Ionicons
               name="checkmark-done-outline"
@@ -130,20 +215,18 @@ export function DiscussionWaitingPhase({
         />
       </View>
 
-      <ConfirmModal
-        visible={confirmModalVisible}
-        title="Avançar para a votação?"
-        message={
-          isImpostorGame
-            ? "Confirme apenas quando todos os jogadores já tiverem falado suas dicas."
-            : "Confirme apenas quando todos os jogadores já tiverem respondido à pergunta."
-        }
-        confirmLabel="Ir para votação"
-        cancelLabel="Continuar jogando"
-        iconName="people-outline"
-        onConfirm={handleConfirmAdvance}
-        onCancel={() => setConfirmModalVisible(false)}
-      />
+      {isImpostorGame ? (
+        <ConfirmModal
+          visible={confirmModalVisible}
+          title="Avançar para a votação?"
+          message="Confirme apenas quando todos os jogadores já tiverem falado suas dicas."
+          confirmLabel="Ir para votação"
+          cancelLabel="Continuar jogando"
+          iconName="people-outline"
+          onConfirm={handleConfirmAdvance}
+          onCancel={() => setConfirmModalVisible(false)}
+        />
+      ) : null}
     </View>
   );
 }
@@ -291,6 +374,67 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     flexShrink: 1,
+  },
+  questionRevealCard: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1.5,
+    borderColor: "rgba(245, 158, 11, 0.35)",
+    borderRadius: RADIUS.xl,
+    padding: SPACING.xl,
+    alignItems: "center",
+  },
+  questionRevealEyebrow: {
+    color: COLORS.warning,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.4,
+    marginBottom: SPACING.xs,
+  },
+  questionRevealText: {
+    color: COLORS.textPrimary,
+    fontSize: 19,
+    lineHeight: 26,
+    fontWeight: "800",
+    textAlign: "center",
+    marginBottom: SPACING.lg,
+  },
+  answersHeaderRow: {
+    gap: 2,
+  },
+  answersSubtitle: {
+    color: COLORS.textSecondary,
+    fontSize: 13,
+  },
+  answersList: {
+    gap: SPACING.sm,
+  },
+  answerCard: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    gap: SPACING.sm,
+  },
+  answerPlayerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.sm,
+  },
+  answerPlayerName: {
+    color: COLORS.textPrimary,
+    fontSize: 15,
+    fontWeight: "700",
+    flex: 1,
+  },
+  answerValue: {
+    color: COLORS.textPrimary,
+    fontSize: 15,
+    lineHeight: 21,
+    backgroundColor: COLORS.surfaceElevated,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
   footer: {
     paddingHorizontal: SPACING.xl,

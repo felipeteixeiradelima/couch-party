@@ -29,6 +29,7 @@ interface GameSettingsModalProps {
   settings: GameSettings;
   categories: GameCategorySummary[];
   playerCount: number;
+  showHintSetting?: boolean;
   onSave: (nextSettings: GameSettings) => void;
   onClose: () => void;
 }
@@ -54,6 +55,7 @@ function GameSettingsModalContent({
   settings,
   categories,
   playerCount,
+  showHintSetting = true,
   onSave,
   onClose,
 }: GameSettingsModalProps) {
@@ -259,30 +261,32 @@ function GameSettingsModalContent({
           </View>
 
           {/* Dica de impostor */}
-          <View style={styles.card}>
-            <View style={styles.rowBetween}>
-              <View style={styles.labelBlock}>
-                <Text style={styles.optionTitle}>Dica para o impostor</Text>
-                <Text style={styles.optionDescription}>
-                  Se ativada, todos os impostores recebem a mesma dica na
-                  rodada.
-                </Text>
-              </View>
+          {showHintSetting ? (
+            <View style={styles.card}>
+              <View style={styles.rowBetween}>
+                <View style={styles.labelBlock}>
+                  <Text style={styles.optionTitle}>Dica para o impostor</Text>
+                  <Text style={styles.optionDescription}>
+                    Se ativada, todos os impostores recebem a mesma dica na
+                    rodada.
+                  </Text>
+                </View>
 
-              <Switch
-                value={draft.hintEnabled}
-                onValueChange={(value) =>
-                  setDraft((prev) => ({ ...prev, hintEnabled: value }))
-                }
-                trackColor={{
-                  false: COLORS.border,
-                  true: COLORS.primary,
-                }}
-                thumbColor={COLORS.white}
-                accessibilityLabel="Habilitar dica para o impostor"
-              />
+                <Switch
+                  value={draft.hintEnabled}
+                  onValueChange={(value) =>
+                    setDraft((prev) => ({ ...prev, hintEnabled: value }))
+                  }
+                  trackColor={{
+                    false: COLORS.border,
+                    true: COLORS.primary,
+                  }}
+                  thumbColor={COLORS.white}
+                  accessibilityLabel="Habilitar dica para o impostor"
+                />
+              </View>
             </View>
-          </View>
+          ) : null}
 
           {/* Tempo de votação */}
           <View style={styles.card}>
