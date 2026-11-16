@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { GameCategorySummary, GameSettings } from "@/types/game";
 import {
   clampImpostorCount,
@@ -34,12 +35,13 @@ interface GameSettingsModalProps {
 
 export function GameSettingsModal(props: GameSettingsModalProps) {
   const { visible, onClose } = props;
+  const { animationsEnabled } = useAppSettings();
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType={animationsEnabled ? "slide" : "none"}
       statusBarTranslucent
       onRequestClose={onClose}
     >

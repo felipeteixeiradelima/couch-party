@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -27,6 +28,7 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
+  const { animationsEnabled } = useAppSettings();
   const isDanger = confirmVariant === "danger";
   const accentColor = isDanger ? COLORS.danger : COLORS.primaryText;
   const iconBgColor = isDanger ? COLORS.dangerSoft : COLORS.primarySoft;
@@ -35,7 +37,7 @@ export function ConfirmModal({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType={animationsEnabled ? "fade" : "none"}
       statusBarTranslucent
       onRequestClose={onCancel}
     >

@@ -1,32 +1,55 @@
 import { COLORS } from "@/constants/theme";
+import { AppSettingsProvider } from "@/contexts/AppSettingsContext";
 import { PlayersProvider } from "@/contexts/PlayersContext";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+function RootNavigator() {
+  const { animationsEnabled } = useAppSettings();
+
+  return (
+    <>
+      <StatusBar style="light" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: COLORS.background },
+          animation: animationsEnabled ? "slide_from_right" : "none",
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="players" />
+        <Stack.Screen
+          name="rules"
+          options={{
+            presentation: "modal",
+            animation: animationsEnabled ? "fade_from_bottom" : "none",
+          }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{
+            animation: animationsEnabled ? "slide_from_right" : "none",
+          }}
+        />
+        <Stack.Screen name="games/impostor" />
+        <Stack.Screen name="games/cidade-dorme" />
+        <Stack.Screen name="games/perguntas" />
+      </Stack>
+    </>
+  );
+}
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider style={{ flex: 1, backgroundColor: COLORS.background }}>
-      <PlayersProvider>
-        <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: COLORS.background },
-            animation: "slide_from_right",
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="players" />
-          <Stack.Screen
-            name="rules"
-            options={{ presentation: "modal", animation: "fade_from_bottom" }}
-          />
-          <Stack.Screen name="games/impostor" />
-          <Stack.Screen name="games/cidade-dorme" />
-          <Stack.Screen name="games/perguntas" />
-        </Stack>
-      </PlayersProvider>
+      <AppSettingsProvider>
+        <PlayersProvider>
+          <RootNavigator />
+        </PlayersProvider>
+      </AppSettingsProvider>
     </SafeAreaProvider>
   );
 }

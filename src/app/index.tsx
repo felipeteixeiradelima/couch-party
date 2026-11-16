@@ -1,7 +1,9 @@
 import { GameCard } from "@/components/games/GameCard";
+import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { GAMES } from "@/constants/games";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -10,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { players } = usePlayers();
+  const { triggerLightImpact } = useHaptics();
 
   const playersButtonLabel =
     players.length > 0
@@ -31,22 +34,48 @@ export default function HomeScreen() {
             <Text style={styles.brandTitle}>Couch Party!</Text>
           </View>
 
-          <Pressable
-            onPress={() => router.push("/rules")}
-            accessibilityRole="button"
-            accessibilityLabel="Abrir regras dos jogos"
-            style={({ pressed }) => [
-              styles.rulesButton,
-              pressed && styles.rulesButtonPressed,
-            ]}
-          >
-            <Ionicons
-              name="help-circle-outline"
-              size={16}
-              color={COLORS.textSecondary}
-            />
-            <Text style={styles.rulesButtonText}>Regras</Text>
-          </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable
+              onPress={() => {
+                triggerLightImpact();
+                router.push("/rules");
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Abrir regras dos jogos"
+              style={({ pressed }) => [
+                styles.rulesButton,
+                pressed && styles.headerButtonPressed,
+              ]}
+              hitSlop={6}
+            >
+              <Ionicons
+                name="help-circle-outline"
+                size={16}
+                color={COLORS.textSecondary}
+              />
+              <Text style={styles.rulesButtonText}>Regras</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                triggerLightImpact();
+                router.push("/settings");
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Abrir configurações do aplicativo"
+              style={({ pressed }) => [
+                styles.settingsButton,
+                pressed && styles.headerButtonPressed,
+              ]}
+              hitSlop={6}
+            >
+              <Ionicons
+                name="settings-outline"
+                size={19}
+                color={COLORS.textPrimary}
+              />
+            </Pressable>
+          </View>
         </View>
 
         <ScrollView
@@ -54,21 +83,32 @@ export default function HomeScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.hero}>
-            <Text style={styles.eyebrow}>A NOITE COMEÇA AQUI</Text>
-            <Text style={styles.heading}>Escolha o jogo</Text>
-            <Text style={styles.subtitle}>
-              Reúna a turma. O resto é com a gente.
-            </Text>
-          </View>
+          <AnimatedPhaseView variant="fade-up" duration={260}>
+            <View style={styles.hero}>
+              <Text style={styles.eyebrow}>A NOITE COMEÇA AQUI</Text>
+              <Text style={styles.heading}>Escolha o jogo</Text>
+              <Text style={styles.subtitle}>
+                Reúna a turma. O resto é com a gente.
+              </Text>
+            </View>
+          </AnimatedPhaseView>
 
           <View style={styles.cardsList}>
-            {GAMES.map((game) => (
-              <GameCard
+            {GAMES.map((game, index) => (
+              <AnimatedPhaseView
                 key={game.id}
-                game={game}
-                onPress={() => router.push(game.route)}
-              />
+                variant="fade-up"
+                delay={60 + index * 55}
+                duration={260}
+              >
+                <GameCard
+                  game={game}
+                  onPress={() => {
+                    triggerLightImpact();
+                    router.push(game.route);
+                  }}
+                />
+              </AnimatedPhaseView>
             ))}
           </View>
         </ScrollView>
@@ -76,7 +116,10 @@ export default function HomeScreen() {
         <View style={styles.footer}>
           <Button
             label={playersButtonLabel}
-            onPress={() => router.push("/players")}
+            onPress={() => {
+              triggerLightImpact();
+              router.push("/players");
+            }}
             icon={
               <Ionicons name="people-outline" size={20} color={COLORS.white} />
             }
@@ -99,6 +142,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: SPACING.sm,
     paddingHorizontal: SPACING.xl,
     paddingTop: SPACING.sm,
     paddingBottom: SPACING.md,
@@ -107,6 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: SPACING.md,
+    flexShrink: 1,
   },
   logoBox: {
     width: 40,
@@ -122,6 +167,11 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: -0.3,
   },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.sm,
+  },
   rulesButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -132,9 +182,19 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.full,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    minHeight: 38,
+    minHeight: 40,
   },
-  rulesButtonPressed: {
+  settingsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerButtonPressed: {
     backgroundColor: COLORS.surfaceElevated,
   },
   rulesButtonText: {

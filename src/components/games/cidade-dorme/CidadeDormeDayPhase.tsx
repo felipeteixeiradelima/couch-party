@@ -1,4 +1,5 @@
 import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
+import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { CircularTimer, getTimerColor } from "@/components/ui/CircularTimer";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -9,6 +10,8 @@ import {
   RADIUS,
   SPACING,
 } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
+import { useHaptics } from "@/hooks/useHaptics";
 import { CidadeDormeMatchState } from "@/types/cidadeDorme";
 import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
 import { formatTimer } from "@/utils/gameEngine";
@@ -54,32 +57,50 @@ export function CidadeDormeDayPhase({
 }: CidadeDormeDayPhaseProps) {
   if (phase === "day-discussion") {
     return (
-      <DayDiscussionView
-        match={match}
-        onAdvanceToVoting={onAdvanceToVoting}
-        onViewGameOver={onViewGameOver}
-        onRequestExit={onRequestExit}
-      />
+      <AnimatedPhaseView
+        key={`day-discussion-${match.roundNumber}`}
+        style={styles.animatedFill}
+        variant="fade-up"
+      >
+        <DayDiscussionView
+          match={match}
+          onAdvanceToVoting={onAdvanceToVoting}
+          onViewGameOver={onViewGameOver}
+          onRequestExit={onRequestExit}
+        />
+      </AnimatedPhaseView>
     );
   }
 
   if (phase === "day-voting") {
     return (
-      <DayVotingView
-        match={match}
-        onFinishVoting={onFinishVoting}
-        onRequestExit={onRequestExit}
-      />
+      <AnimatedPhaseView
+        key={`day-voting-${match.roundNumber}`}
+        style={styles.animatedFill}
+        variant="fade-up"
+      >
+        <DayVotingView
+          match={match}
+          onFinishVoting={onFinishVoting}
+          onRequestExit={onRequestExit}
+        />
+      </AnimatedPhaseView>
     );
   }
 
   return (
-    <DayEliminationView
-      match={match}
-      onProceedToNextNight={onProceedToNextNight}
-      onViewGameOver={onViewGameOver}
-      onRequestExit={onRequestExit}
-    />
+    <AnimatedPhaseView
+      key={`day-elimination-${match.roundNumber}`}
+      style={styles.animatedFill}
+      variant="pop"
+    >
+      <DayEliminationView
+        match={match}
+        onProceedToNextNight={onProceedToNextNight}
+        onViewGameOver={onViewGameOver}
+        onRequestExit={onRequestExit}
+      />
+    </AnimatedPhaseView>
   );
 }
 
@@ -378,6 +399,8 @@ function DayVotingView({
   onFinishVoting: (votedPlayerId: string | null) => void;
   onRequestExit: () => void;
 }) {
+  const { animationsEnabled } = useAppSettings();
+  const { triggerSelection, triggerWarning } = useHaptics();
   const { votingTimerEnabled, votingDurationSeconds } = match.settingsSnapshot;
   const alivePlayers = useMemo(
     () => match.players.filter((entry) => entry.alive),
@@ -395,6 +418,7 @@ function DayVotingView({
 
   const selectedPlayerIdRef = useRef<string | null>(null);
   const hasFinishedRef = useRef(false);
+  const warnedAtTenRef = useRef(false);
   const [stickyAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -417,6 +441,7 @@ function DayVotingView({
       return;
     }
 
+    warnedAtTenRef.current = false;
     const interval = setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
@@ -431,18 +456,29 @@ function DayVotingView({
   }, [votingTimerEnabled, match.roundNumber]);
 
   useEffect(() => {
-    if (votingTimerEnabled && remainingSeconds === 0) {
+    if (!votingTimerEnabled) return;
+    if (remainingSeconds === 10 && !warnedAtTenRef.current) {
+      warnedAtTenRef.current = true;
+      triggerWarning();
+    }
+    if (remainingSeconds === 0) {
+      triggerWarning();
       finishOnce(selectedPlayerIdRef.current);
     }
-  }, [votingTimerEnabled, remainingSeconds, finishOnce]);
+  }, [votingTimerEnabled, remainingSeconds, finishOnce, triggerWarning]);
 
   useEffect(() => {
+    if (!animationsEnabled) {
+      stickyAnim.setValue(showStickyTimer ? 1 : 0);
+      return;
+    }
+
     Animated.timing(stickyAnim, {
       toValue: showStickyTimer ? 1 : 0,
       duration: 180,
       useNativeDriver: true,
     }).start();
-  }, [showStickyTimer, stickyAnim]);
+  }, [animationsEnabled, showStickyTimer, stickyAnim]);
 
   const selectedPlayer = useMemo(
     () =>
@@ -601,11 +637,12 @@ function DayVotingView({
                 return (
                   <Pressable
                     key={player.id}
-                    onPress={() =>
+                    onPress={() => {
+                      triggerSelection();
                       setSelectedPlayerId((prev) =>
                         prev === player.id ? null : player.id,
-                      )
-                    }
+                      );
+                    }}
                     accessibilityRole="radio"
                     accessibilityState={{ selected: isSelected }}
                     accessibilityLabel={`Votar em ${player.name}`}
@@ -717,9 +754,18 @@ function DayEliminationView({
   onViewGameOver: () => void;
   onRequestExit: () => void;
 }) {
+  const { triggerWarning, triggerLightImpact } = useHaptics();
   const eliminated = match.lastEliminatedDayPlayer;
   const aliveCount = match.players.filter((entry) => entry.alive).length;
   const roleMeta = eliminated ? CIDADE_DORME_ROLE_META[eliminated.role] : null;
+
+  useEffect(() => {
+    if (eliminated) {
+      triggerWarning();
+    } else {
+      triggerLightImpact();
+    }
+  }, [eliminated, triggerWarning, triggerLightImpact]);
 
   return (
     <View style={styles.container}>
@@ -825,6 +871,9 @@ function DayEliminationView({
 }
 
 const styles = StyleSheet.create({
+  animatedFill: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingHorizontal: SPACING.xl,

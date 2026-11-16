@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { CidadeDormeSettings } from "@/types/cidadeDorme";
 import {
   clampAssassinCount,
@@ -39,12 +40,13 @@ interface CidadeDormeSettingsModalProps {
 
 export function CidadeDormeSettingsModal(props: CidadeDormeSettingsModalProps) {
   const { visible, onClose } = props;
+  const { animationsEnabled } = useAppSettings();
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType={animationsEnabled ? "slide" : "none"}
       statusBarTranslucent
       onRequestClose={onClose}
     >
