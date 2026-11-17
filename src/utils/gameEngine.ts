@@ -1,9 +1,11 @@
 import { GAMES_BY_ID } from "@/constants/games";
-import { getMockGameData } from "@/data/gameContent";
+import { getGameData } from "@/data/gameContent";
 import {
   ActiveRoundState,
   GameSettings,
+  ImpostorCategory,
   PlayerAssignment,
+  QuestionCategory,
   RoundPrompt,
   RoundResult,
   SupportedPartyGameId,
@@ -149,6 +151,8 @@ interface CreateRoundParams {
   settings: GameSettings;
   usedHintHistory: UsedHintHistory;
   roundNumber: number;
+  impostorCategories?: readonly ImpostorCategory[];
+  questionCategories?: readonly QuestionCategory[];
 }
 
 export function createRound({
@@ -157,6 +161,8 @@ export function createRound({
   settings,
   usedHintHistory,
   roundNumber,
+  impostorCategories,
+  questionCategories,
 }: CreateRoundParams): {
   round: ActiveRoundState;
   nextHintHistory: UsedHintHistory;
@@ -177,13 +183,17 @@ export function createRound({
     votingDurationSeconds: clampVotingSeconds(settings.votingDurationSeconds),
   };
 
-  const data = getMockGameData();
+  const data = getGameData();
   let prompt: RoundPrompt;
   let nextHintHistory = usedHintHistory;
 
   if (gameId === "impostor") {
+    const sourceCategories =
+      impostorCategories && impostorCategories.length > 0
+        ? impostorCategories
+        : data.impostor.categories;
     const pool = selectCategoryPool(
-      data.impostor.categories,
+      sourceCategories,
       normalizedSettings.selectedCategoryIds,
     );
     const chosenCategory = pickRandomElement(pool);
@@ -205,12 +215,17 @@ export function createRound({
       categoryId: chosenCategory.id,
       categoryName: chosenCategory.name,
       itemId: chosenItem.id,
+      itemDbId: chosenItem.dbId,
       secretWord: chosenItem.word,
       impostorHint,
     };
   } else {
+    const sourceCategories =
+      questionCategories && questionCategories.length > 0
+        ? questionCategories
+        : data.perguntas.categories;
     const pool = selectCategoryPool(
-      data.perguntas.categories,
+      sourceCategories,
       normalizedSettings.selectedCategoryIds,
     );
     const chosenCategory = pickRandomElement(pool);
@@ -221,6 +236,7 @@ export function createRound({
       categoryId: chosenCategory.id,
       categoryName: chosenCategory.name,
       itemId: chosenItem.id,
+      itemDbId: chosenItem.dbId,
       innocentQuestion: chosenItem.innocentQuestion,
       impostorQuestion: chosenItem.impostorQuestion,
     };

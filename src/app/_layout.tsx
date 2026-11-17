@@ -1,8 +1,10 @@
 import { COLORS } from "@/constants/theme";
 import { AppSettingsProvider } from "@/contexts/AppSettingsContext";
 import { PlayersProvider } from "@/contexts/PlayersContext";
+import { DATABASE_NAME, initializeDatabase } from "@/database";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { Stack } from "expo-router";
+import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -45,11 +47,13 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <SafeAreaProvider style={{ flex: 1, backgroundColor: COLORS.background }}>
-      <AppSettingsProvider>
-        <PlayersProvider>
-          <RootNavigator />
-        </PlayersProvider>
-      </AppSettingsProvider>
+      <SQLiteProvider databaseName={DATABASE_NAME} onInit={initializeDatabase}>
+        <AppSettingsProvider>
+          <PlayersProvider>
+            <RootNavigator />
+          </PlayersProvider>
+        </AppSettingsProvider>
+      </SQLiteProvider>
     </SafeAreaProvider>
   );
 }

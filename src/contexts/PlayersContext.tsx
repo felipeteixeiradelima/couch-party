@@ -1,23 +1,35 @@
 import { PLAYER_COLORS } from "@/constants/theme";
+import {
+  addOrReactivatePlayer,
+  clearActivePlayers,
+  listActivePlayers,
+  removeActivePlayer,
+  updatePlayerName as updatePlayerNameInDb,
+} from "@/database";
 import { Player, PlayerActionResult } from "@/types/player";
-import React, { createContext, useCallback, useMemo, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export const MAX_PLAYERS = 20;
 export const MAX_PLAYER_NAME_LENGTH = 24;
 
 export interface PlayersContextValue {
   players: Player[];
-  addPlayer: (name: string) => PlayerActionResult;
-  removePlayer: (id: string) => void;
-  updatePlayerName: (id: string, name: string) => PlayerActionResult;
-  clearPlayers: () => void;
+  isHydrated: boolean;
+  addPlayer: (name: string) => Promise<PlayerActionResult>;
+  removePlayer: (id: string) => Promise<void>;
+  updatePlayerName: (id: string, name: string) => Promise<PlayerActionResult>;
+  clearPlayers: () => Promise<void>;
+  refreshPlayers: () => Promise<void>;
 }
 
 export const PlayersContext = createContext<PlayersContextValue | null>(null);
-
-function createPlayerId(): string {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-}
 
 function validatePlayerName(
   rawName: string,
@@ -54,10 +66,40 @@ interface PlayersProviderProps {
 }
 
 export function PlayersProvider({ children }: PlayersProviderProps) {
+  const db = useSQLiteContext();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  const refreshPlayers = useCallback(async () => {
+    const loaded = await listActivePlayers(db);
+    setPlayers(loaded);
+  }, [db]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function hydrate() {
+      try {
+        const loaded = await listActivePlayers(db);
+        if (isMounted) {
+          setPlayers(loaded);
+        }
+      } finally {
+        if (isMounted) {
+          setIsHydrated(true);
+        }
+      }
+    }
+
+    void hydrate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [db]);
 
   const addPlayer = useCallback(
-    (rawName: string): PlayerActionResult => {
+    async (rawName: string): Promise<PlayerActionResult> => {
       if (players.length >= MAX_PLAYERS) {
         return {
           ok: false,
@@ -70,55 +112,74 @@ export function PlayersProvider({ children }: PlayersProviderProps) {
         return { ok: false, error: validation.error };
       }
 
-      const color = PLAYER_COLORS[players.length % PLAYER_COLORS.length];
-      const newPlayer: Player = {
-        id: createPlayerId(),
-        name: validation.normalized,
-        color,
-      };
-
-      setPlayers((prev) => [...prev, newPlayer]);
-      return { ok: true };
+      try {
+        const color = PLAYER_COLORS[players.length % PLAYER_COLORS.length];
+        await addOrReactivatePlayer(db, validation.normalized, color);
+        await refreshPlayers();
+        return { ok: true };
+      } catch {
+        return {
+          ok: false,
+          error: "Não foi possível salvar o jogador no banco de dados.",
+        };
+      }
     },
-    [players],
+    [db, players, refreshPlayers],
   );
 
-  const removePlayer = useCallback((id: string) => {
-    setPlayers((prev) => prev.filter((player) => player.id !== id));
-  }, []);
+  const removePlayer = useCallback(
+    async (id: string) => {
+      await removeActivePlayer(db, id);
+      await refreshPlayers();
+    },
+    [db, refreshPlayers],
+  );
 
   const updatePlayerName = useCallback(
-    (id: string, rawName: string): PlayerActionResult => {
+    async (id: string, rawName: string): Promise<PlayerActionResult> => {
       const validation = validatePlayerName(rawName, players, id);
       if (!validation.valid) {
         return { ok: false, error: validation.error };
       }
 
-      setPlayers((prev) =>
-        prev.map((player) =>
-          player.id === id
-            ? { ...player, name: validation.normalized }
-            : player,
-        ),
-      );
-      return { ok: true };
+      try {
+        await updatePlayerNameInDb(db, id, validation.normalized);
+        await refreshPlayers();
+        return { ok: true };
+      } catch {
+        return {
+          ok: false,
+          error: "Não foi possível atualizar o nome no banco de dados.",
+        };
+      }
     },
-    [players],
+    [db, players, refreshPlayers],
   );
 
-  const clearPlayers = useCallback(() => {
+  const clearPlayers = useCallback(async () => {
+    await clearActivePlayers(db);
     setPlayers([]);
-  }, []);
+  }, [db]);
 
   const value = useMemo<PlayersContextValue>(
     () => ({
       players,
+      isHydrated,
       addPlayer,
       removePlayer,
       updatePlayerName,
       clearPlayers,
+      refreshPlayers,
     }),
-    [players, addPlayer, removePlayer, updatePlayerName, clearPlayers],
+    [
+      players,
+      isHydrated,
+      addPlayer,
+      removePlayer,
+      updatePlayerName,
+      clearPlayers,
+      refreshPlayers,
+    ],
   );
 
   return (

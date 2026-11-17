@@ -21,30 +21,61 @@ export interface GameMetadata {
 
 export interface ImpostorWordItem {
   id: string;
+  dbId?: number;
   word: string;
   hints: string[];
+  isCustom?: boolean;
 }
 
 export interface ImpostorCategory {
   id: string;
+  dbId?: number;
   name: string;
+  isCustom?: boolean;
   items: ImpostorWordItem[];
 }
 
 export interface QuestionPairItem {
   id: string;
+  dbId?: number;
   innocentQuestion: string;
   impostorQuestion: string;
   hints?: string[];
+  isCustom?: boolean;
 }
 
 export interface QuestionCategory {
   id: string;
+  dbId?: number;
   name: string;
+  isCustom?: boolean;
   items: QuestionPairItem[];
 }
 
-export interface MockGameData {
+export interface SeedCategoryRecord {
+  slug: string;
+  game_type: SupportedPartyGameId;
+  name: string;
+  is_custom: 0 | 1;
+}
+
+export interface SeedGameItemRecord {
+  slug: string;
+  game_type: SupportedPartyGameId;
+  category_slug: string;
+  main_content: string;
+  impostor_content: string | null;
+  hints: string[];
+  is_custom: 0 | 1;
+  is_active: 0 | 1;
+}
+
+export interface DatabaseSeedData {
+  categories: SeedCategoryRecord[];
+  game_items: SeedGameItemRecord[];
+}
+
+export interface GameData {
   impostor: {
     categories: ImpostorCategory[];
   };
@@ -81,6 +112,7 @@ export type RoundPrompt =
       categoryId: string;
       categoryName: string;
       itemId: string;
+      itemDbId?: number;
       secretWord: string;
       impostorHint: string | null;
     }
@@ -89,6 +121,7 @@ export type RoundPrompt =
       categoryId: string;
       categoryName: string;
       itemId: string;
+      itemDbId?: number;
       innocentQuestion: string;
       impostorQuestion: string;
     };

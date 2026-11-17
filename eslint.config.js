@@ -5,7 +5,7 @@ const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommen
 
 module.exports = defineConfig([
   {
-    ignores: ["dist/*", ".expo/*", "web-build/*", "src/data/mock-data.json"],
+    ignores: ["dist/*", ".expo/*", "web-build/*", "src/data/data.json"],
   },
   expoConfig,
   eslintPluginPrettierRecommended,

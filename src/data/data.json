@@ -1,0 +1,2198 @@
+{
+  "categories": [
+    {
+      "slug": "animais",
+      "game_type": "impostor",
+      "name": "Animais",
+      "is_custom": 0
+    },
+    {
+      "slug": "comidas",
+      "game_type": "impostor",
+      "name": "Comidas e Bebidas",
+      "is_custom": 0
+    },
+    {
+      "slug": "objetos",
+      "game_type": "impostor",
+      "name": "Objetos do Dia a Dia",
+      "is_custom": 0
+    },
+    {
+      "slug": "jogos",
+      "game_type": "impostor",
+      "name": "Videogames",
+      "is_custom": 0
+    },
+    {
+      "slug": "sf",
+      "game_type": "impostor",
+      "name": "Séries e Filmes",
+      "is_custom": 0
+    },
+    {
+      "slug": "lugares",
+      "game_type": "impostor",
+      "name": "Lugares",
+      "is_custom": 0
+    },
+    {
+      "slug": "profissoes",
+      "game_type": "impostor",
+      "name": "Profissões",
+      "is_custom": 0
+    },
+    {
+      "slug": "numeros",
+      "game_type": "perguntas",
+      "name": "Números e Medidas",
+      "is_custom": 0
+    },
+    {
+      "slug": "preferencias",
+      "game_type": "perguntas",
+      "name": "Preferências",
+      "is_custom": 0
+    },
+    {
+      "slug": "cotidiano",
+      "game_type": "perguntas",
+      "name": "Cotidiano",
+      "is_custom": 0
+    },
+    {
+      "slug": "comida",
+      "game_type": "perguntas",
+      "name": "Comida",
+      "is_custom": 0
+    },
+    {
+      "slug": "viagem-lazer",
+      "game_type": "perguntas",
+      "name": "Viagem e Lazer",
+      "is_custom": 0
+    }
+  ],
+  "game_items": [
+    {
+      "slug": "animais-pinguim",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Pinguim",
+      "impostor_content": null,
+      "hints": ["Frio", "Peixe", "Preto e branco"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-camaleao",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Camaleão",
+      "impostor_content": null,
+      "hints": ["Cor", "Camuflar", "Disfarce"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-golfinho",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Golfinho",
+      "impostor_content": null,
+      "hints": ["Amigável", "Tesouro", "Nado artístico"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-coruja",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Coruja",
+      "impostor_content": null,
+      "hints": ["Sabedoria", "Harry Potter", "Silêncio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-canguru",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Canguru",
+      "impostor_content": null,
+      "hints": ["Salto", "Bolsa", "Austrália"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-polvo",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Polvo",
+      "impostor_content": null,
+      "hints": ["Invertebrado", "Sangue azul", "Ventosa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-preguica",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Bicho-preguiça",
+      "impostor_content": null,
+      "hints": ["Descanso", "Ponta-cabeça", "Lentidão"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-flamingo",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Flamingo",
+      "impostor_content": null,
+      "hints": ["Rosa", "Quatro", "Time de Futebol"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-girafa",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Girafa",
+      "impostor_content": null,
+      "hints": ["Altura", "Savana", "Manchas"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-elefante",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Elefante",
+      "impostor_content": null,
+      "hints": ["Memória", "Marfim", "Pesado"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-capivara",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Capivara",
+      "impostor_content": null,
+      "hints": ["Parque", "Roedor", "Calma"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-morcego",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Morcego",
+      "impostor_content": null,
+      "hints": ["Caverna", "Noite", "Eco"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-tubarao",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Tubarão",
+      "impostor_content": null,
+      "hints": ["Barbatana", "Oceano", "Dentes"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-leao",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Leão",
+      "impostor_content": null,
+      "hints": ["Rei", "Juba", "Rugido"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-abelha",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Abelha",
+      "impostor_content": null,
+      "hints": ["Colmeia", "Doce", "Ferrão"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-tartaruga",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Tartaruga",
+      "impostor_content": null,
+      "hints": ["Casco", "Longevidade", "Ninja"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-panda",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Panda",
+      "impostor_content": null,
+      "hints": ["Bambu", "China", "Olheiras"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-lobo",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Lobo",
+      "impostor_content": null,
+      "hints": ["Alcateia", "Lua cheia", "Uivo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-ornitorrinco",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Ornitorrinco",
+      "impostor_content": null,
+      "hints": ["Bico", "Chapéu", "Ovos"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-tucano",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Tucano",
+      "impostor_content": null,
+      "hints": ["Floresta", "Colorido", "Bico grande"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "animais-cavalo",
+      "game_type": "impostor",
+      "category_slug": "animais",
+      "main_content": "Cavalo",
+      "impostor_content": null,
+      "hints": ["Galope", "Ferradura", "Fazenda"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-pizza",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Pizza",
+      "impostor_content": null,
+      "hints": ["Forno", "Queijo", "Redondo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-sushi",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Sushi",
+      "impostor_content": null,
+      "hints": ["Arroz", "Asiático", "Frutos do mar"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-feijoada",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Feijoada",
+      "impostor_content": null,
+      "hints": ["Brasileiro", "Porco", "Feijão"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-pipoca",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Pipoca",
+      "impostor_content": null,
+      "hints": ["Milho", "Manteiga", "Petisco"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-brigadeiro",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Brigadeiro",
+      "impostor_content": null,
+      "hints": ["Confeito", "Chocolate", "Ponto"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-cafe",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Café",
+      "impostor_content": null,
+      "hints": ["Energia", "Amargo", "Marrom"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-lasanha",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Lasanha",
+      "impostor_content": null,
+      "hints": ["Camadas", "Italiano", "Massa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-pastel",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Pastel",
+      "impostor_content": null,
+      "hints": ["Frito", "Bolhas", "Feira"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-sorvete",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Sorvete",
+      "impostor_content": null,
+      "hints": ["Gelado", "Frutas", "Calor"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-batata",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Batata",
+      "impostor_content": null,
+      "hints": ["Frita", "Vegetal", "Acompanhamento"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-macarrao",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Macarrão",
+      "impostor_content": null,
+      "hints": ["Italiano", "Molho", "Ferver"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-coxinha",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Coxinha",
+      "impostor_content": null,
+      "hints": ["Salgado", "Frango", "Festa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-hamburguer",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Hambúrguer",
+      "impostor_content": null,
+      "hints": ["Chapa", "Pão", "Fast food"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-acai",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Açaí",
+      "impostor_content": null,
+      "hints": ["Roxo", "Granola", "Tigela"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-pudim",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Pudim",
+      "impostor_content": null,
+      "hints": ["Calda", "Leite condensado", "Sobremesa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-pao-de-queijo",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Pão de queijo",
+      "impostor_content": null,
+      "hints": ["Minas Gerais", "Polvilho", "Quentinho"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-tacos",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Tacos",
+      "impostor_content": null,
+      "hints": ["México", "Pimenta", "Crocante"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-churrasco",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Churrasco",
+      "impostor_content": null,
+      "hints": ["Carvão", "Domingo", "Espeto"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-panqueca",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Panqueca",
+      "impostor_content": null,
+      "hints": ["Frigideira", "Enrolada", "Recheio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-chocolate",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Chocolate",
+      "impostor_content": null,
+      "hints": ["Cacau", "Barra", "Páscoa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "comidas-milkshake",
+      "game_type": "impostor",
+      "category_slug": "comidas",
+      "main_content": "Milkshake",
+      "impostor_content": null,
+      "hints": ["Canudo", "Cremoso", "Liquidificador"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-fone",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Fone de Ouvido",
+      "impostor_content": null,
+      "hints": ["Fio", "Ouvido", "Som"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-mochila",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Mochila",
+      "impostor_content": null,
+      "hints": ["Costas", "Bagagem", "Bolso"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-chave",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Chave",
+      "impostor_content": null,
+      "hints": ["Prata", "Senha", "Molho"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-guarda-chuva",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Guarda-chuva",
+      "impostor_content": null,
+      "hints": ["Clima", "Cores", "Vento"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-espelho",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Espelho",
+      "impostor_content": null,
+      "hints": ["Olhar", "Banheiro", "Reflexo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-despertador",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Despertador",
+      "impostor_content": null,
+      "hints": ["Irritação", "Música", "Soneca"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-controle-remoto",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Controle Remoto",
+      "impostor_content": null,
+      "hints": ["Pilha", "Sofá", "Canal"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-oculos",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Óculos",
+      "impostor_content": null,
+      "hints": ["Lente", "Rosto", "Grau"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-travesseiro",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Travesseiro",
+      "impostor_content": null,
+      "hints": ["Fronha", "Pescoço", "Cama"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-tesoura",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Tesoura",
+      "impostor_content": null,
+      "hints": ["Corte", "Lâmina", "Papel"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-carregador",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Carregador",
+      "impostor_content": null,
+      "hints": ["Tomada", "Bateria", "Cabo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-escova-dentes",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Escova de Dentes",
+      "impostor_content": null,
+      "hints": ["Higiene", "Pasta", "Cerdas"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-garrafa-termica",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Garrafa Térmica",
+      "impostor_content": null,
+      "hints": ["Temperatura", "Tampa", "Viagem"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-relogio",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Relógio",
+      "impostor_content": null,
+      "hints": ["Pulso", "Ponteiro", "Hora"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-cadeado",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Cadeado",
+      "impostor_content": null,
+      "hints": ["Segredo", "Portão", "Tranca"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-ventilador",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Ventilador",
+      "impostor_content": null,
+      "hints": ["Verão", "Barulho", "Hélice"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-caderno",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Caderno",
+      "impostor_content": null,
+      "hints": ["Folha", "Espiral", "Anotação"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-lanterna",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Lanterna",
+      "impostor_content": null,
+      "hints": ["Escuro", "Feixe", "Acampamento"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-carteira",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Carteira",
+      "impostor_content": null,
+      "hints": ["Documento", "Bolso", "Couro"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-vela",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Vela",
+      "impostor_content": null,
+      "hints": ["Cera", "Pavio", "Apagão"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "objetos-bussola",
+      "game_type": "impostor",
+      "category_slug": "objetos",
+      "main_content": "Bússola",
+      "impostor_content": null,
+      "hints": ["Norte", "Imã", "Trilha"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-lol",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "League of Legends",
+      "impostor_content": null,
+      "hints": ["MOBA", "Faker", "Rotas"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-minecraft",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Minecraft",
+      "impostor_content": null,
+      "hints": ["Picareta", "Mundo aberto", "Blocos"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-tetris",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Tetris",
+      "impostor_content": null,
+      "hints": ["Quebra-cabeça", "Clássico", "Linhas horizontais"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-cs",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Counter-Strike 2",
+      "impostor_content": null,
+      "hints": ["Faca", "Awp", "Valve"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-fortnite",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Fortnite",
+      "impostor_content": null,
+      "hints": ["Construção", "Ônibus", "Baú"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-pacman",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Pacman",
+      "impostor_content": null,
+      "hints": ["Fliperama", "Cereja", "Fantasma"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-super-mario",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Super Mario",
+      "impostor_content": null,
+      "hints": ["Cogumelo", "Encanador", "Castelo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-gta",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Grand Theft Auto",
+      "impostor_content": null,
+      "hints": ["Estrelas", "Cidade", "Missão"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-the-sims",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "The Sims",
+      "impostor_content": null,
+      "hints": ["Diamante verde", "Casa", "Rotina"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-among-us",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Among Us",
+      "impostor_content": null,
+      "hints": ["Nave", "Reunião", "Duto"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-valorant",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Valorant",
+      "impostor_content": null,
+      "hints": ["Agentes", "Spike", "Tiro tático"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-pokemon",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Pokémon",
+      "impostor_content": null,
+      "hints": ["Ginásio", "Evolução", "Captura"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-zelda",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "The Legend of Zelda",
+      "impostor_content": null,
+      "hints": ["Espada", "Reino", "Enigma"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-god-of-war",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "God of War",
+      "impostor_content": null,
+      "hints": ["Mitologia", "Machado", "Pai e filho"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-mario-kart",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Mario Kart",
+      "impostor_content": null,
+      "hints": ["Casco azul", "Pista", "Banana"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-roblox",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Roblox",
+      "impostor_content": null,
+      "hints": ["Avatar", "Minigames", "Servidores"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-resident-evil",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Resident Evil",
+      "impostor_content": null,
+      "hints": ["Mansão", "Vírus", "Sobrevivência"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-sonic",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Sonic",
+      "impostor_content": null,
+      "hints": ["Anéis", "Velocidade", "Azul"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-fifa",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "EA Sports FC (FIFA)",
+      "impostor_content": null,
+      "hints": ["Cartinhas", "Estádio", "Gol"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-street-fighter",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Street Fighter",
+      "impostor_content": null,
+      "hints": ["Combo", "Arena", "Arcade"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "jogos-clash-royale",
+      "game_type": "impostor",
+      "category_slug": "jogos",
+      "main_content": "Clash Royale",
+      "impostor_content": null,
+      "hints": ["Elixir", "Torres", "Deck"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-star",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Star Wars",
+      "impostor_content": null,
+      "hints": ["Sabre", "Estrela", "Pai"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-walking",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "The Walking Dead",
+      "impostor_content": null,
+      "hints": ["Zumbi", "Arma", "Vírus"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-frozen",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Frozen",
+      "impostor_content": null,
+      "hints": ["Neve", "Reino", "Poder"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-avatar",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Avatar",
+      "impostor_content": null,
+      "hints": ["Azul", "Planeta", "Bilheteria"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-stranger-things",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Stranger Things",
+      "impostor_content": null,
+      "hints": ["Onze", "RPG", "Ao contrário"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-bridgerton",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Bridgerton",
+      "impostor_content": null,
+      "hints": ["Época", "Romance", "Coluna de fofoca"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-breaking-bad",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Breaking Bad",
+      "impostor_content": null,
+      "hints": ["Química", "Deserto", "Chapéu"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-harry-potter",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Harry Potter",
+      "impostor_content": null,
+      "hints": ["Varinha", "Trem", "Cicatriz"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-matrix",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Matrix",
+      "impostor_content": null,
+      "hints": ["Pílula", "Código", "Óculos escuros"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-shrek",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Shrek",
+      "impostor_content": null,
+      "hints": ["Pântano", "Camadas", "Burro"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-friends",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Friends",
+      "impostor_content": null,
+      "hints": ["Cafeteria", "Sofá", "Apartamento"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-the-office",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "The Office",
+      "impostor_content": null,
+      "hints": ["Papel", "Caneca", "Câmera"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-senhor-dos-aneis",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "O Senhor dos Anéis",
+      "impostor_content": null,
+      "hints": ["Vulcão", "Sociedade", "Anel"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-vingadores",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Vingadores",
+      "impostor_content": null,
+      "hints": ["Joias", "Escudo", "Estalo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-jurassic-park",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Jurassic Park",
+      "impostor_content": null,
+      "hints": ["Ilha", "Fóssil", "Dinossauro"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-toy-story",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Toy Story",
+      "impostor_content": null,
+      "hints": ["Quarto", "Bota", "Infinito"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-la-casa-de-papel",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "La Casa de Papel",
+      "impostor_content": null,
+      "hints": ["Macacão", "Máscara", "Cofre"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-round-6",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Round 6",
+      "impostor_content": null,
+      "hints": ["Boneca", "Número", "Prêmio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-titanic",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Titanic",
+      "impostor_content": null,
+      "hints": ["Navio", "Gelo", "Colar"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-rei-leao",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "O Rei Leão",
+      "impostor_content": null,
+      "hints": ["Pedra", "Ciclo", "Tio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "sf-homem-aranha",
+      "game_type": "impostor",
+      "category_slug": "sf",
+      "main_content": "Homem-Aranha",
+      "impostor_content": null,
+      "hints": ["Nova York", "Foto", "Teia"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-praia",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Praia",
+      "impostor_content": null,
+      "hints": ["Areia", "Protetor", "Maré"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-hospital",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Hospital",
+      "impostor_content": null,
+      "hints": ["Plantão", "Recepção", "Jaleco"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-cinema",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Cinema",
+      "impostor_content": null,
+      "hints": ["Escuro", "Fileira", "Tela grande"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-aeroporto",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Aeroporto",
+      "impostor_content": null,
+      "hints": ["Portão", "Mala", "Passaporte"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-escola",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Escola",
+      "impostor_content": null,
+      "hints": ["Sinal", "Lousa", "Intervalo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-supermercado",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Supermercado",
+      "impostor_content": null,
+      "hints": ["Corredor", "Carrinho", "Caixa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-academia",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Academia",
+      "impostor_content": null,
+      "hints": ["Série", "Espelho", "Suor"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-padaria",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Padaria",
+      "impostor_content": null,
+      "hints": ["Manhã", "Vitrine", "Fornada"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-biblioteca",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Biblioteca",
+      "impostor_content": null,
+      "hints": ["Silêncio", "Estante", "Empréstimo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-estadio",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Estádio",
+      "impostor_content": null,
+      "hints": ["Arquibancada", "Grito", "Gramado"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-shopping",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Shopping",
+      "impostor_content": null,
+      "hints": ["Escada rolante", "Praça de alimentação", "Vitrine"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-parque-diversoes",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Parque de Diversões",
+      "impostor_content": null,
+      "hints": ["Fila", "Adrenalina", "Ingresso"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-museu",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Museu",
+      "impostor_content": null,
+      "hints": ["História", "Moldura", "Guia"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-zoologico",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Zoológico",
+      "impostor_content": null,
+      "hints": ["Mapa", "Recinto", "Passeio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-farmacia",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Farmácia",
+      "impostor_content": null,
+      "hints": ["Receita", "Balcão", "Bula"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-rodoviaria",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Rodoviária",
+      "impostor_content": null,
+      "hints": ["Plataforma", "Passagem", "Bagageiro"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-acampamento",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Acampamento",
+      "impostor_content": null,
+      "hints": ["Barraca", "Fogueira", "Mata"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-restaurante",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Restaurante",
+      "impostor_content": null,
+      "hints": ["Cardápio", "Reserva", "Conta"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-fazenda",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Fazenda",
+      "impostor_content": null,
+      "hints": ["Cerca", "Interior", "Manhã cedo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-teatro",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Teatro",
+      "impostor_content": null,
+      "hints": ["Cortina", "Palco", "Aplauso"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "lugares-posto-gasolina",
+      "game_type": "impostor",
+      "category_slug": "lugares",
+      "main_content": "Posto de Gasolina",
+      "impostor_content": null,
+      "hints": ["Bomba", "Conveniência", "Tanque"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-medico",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Médico",
+      "impostor_content": null,
+      "hints": ["Consulta", "Exame", "Estetoscópio"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-bombeiro",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Bombeiro",
+      "impostor_content": null,
+      "hints": ["Sirene", "Resgate", "Escada"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-professor",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Professor",
+      "impostor_content": null,
+      "hints": ["Turma", "Prova", "Explicação"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-astronauta",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Astronauta",
+      "impostor_content": null,
+      "hints": ["Gravidade", "Capacete", "Órbita"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-chef",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Chef de Cozinha",
+      "impostor_content": null,
+      "hints": ["Tempero", "Avental", "Prato"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-detetive",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Detetive",
+      "impostor_content": null,
+      "hints": ["Pista", "Lupa", "Mistério"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-piloto",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Piloto de Avião",
+      "impostor_content": null,
+      "hints": ["Cabine", "Rota", "Decolagem"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-dentista",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Dentista",
+      "impostor_content": null,
+      "hints": ["Cadeira", "Sorriso", "Motorzinho"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-veterinario",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Veterinário",
+      "impostor_content": null,
+      "hints": ["Clínica", "Vacina", "Bicho"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-programador",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Programador",
+      "impostor_content": null,
+      "hints": ["Teclado", "Lógica", "Bug"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-fotografo",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Fotógrafo",
+      "impostor_content": null,
+      "hints": ["Enquadramento", "Flash", "Evento"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-mecanico",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Mecânico",
+      "impostor_content": null,
+      "hints": ["Oficina", "Óleo", "Motor"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-arquiteto",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Arquiteto",
+      "impostor_content": null,
+      "hints": ["Planta", "Obra", "Projeto"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-jornalista",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Jornalista",
+      "impostor_content": null,
+      "hints": ["Entrevista", "Manchete", "Microfone"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-advogado",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Advogado",
+      "impostor_content": null,
+      "hints": ["Processo", "Terno", "Tribunal"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-eletricista",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Eletricista",
+      "impostor_content": null,
+      "hints": ["Fiação", "Disjuntor", "Choque"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-padeiro",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Padeiro",
+      "impostor_content": null,
+      "hints": ["Madrugada", "Farinha", "Massa"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-musico",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Músico",
+      "impostor_content": null,
+      "hints": ["Palco", "Ensaio", "Ritmo"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-policial",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Policial",
+      "impostor_content": null,
+      "hints": ["Viatura", "Distintivo", "Patrulha"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-barbeiro",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Barbeiro",
+      "impostor_content": null,
+      "hints": ["Navalha", "Espelho", "Degradê"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "profissoes-cientista",
+      "game_type": "impostor",
+      "category_slug": "profissoes",
+      "main_content": "Cientista",
+      "impostor_content": null,
+      "hints": ["Laboratório", "Experimento", "Hipótese"],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-sono",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantas horas por noite você costuma dormir?",
+      "impostor_content": "Quantas horas por dia você passa mexendo no celular?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-bicicleta",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Com quantos anos você aprendeu a andar de bicicleta?",
+      "impostor_content": "Com quantos anos você começou a usar redes sociais?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-alarmes",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos alarmes você coloca para conseguir acordar?",
+      "impostor_content": "Quantas xícaras de café ou chá você toma por dia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-filmes",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantas vezes você já assistiu ao seu filme favorito?",
+      "impostor_content": "Quantos países ou estados diferentes você já visitou?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-celular",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Com qual idade você ganhou seu primeiro celular?",
+      "impostor_content": "Com qual idade você parou de acreditar no Papai Noel?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-aniversario",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantas pessoas iriam no seu aniversário?",
+      "impostor_content": "Quantas pessoas iriam no seu velório?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-pastel",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos pedaços de pizza você aguentaria comer?",
+      "impostor_content": "Quantas crianças você venceria em uma briga?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-atraso",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos minutos de atraso você considera aceitáveis em um encontro?",
+      "impostor_content": "Quantos minutos você leva para tomar banho?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-agua",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos copos de água você bebe em um dia normal?",
+      "impostor_content": "Quantas vezes por dia você abre a geladeira sem motivo?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-series",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos episódios de uma série você consegue ver seguidos em um fim de semana?",
+      "impostor_content": "Quantas horas seguidas você consegue ficar sem falar com ninguém?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-sapatos",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantos pares de calçados você tem hoje?",
+      "impostor_content": "Quantos amigos próximos você considera de verdade?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-nota-culinaria",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "De 0 a 10, que nota você dá para suas habilidades na cozinha?",
+      "impostor_content": "De 0 a 10, que nota você dá para a sua paciência no trânsito?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "numeros-abas",
+      "game_type": "perguntas",
+      "category_slug": "numeros",
+      "main_content": "Quantas abas costumam ficar abertas no navegador do seu celular?",
+      "impostor_content": "Quantas mensagens não lidas existem no seu WhatsApp agora?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-restaurante",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual restaurante você almoçaria agora?",
+      "impostor_content": "Qual restaurante você acha o mais nojento de se comer?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-estacao",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual é a sua estação do ano favorita?",
+      "impostor_content": "Qual é a estação do ano que você mais odeia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-poder",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual superpoder você escolheria ter na vida real?",
+      "impostor_content": "Qual habilidade prática você gostaria de aprender instantaneamente?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-animal",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual animal exótico você teria coragem de ter em casa?",
+      "impostor_content": "Qual animal você acha mais assustador de encontrar na natureza?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-musica",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual estilo musical combina mais com uma viagem de carro?",
+      "impostor_content": "Qual estilo musical você menos escuta no dia a dia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-cor",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual cor você mais usa nas suas roupas?",
+      "impostor_content": "Qual cor você nunca compraria para um carro?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-filme-genero",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual gênero de filme você escolhe primeiro no cinema?",
+      "impostor_content": "Qual gênero de filme costuma fazer você dormir no meio?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-dia-semana",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual é o seu dia favorito da semana?",
+      "impostor_content": "Qual dia da semana parece passar mais devagar para você?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-materia-escola",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual matéria você mais gostava na escola?",
+      "impostor_content": "Qual matéria você mais tinha dificuldade na escola?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-esporte",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual esporte você mais gosta de assistir na TV?",
+      "impostor_content": "Qual esporte você acha mais difícil de entender as regras?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-celebridade",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Com qual pessoa famosa você gostaria de jantar?",
+      "impostor_content": "Qual pessoa famosa você acha mais chata na internet?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-epoca",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Para qual época da história você viajaria para passar um fim de semana?",
+      "impostor_content": "Em qual época da história você acha que não sobreviveria nem um dia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "pref-presente",
+      "game_type": "perguntas",
+      "category_slug": "preferencias",
+      "main_content": "Qual presente você sempre gosta de ganhar no aniversário?",
+      "impostor_content": "Qual presente clichê você finge que gostou quando recebe?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-dia",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual é a primeira coisa que você faz logo depois de acordar?",
+      "impostor_content": "Qual é a última coisa que você faz antes de dormir?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-tarefa",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual tarefa doméstica você menos gosta de fazer?",
+      "impostor_content": "Qual tarefa doméstica você faz mais rápido?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-esquecer",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "O que você mais costuma esquecer quando sai de casa?",
+      "impostor_content": "Qual objeto nunca sai do seu bolso ou bolsa?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-app",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual aplicativo do celular você abre mais vezes no dia?",
+      "impostor_content": "Qual aplicativo você apagaria se precisasse liberar espaço agora?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-fim-semana",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual é o seu hobby perfeito para um domingo chuvoso?",
+      "impostor_content": "O que você evita fazer aos domingos à noite?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-compra-impulso",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual foi a última coisa que você comprou por impulso?",
+      "impostor_content": "Qual objeto da sua casa você usa praticamente todo dia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-transito",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "O que você faz para passar o tempo quando está preso no trânsito ou na fila?",
+      "impostor_content": "O que mais tira você do sério quando está com pressa?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-alarme-reacao",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual som ou barulho irrita você imediatamente?",
+      "impostor_content": "Qual som ajuda você a relaxar ou dormir melhor?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-notificacao",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual tipo de notificação no celular faz você sorrir na hora?",
+      "impostor_content": "Qual tipo de notificação você ignora ou silencia primeiro?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-supermercado",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual item nunca falta na sua lista de compras do mês?",
+      "impostor_content": "Qual item você sempre esquece de comprar no mercado?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-procrastinar",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual obrigação do dia a dia você sempre deixa para depois?",
+      "impostor_content": "Qual atividade você faz questão de resolver logo cedo?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-roupa-casa",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Qual peça de roupa você mais gosta de usar para ficar em casa?",
+      "impostor_content": "Qual peça de roupa você coloca quando precisa impressionar alguém?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "cot-horario",
+      "game_type": "perguntas",
+      "category_slug": "cotidiano",
+      "main_content": "Em qual horário do dia você se sente mais produtivo?",
+      "impostor_content": "Em qual horário do dia bate mais sono em você?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-acompanhamento",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual comida você conseguiria comer toda semana sem enjoar?",
+      "impostor_content": "Qual comida todo mundo ama, mas você acha superestimada?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-cafe-manha",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "O que não pode faltar no seu café da manhã ideal?",
+      "impostor_content": "O que você costuma beliscar de madrugada quando está com fome?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-ingrediente",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual ingrediente deixa qualquer lanche melhor?",
+      "impostor_content": "Qual ingrediente você sempre pede para tirar do lanche?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-sobremesa",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual sobremesa você escolheria depois de um almoço especial?",
+      "impostor_content": "Qual doce da infância você acha enjoativo hoje em dia?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-sabor-pizza",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual é o melhor sabor de pizza para pedir com a galera?",
+      "impostor_content": "Qual sabor de pizza você nunca pediria por conta própria?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-bebida",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual bebida combina perfeitamente com um dia muito quente?",
+      "impostor_content": "Qual bebida você evita tomar antes de dormir?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-fruta",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual é a fruta mais gostosa na sua opinião?",
+      "impostor_content": "Qual fruta dá mais trabalho para descascar ou comer?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-salgado-festa",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual salgadinho de festa você pega primeiro na bandeja?",
+      "impostor_content": "Qual salgadinho sempre sobra por último na festa?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-prato-cozinhar",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual prato você sabe cozinhar muito bem?",
+      "impostor_content": "Qual prato você já tentou fazer e deu errado?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-sorvete-sabor",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual sabor de sorvete nunca tem erro para você?",
+      "impostor_content": "Qual sabor de sorvete você acha estranho demais?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-delivery",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "O que você pede no delivery quando está com preguiça de cozinhar?",
+      "impostor_content": "O que nunca chega bonito quando você pede por delivery?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-churrasco",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "O que não pode faltar em um bom churrasco?",
+      "impostor_content": "O que você costuma dispensar quando vai a um churrasco?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "com-culinaria-pais",
+      "game_type": "perguntas",
+      "category_slug": "comida",
+      "main_content": "Qual culinária de outro país você mais gosta?",
+      "impostor_content": "Qual culinária de outro país você ainda tem receio de provar?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-destino",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual lugar do Brasil ou do mundo você sonha em conhecer?",
+      "impostor_content": "Qual lugar famoso você acha superestimado?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-mala",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual item você sempre coloca primeiro na mala de viagem?",
+      "impostor_content": "O que você sempre deixa para comprar na última hora antes de viajar?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-transporte",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual meio de transporte você prefere para viajar longe?",
+      "impostor_content": "Qual meio de transporte você usa com menos frequência?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-parque",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Que tipo de passeio em grupo você mais gosta de fazer?",
+      "impostor_content": "Que tipo de rolê cansa você mais rápido?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-feriado",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Como seria o feriado prolongado perfeito para você?",
+      "impostor_content": "O que pode estragar completamente um feriado prolongado?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-hospedagem",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "O que é indispensável na hora de escolher um hotel ou hospedagem?",
+      "impostor_content": "O que mais incomoda você em uma hospedagem?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-praia-campo",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual atividade você mais gosta de fazer ao ar livre?",
+      "impostor_content": "Qual atividade ao ar livre você evita quando está muito calor?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-jogo-mesa",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual jogo é perfeito para animar uma noite com amigos?",
+      "impostor_content": "Qual jogo costuma gerar mais discórdia entre amigos?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-lembranca",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Que tipo de lembrancinha você gosta de trazer de uma viagem?",
+      "impostor_content": "Que tipo de lembrancinha você acha um desperdício comprar?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-companheiro",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual característica torna alguém uma ótima companhia de viagem?",
+      "impostor_content": "Qual mania de outra pessoa mais atrapalha uma viagem em grupo?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-clima-viagem",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Você prefere viajar para lugares frios ou quentes? Por quê?",
+      "impostor_content": "Qual tipo de clima atrapalha mais os seus planos de passeio?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-evento",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual show, festival ou evento você ainda quer ir na vida?",
+      "impostor_content": "Qual tipo de evento lotado você prefere evitar?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    },
+    {
+      "slug": "via-foto",
+      "game_type": "perguntas",
+      "category_slug": "viagem-lazer",
+      "main_content": "Qual paisagem você sempre para para fotografar?",
+      "impostor_content": "O que você normalmente esquece de fotografar durante um passeio?",
+      "hints": [],
+      "is_custom": 0,
+      "is_active": 1
+    }
+  ]
+}
