@@ -39,6 +39,3 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-
-# local mock data
-src/data/mock-data.json

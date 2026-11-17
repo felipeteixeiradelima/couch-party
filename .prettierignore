@@ -4,4 +4,4 @@ dist
 web-build
 .vscode
 package-lock.json
-src/data/mock-data.json
+src/data/data.json

@@ -1,4 +1,4 @@
-import { getMockGameData } from "@/data/gameContent";
+import { getSeedData } from "@/data/gameContent";
 import { DbGameContentType } from "@/types/database";
 import type { SQLiteDatabase } from "expo-sqlite";
 
@@ -9,45 +9,31 @@ interface CategoryRow {
 }
 
 /**
- * Seeds built-in categories and game items from mock-data.json idempotently.
+ * Seeds built-in categories and game items from data.json idempotently.
  * Custom user-created content (is_custom = 1) is never overwritten.
  */
 export async function seedDefaultGameContent(
   db: SQLiteDatabase,
 ): Promise<void> {
+  const seedData = getSeedData();
+  const expectedDefaults = seedData.game_items.filter(
+    (item) => item.is_custom === 0,
+  ).length;
+
   const existingDefaultCount = await db.getFirstAsync<{ count: number }>(
     "SELECT COUNT(*) AS count FROM game_items WHERE is_custom = 0",
   );
 
-  const mockData = getMockGameData();
-  const totalExpectedDefaults =
-    mockData.impostor.categories.reduce(
-      (acc, category) => acc + category.items.length,
-      0,
-    ) +
-    mockData.perguntas.categories.reduce(
-      (acc, category) => acc + category.items.length,
-      0,
-    );
-
-  if ((existingDefaultCount?.count ?? 0) >= totalExpectedDefaults) {
+  if ((existingDefaultCount?.count ?? 0) >= expectedDefaults) {
     return;
   }
 
   await db.withTransactionAsync(async () => {
-    for (const category of mockData.impostor.categories) {
+    for (const category of seedData.categories) {
       await db.runAsync(
         `INSERT OR IGNORE INTO categories (slug, game_type, name, is_custom)
-         VALUES (?, 'impostor', ?, 0)`,
-        [category.id, category.name],
-      );
-    }
-
-    for (const category of mockData.perguntas.categories) {
-      await db.runAsync(
-        `INSERT OR IGNORE INTO categories (slug, game_type, name, is_custom)
-         VALUES (?, 'perguntas', ?, 0)`,
-        [category.id, category.name],
+         VALUES (?, ?, ?, ?)`,
+        [category.slug, category.game_type, category.name, category.is_custom],
       );
     }
 
@@ -60,38 +46,27 @@ export async function seedDefaultGameContent(
       categoryIdMap.set(`${row.game_type}:${row.slug}`, row.id);
     }
 
-    for (const category of mockData.impostor.categories) {
-      const categoryId = categoryIdMap.get(`impostor:${category.id}`);
+    for (const item of seedData.game_items) {
+      const categoryId = categoryIdMap.get(
+        `${item.game_type}:${item.category_slug}`,
+      );
       if (categoryId == null) continue;
 
-      for (const item of category.items) {
-        await db.runAsync(
-          `INSERT OR IGNORE INTO game_items (
-             slug, game_type, category_id, main_content, impostor_content, hints_json, is_custom, is_active
-           ) VALUES (?, 'impostor', ?, ?, NULL, ?, 0, 1)`,
-          [item.id, categoryId, item.word, JSON.stringify(item.hints)],
-        );
-      }
-    }
-
-    for (const category of mockData.perguntas.categories) {
-      const categoryId = categoryIdMap.get(`perguntas:${category.id}`);
-      if (categoryId == null) continue;
-
-      for (const item of category.items) {
-        await db.runAsync(
-          `INSERT OR IGNORE INTO game_items (
-             slug, game_type, category_id, main_content, impostor_content, hints_json, is_custom, is_active
-           ) VALUES (?, 'perguntas', ?, ?, ?, ?, 0, 1)`,
-          [
-            item.id,
-            categoryId,
-            item.innocentQuestion,
-            item.impostorQuestion,
-            JSON.stringify(item.hints ?? []),
-          ],
-        );
-      }
+      await db.runAsync(
+        `INSERT OR IGNORE INTO game_items (
+           slug, game_type, category_id, main_content, impostor_content, hints_json, is_custom, is_active
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          item.slug,
+          item.game_type,
+          categoryId,
+          item.main_content,
+          item.impostor_content,
+          JSON.stringify(item.hints),
+          item.is_custom,
+          item.is_active,
+        ],
+      );
     }
   });
 }

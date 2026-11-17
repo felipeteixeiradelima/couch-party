@@ -52,7 +52,30 @@ export interface QuestionCategory {
   items: QuestionPairItem[];
 }
 
-export interface MockGameData {
+export interface SeedCategoryRecord {
+  slug: string;
+  game_type: SupportedPartyGameId;
+  name: string;
+  is_custom: 0 | 1;
+}
+
+export interface SeedGameItemRecord {
+  slug: string;
+  game_type: SupportedPartyGameId;
+  category_slug: string;
+  main_content: string;
+  impostor_content: string | null;
+  hints: string[];
+  is_custom: 0 | 1;
+  is_active: 0 | 1;
+}
+
+export interface DatabaseSeedData {
+  categories: SeedCategoryRecord[];
+  game_items: SeedGameItemRecord[];
+}
+
+export interface GameData {
   impostor: {
     categories: ImpostorCategory[];
   };

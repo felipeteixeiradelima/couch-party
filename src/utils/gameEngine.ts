@@ -1,5 +1,5 @@
 import { GAMES_BY_ID } from "@/constants/games";
-import { getMockGameData } from "@/data/gameContent";
+import { getGameData } from "@/data/gameContent";
 import {
   ActiveRoundState,
   GameSettings,
@@ -183,7 +183,7 @@ export function createRound({
     votingDurationSeconds: clampVotingSeconds(settings.votingDurationSeconds),
   };
 
-  const data = getMockGameData();
+  const data = getGameData();
   let prompt: RoundPrompt;
   let nextHintHistory = usedHintHistory;
 
