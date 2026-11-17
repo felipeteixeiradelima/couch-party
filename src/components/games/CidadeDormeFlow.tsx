@@ -10,6 +10,7 @@ import { CidadeDormeRoleRevealPhase } from "@/components/games/cidade-dorme/Cida
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { CIDADE_DORME_THEMES, COLORS } from "@/constants/theme";
+import { parsePlayerDbId, recordMatch } from "@/database";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
@@ -27,6 +28,7 @@ import {
   resolveNightActions,
 } from "@/utils/cidadeDormeEngine";
 import { formatDurationLabel } from "@/utils/gameEngine";
+import { useSQLiteContext } from "expo-sqlite";
 import React, {
   useCallback,
   useEffect,
@@ -54,7 +56,8 @@ function getThemeColorStep(phase: CidadeDormePhase): number {
 }
 
 export function CidadeDormeFlow() {
-  const { players } = usePlayers();
+  const db = useSQLiteContext();
+  const { players, refreshPlayers } = usePlayers();
   const { animationsEnabled } = useAppSettings();
   const {
     triggerDayTransition,
@@ -75,7 +78,46 @@ export function CidadeDormeFlow() {
   const [match, setMatch] = useState<CidadeDormeMatchState | null>(null);
 
   const prevPhaseRef = useRef<CidadeDormePhase>(phase);
+  const recordedMatchIdRef = useRef<number | null>(null);
   const [themeAnim] = useState(() => new Animated.Value(0));
+
+  const persistFinishedMatch = useCallback(
+    (finishedMatch: CidadeDormeMatchState) => {
+      if (!finishedMatch.winner) return;
+      if (recordedMatchIdRef.current === finishedMatch.matchId) return;
+      recordedMatchIdRef.current = finishedMatch.matchId;
+
+      const winner = finishedMatch.winner;
+      void recordMatch(db, {
+        gameType: "cidade-dorme",
+        winnerSide: winner,
+        outcomeDetail: winner,
+        gameItemId: null,
+        roundsCount: finishedMatch.roundNumber,
+        participants: finishedMatch.players.map((entry) => {
+          const isAssassin = entry.role === "assassin";
+          const won =
+            (winner === "assassins" && isAssassin) ||
+            (winner === "citizens" && !isAssassin);
+
+          return {
+            playerId: parsePlayerDbId(entry.player.id),
+            playerName: entry.player.name,
+            avatarColor: entry.player.color,
+            role: entry.role,
+            alignment: isAssassin ? "impostor" : "innocent",
+            won,
+            survived: entry.alive,
+          };
+        }),
+      })
+        .then(() => refreshPlayers())
+        .catch(() => {
+          // Do not block end-of-match UI if match logging fails.
+        });
+    },
+    [db, refreshPlayers],
+  );
 
   const effectiveSettings = useMemo(
     () => normalizeCidadeDormeSettings(settings, players.length),
@@ -164,9 +206,10 @@ export function CidadeDormeFlow() {
         detectiveInvestigatedIds: payload.detectiveInvestigatedIds,
       });
       setMatch(updated);
+      persistFinishedMatch(updated);
       setPhase("day-discussion");
     },
-    [match],
+    [match, persistFinishedMatch],
   );
 
   const handleFinishVoting = useCallback(
@@ -174,9 +217,10 @@ export function CidadeDormeFlow() {
       if (!match) return;
       const updated = resolveDayVote({ match, votedPlayerId });
       setMatch(updated);
+      persistFinishedMatch(updated);
       setPhase("day-elimination");
     },
-    [match],
+    [match, persistFinishedMatch],
   );
 
   const handleProceedToNextNight = useCallback(() => {

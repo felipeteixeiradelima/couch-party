@@ -32,8 +32,8 @@ export default function PlayersScreen() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
 
-  const handleAddPlayer = () => {
-    const result = addPlayer(nameInput);
+  const handleAddPlayer = async () => {
+    const result = await addPlayer(nameInput);
     if (!result.ok) {
       triggerError();
       setErrorMessage(result.error ?? "Não foi possível adicionar o jogador.");
@@ -51,10 +51,10 @@ export default function PlayersScreen() {
     setErrorMessage(null);
   };
 
-  const handleConfirmEdit = () => {
+  const handleConfirmEdit = async () => {
     if (!editingId) return;
 
-    const result = updatePlayerName(editingId, editingName);
+    const result = await updatePlayerName(editingId, editingName);
     if (!result.ok) {
       triggerError();
       setErrorMessage(result.error ?? "Não foi possível atualizar o nome.");
@@ -83,7 +83,7 @@ export default function PlayersScreen() {
           text: "Remover todos",
           style: "destructive",
           onPress: () => {
-            clearPlayers();
+            void clearPlayers();
             setEditingId(null);
             setErrorMessage(null);
           },
@@ -174,7 +174,7 @@ export default function PlayersScreen() {
               <Pressable
                 onPress={() => {
                   triggerLightImpact();
-                  removePlayer(item.id);
+                  void removePlayer(item.id);
                 }}
                 accessibilityRole="button"
                 accessibilityLabel={`Remover ${item.name}`}

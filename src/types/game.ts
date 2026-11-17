@@ -21,26 +21,34 @@ export interface GameMetadata {
 
 export interface ImpostorWordItem {
   id: string;
+  dbId?: number;
   word: string;
   hints: string[];
+  isCustom?: boolean;
 }
 
 export interface ImpostorCategory {
   id: string;
+  dbId?: number;
   name: string;
+  isCustom?: boolean;
   items: ImpostorWordItem[];
 }
 
 export interface QuestionPairItem {
   id: string;
+  dbId?: number;
   innocentQuestion: string;
   impostorQuestion: string;
   hints?: string[];
+  isCustom?: boolean;
 }
 
 export interface QuestionCategory {
   id: string;
+  dbId?: number;
   name: string;
+  isCustom?: boolean;
   items: QuestionPairItem[];
 }
 
@@ -81,6 +89,7 @@ export type RoundPrompt =
       categoryId: string;
       categoryName: string;
       itemId: string;
+      itemDbId?: number;
       secretWord: string;
       impostorHint: string | null;
     }
@@ -89,6 +98,7 @@ export type RoundPrompt =
       categoryId: string;
       categoryName: string;
       itemId: string;
+      itemDbId?: number;
       innocentQuestion: string;
       impostorQuestion: string;
     };

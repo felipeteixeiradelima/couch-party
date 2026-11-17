@@ -9,12 +9,22 @@ import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { COLORS } from "@/constants/theme";
 import { getGameCategories } from "@/data/gameContent";
+import {
+  getCategoriesByGame,
+  getPlayableImpostorCategories,
+  getPlayableQuestionCategories,
+  parsePlayerDbId,
+  recordMatch,
+} from "@/database";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
 import {
   ActiveRoundState,
+  GameCategorySummary,
   GamePhase,
   GameSettings,
+  ImpostorCategory,
+  QuestionCategory,
   RoundResult,
   SupportedPartyGameId,
 } from "@/types/game";
@@ -25,6 +35,7 @@ import {
   resolveRoundResult,
   UsedHintHistory,
 } from "@/utils/gameEngine";
+import { useSQLiteContext } from "expo-sqlite";
 import React, {
   useCallback,
   useEffect,
@@ -40,9 +51,18 @@ interface PartyGameFlowProps {
 }
 
 export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
-  const { players } = usePlayers();
+  const db = useSQLiteContext();
+  const { players, refreshPlayers } = usePlayers();
   const { triggerSuccess, triggerWarning } = useHaptics();
-  const categories = useMemo(() => getGameCategories(gameId), [gameId]);
+  const [categories, setCategories] = useState<GameCategorySummary[]>(() =>
+    getGameCategories(gameId),
+  );
+  const [impostorCategories, setImpostorCategories] = useState<
+    ImpostorCategory[]
+  >([]);
+  const [questionCategories, setQuestionCategories] = useState<
+    QuestionCategory[]
+  >([]);
 
   const [phase, setPhase] = useState<GamePhase>("lobby");
   const [settings, setSettings] = useState<GameSettings>(() =>
@@ -57,6 +77,37 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
   const [usedHintHistory, setUsedHintHistory] = useState<UsedHintHistory>({});
 
   const prevPhaseRef = useRef<GamePhase>(phase);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadContent() {
+      try {
+        const dbCategories = await getCategoriesByGame(db, gameId);
+        if (gameId === "impostor") {
+          const playable = await getPlayableImpostorCategories(db);
+          if (isMounted) {
+            if (dbCategories.length > 0) setCategories(dbCategories);
+            setImpostorCategories(playable);
+          }
+        } else {
+          const playable = await getPlayableQuestionCategories(db);
+          if (isMounted) {
+            if (dbCategories.length > 0) setCategories(dbCategories);
+            setQuestionCategories(playable);
+          }
+        }
+      } catch {
+        // Keep bundled fallback data if database query fails.
+      }
+    }
+
+    void loadContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [db, gameId]);
 
   const effectiveSettings = useMemo(() => {
     const clamped = clampImpostorCount(settings.impostorCount, players.length);
@@ -89,6 +140,8 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
       settings: effectiveSettings,
       usedHintHistory,
       roundNumber: nextRoundNumber,
+      impostorCategories,
+      questionCategories,
     });
 
     setRoundNumber(nextRoundNumber);
@@ -96,7 +149,15 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
     setActiveRound(round);
     setRoundResult(null);
     setPhase("reveal");
-  }, [gameId, players, effectiveSettings, usedHintHistory, roundNumber]);
+  }, [
+    gameId,
+    players,
+    effectiveSettings,
+    usedHintHistory,
+    roundNumber,
+    impostorCategories,
+    questionCategories,
+  ]);
 
   const handleFinishVoting = useCallback(
     (votedPlayerIds: readonly string[]) => {
@@ -104,8 +165,29 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
       const result = resolveRoundResult(activeRound, votedPlayerIds);
       setRoundResult(result);
       setPhase("result");
+
+      void recordMatch(db, {
+        gameType: gameId,
+        winnerSide:
+          result.winningRole === "innocent" ? "innocents" : "impostors",
+        outcomeDetail: result.outcome,
+        gameItemId: activeRound.prompt.itemDbId ?? null,
+        roundsCount: activeRound.roundNumber,
+        participants: activeRound.assignments.map((assignment) => ({
+          playerId: parsePlayerDbId(assignment.player.id),
+          playerName: assignment.player.name,
+          avatarColor: assignment.player.color,
+          role: assignment.role,
+          alignment: assignment.role,
+          won: assignment.role === result.winningRole,
+        })),
+      })
+        .then(() => refreshPlayers())
+        .catch(() => {
+          // Do not block the round result UI if match logging fails.
+        });
     },
-    [activeRound],
+    [activeRound, db, gameId, refreshPlayers],
   );
 
   const handleCompleteAnswers = useCallback(
