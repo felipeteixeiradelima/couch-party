@@ -1,9 +1,13 @@
 import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { CidadeDormeMatchState } from "@/types/cidadeDorme";
-import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
+import {
+  CIDADE_DORME_ROLE_META,
+  getCidadeDormeRoleVisuals,
+} from "@/utils/cidadeDormeEngine";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -19,12 +23,14 @@ export function CidadeDormeResultPhase({
   onPlayAgain,
   onBackToLobby,
 }: CidadeDormeResultPhaseProps) {
+  const theme = useTheme();
+  const { colors, cidadeDorme } = theme;
+  const styles = useThemedStyles(createStyles);
+
   const citizensWon = match.winner === "citizens";
-  const accentColor = citizensWon ? COLORS.success : COLORS.danger;
-  const softBgColor = citizensWon ? COLORS.successSoft : COLORS.dangerSoft;
-  const borderColor = citizensWon
-    ? "rgba(16, 185, 129, 0.4)"
-    : "rgba(244, 63, 94, 0.4)";
+  const accentColor = citizensWon ? colors.success : colors.danger;
+  const softBgColor = citizensWon ? colors.successSoft : colors.dangerSoft;
+  const borderColor = citizensWon ? colors.successBorder : colors.dangerBorder;
 
   const assassins = match.players.filter((entry) => entry.role === "assassin");
   const hasMultipleAssassins = assassins.length > 1;
@@ -90,6 +96,7 @@ export function CidadeDormeResultPhase({
           <View style={styles.rosterList}>
             {match.players.map((entry) => {
               const roleMeta = CIDADE_DORME_ROLE_META[entry.role];
+              const roleVisuals = getCidadeDormeRoleVisuals(entry.role, theme);
               const statusLabel = entry.alive
                 ? "Sobreviveu"
                 : entry.eliminatedPhase?.kind === "night"
@@ -122,20 +129,20 @@ export function CidadeDormeResultPhase({
                     style={[
                       styles.roleChip,
                       {
-                        backgroundColor: roleMeta.softBgColor,
-                        borderColor: roleMeta.borderColor,
+                        backgroundColor: roleVisuals.softBgColor,
+                        borderColor: roleVisuals.borderColor,
                       },
                     ]}
                   >
                     <RoleBadgeIcon
                       role={entry.role}
                       size={14}
-                      color={roleMeta.accentColor}
+                      color={roleVisuals.accentColor}
                     />
                     <Text
                       style={[
                         styles.roleChipText,
-                        { color: roleMeta.accentColor },
+                        { color: roleVisuals.accentColor },
                       ]}
                     >
                       {roleMeta.title}
@@ -160,8 +167,8 @@ export function CidadeDormeResultPhase({
                       {
                         backgroundColor:
                           item.phase === "night"
-                            ? "rgba(96, 165, 250, 0.14)"
-                            : COLORS.warningSoft,
+                            ? cidadeDorme.night.accentSoft
+                            : cidadeDorme.day.accentSoft,
                       },
                     ]}
                     accessible={false}
@@ -174,7 +181,9 @@ export function CidadeDormeResultPhase({
                       }
                       size={15}
                       color={
-                        item.phase === "night" ? "#60A5FA" : COLORS.warning
+                        item.phase === "night"
+                          ? cidadeDorme.night.accent
+                          : cidadeDorme.day.accent
                       }
                     />
                   </View>
@@ -190,7 +199,7 @@ export function CidadeDormeResultPhase({
         <Button
           label="Jogar novamente"
           onPress={onPlayAgain}
-          icon={<Ionicons name="refresh" size={20} color={COLORS.white} />}
+          icon={<Ionicons name="refresh" size={20} color={colors.white} />}
         />
         <Button
           label="Configurações da partida"
@@ -202,142 +211,143 @@ export function CidadeDormeResultPhase({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.md,
-    alignItems: "center",
-  },
-  eyebrow: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-  },
-  headerTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.lg,
-  },
-  winnerCard: {
-    borderWidth: 1.5,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-  },
-  winnerIconCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.md,
-  },
-  winnerTitle: {
-    fontSize: 26,
-    fontWeight: "900",
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-  },
-  winnerDescription: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.md,
-  },
-  cardTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  rosterList: {
-    gap: SPACING.md,
-  },
-  rosterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  rosterInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-  rosterName: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  rosterStatus: {
-    color: COLORS.textMuted,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  rosterStatusAlive: {
-    color: COLORS.success,
-    fontWeight: "600",
-  },
-  roleChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    borderWidth: 1,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 5,
-  },
-  roleChipText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  historyList: {
-    gap: SPACING.md,
-  },
-  historyRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: SPACING.md,
-  },
-  historyIconBox: {
-    width: 28,
-    height: 28,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 1,
-  },
-  historyText: {
-    flex: 1,
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-    gap: SPACING.sm,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.md,
+      alignItems: "center",
+    },
+    eyebrow: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+    },
+    headerTitle: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      marginTop: 2,
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.lg,
+    },
+    winnerCard: {
+      borderWidth: 1.5,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+    },
+    winnerIconCircle: {
+      width: 76,
+      height: 76,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.md,
+    },
+    winnerTitle: {
+      fontSize: 26,
+      fontWeight: "900",
+      textAlign: "center",
+      marginBottom: SPACING.xs,
+    },
+    winnerDescription: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.md,
+    },
+    cardTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    rosterList: {
+      gap: SPACING.md,
+    },
+    rosterRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    rosterInfo: {
+      flex: 1,
+      minWidth: 0,
+    },
+    rosterName: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    rosterStatus: {
+      color: colors.textMuted,
+      fontSize: 12,
+      marginTop: 2,
+    },
+    rosterStatusAlive: {
+      color: colors.success,
+      fontWeight: "600",
+    },
+    roleChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      borderWidth: 1,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 5,
+    },
+    roleChipText: {
+      fontSize: 12,
+      fontWeight: "700",
+    },
+    historyList: {
+      gap: SPACING.md,
+    },
+    historyRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: SPACING.md,
+    },
+    historyIconBox: {
+      width: 28,
+      height: 28,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 1,
+    },
+    historyText: {
+      flex: 1,
+      color: colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 19,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+      gap: SPACING.sm,
+    },
+  });

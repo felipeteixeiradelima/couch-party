@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { GAMES_BY_ID } from "@/constants/games";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { ActiveRoundState } from "@/types/game";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -20,6 +21,8 @@ export function DiscussionWaitingPhase({
   onRequestExit,
 }: DiscussionWaitingPhaseProps) {
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   const game = GAMES_BY_ID[round.prompt.gameId];
   const impostorCount = round.settingsSnapshot.impostorCount;
@@ -49,7 +52,7 @@ export function DiscussionWaitingPhase({
           ]}
           hitSlop={8}
         >
-          <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+          <Ionicons name="close" size={20} color={colors.textSecondary} />
         </Pressable>
       </View>
 
@@ -65,7 +68,7 @@ export function DiscussionWaitingPhase({
                 <Ionicons
                   name="chatbubbles-outline"
                   size={34}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
               </View>
 
@@ -73,7 +76,7 @@ export function DiscussionWaitingPhase({
                 <Ionicons
                   name="pricetag-outline"
                   size={14}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
                 <Text style={styles.categoryPillText}>
                   Categoria: {round.prompt.categoryName}
@@ -93,7 +96,7 @@ export function DiscussionWaitingPhase({
                 <Ionicons
                   name="eye-off-outline"
                   size={16}
-                  color={COLORS.warning}
+                  color={colors.warning}
                 />
                 <Text style={styles.infoBannerText}>
                   {impostorCount === 1
@@ -130,7 +133,7 @@ export function DiscussionWaitingPhase({
                 <Ionicons
                   name="pricetag-outline"
                   size={14}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
                 <Text style={styles.categoryPillText}>
                   Categoria: {round.prompt.categoryName}
@@ -150,7 +153,7 @@ export function DiscussionWaitingPhase({
                 <Ionicons
                   name="eye-off-outline"
                   size={16}
-                  color={COLORS.warning}
+                  color={colors.warning}
                 />
                 <Text style={styles.infoBannerText}>
                   {impostorCount === 1
@@ -209,7 +212,7 @@ export function DiscussionWaitingPhase({
             <Ionicons
               name="checkmark-done-outline"
               size={20}
-              color={COLORS.white}
+              color={colors.white}
             />
           }
         />
@@ -231,216 +234,217 @@ export function DiscussionWaitingPhase({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  headerLeft: {
-    flex: 1,
-  },
-  eyebrow: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-  },
-  title: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  exitButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.xl,
-  },
-  heroCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-  },
-  heroIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.lg,
-  },
-  categoryPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: COLORS.primarySoft,
-    borderWidth: 1,
-    borderColor: "rgba(139, 61, 255, 0.35)",
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-    marginBottom: SPACING.lg,
-  },
-  categoryPillText: {
-    color: COLORS.primaryText,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  heroTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    textAlign: "center",
-    marginBottom: SPACING.sm,
-  },
-  heroDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: "center",
-    marginBottom: SPACING.lg,
-  },
-  infoBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.warningSoft,
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-  },
-  infoBannerText: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  playersSection: {
-    gap: SPACING.md,
-  },
-  sectionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  playersGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.sm,
-  },
-  playerChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.md,
-    maxWidth: "48%",
-  },
-  playerName: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-    flexShrink: 1,
-  },
-  questionRevealCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xl,
-    alignItems: "center",
-  },
-  questionRevealEyebrow: {
-    color: COLORS.warning,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.4,
-    marginBottom: SPACING.xs,
-  },
-  questionRevealText: {
-    color: COLORS.textPrimary,
-    fontSize: 19,
-    lineHeight: 26,
-    fontWeight: "800",
-    textAlign: "center",
-    marginBottom: SPACING.lg,
-  },
-  answersHeaderRow: {
-    gap: 2,
-  },
-  answersSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-  },
-  answersList: {
-    gap: SPACING.sm,
-  },
-  answerCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.sm,
-  },
-  answerPlayerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  answerPlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-    flex: 1,
-  },
-  answerValue: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    lineHeight: 21,
-    backgroundColor: COLORS.surfaceElevated,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    headerLeft: {
+      flex: 1,
+    },
+    eyebrow: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+    },
+    title: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      marginTop: 2,
+    },
+    exitButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.xl,
+    },
+    heroCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+    },
+    heroIconCircle: {
+      width: 72,
+      height: 72,
+      borderRadius: RADIUS.full,
+      backgroundColor: colors.primarySoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.lg,
+    },
+    categoryPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.primarySoft,
+      borderWidth: 1,
+      borderColor: colors.primaryBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+      marginBottom: SPACING.lg,
+    },
+    categoryPillText: {
+      color: colors.primaryText,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    heroTitle: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      textAlign: "center",
+      marginBottom: SPACING.sm,
+    },
+    heroDescription: {
+      color: colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 22,
+      textAlign: "center",
+      marginBottom: SPACING.lg,
+    },
+    infoBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.warningSoft,
+      borderWidth: 1,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: SPACING.sm,
+    },
+    infoBannerText: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    playersSection: {
+      gap: SPACING.md,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    playersGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    playerChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.sm,
+      paddingHorizontal: SPACING.md,
+      maxWidth: "48%",
+    },
+    playerName: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+      flexShrink: 1,
+    },
+    questionRevealCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1.5,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xl,
+      alignItems: "center",
+    },
+    questionRevealEyebrow: {
+      color: colors.warning,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.4,
+      marginBottom: SPACING.xs,
+    },
+    questionRevealText: {
+      color: colors.textPrimary,
+      fontSize: 19,
+      lineHeight: 26,
+      fontWeight: "800",
+      textAlign: "center",
+      marginBottom: SPACING.lg,
+    },
+    answersHeaderRow: {
+      gap: 2,
+    },
+    answersSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 13,
+    },
+    answersList: {
+      gap: SPACING.sm,
+    },
+    answerCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: SPACING.sm,
+    },
+    answerPlayerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    answerPlayerName: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+      flex: 1,
+    },
+    answerValue: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      lineHeight: 21,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: SPACING.sm,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+  });

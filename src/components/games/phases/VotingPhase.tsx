@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/Button";
 import { CircularTimer, getTimerColor } from "@/components/ui/CircularTimer";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { ActiveRoundState } from "@/types/game";
 import { formatPlayerNames, formatTimer } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
@@ -39,6 +40,10 @@ export function VotingPhase({
 }: VotingPhaseProps) {
   const { animationsEnabled } = useAppSettings();
   const { triggerSelection, triggerWarning } = useHaptics();
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useThemedStyles(createStyles);
+
   const { votingTimerEnabled, votingDurationSeconds, impostorCount } =
     round.settingsSnapshot;
   const requiredVotes = Math.max(1, impostorCount);
@@ -158,7 +163,11 @@ export function VotingPhase({
     }
   };
 
-  const timerColor = getTimerColor(remainingSeconds, votingDurationSeconds);
+  const timerColor = getTimerColor(
+    remainingSeconds,
+    votingDurationSeconds,
+    colors,
+  );
   const progressRatio =
     votingDurationSeconds > 0
       ? Math.min(1, Math.max(0, remainingSeconds / votingDurationSeconds))
@@ -196,7 +205,7 @@ export function VotingPhase({
           ]}
           hitSlop={8}
         >
-          <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+          <Ionicons name="close" size={20} color={colors.textSecondary} />
         </Pressable>
       </View>
 
@@ -284,7 +293,7 @@ export function VotingPhase({
                 <Ionicons
                   name="infinite-outline"
                   size={20}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
                 <Text style={styles.noTimerText}>
                   Votação sem limite de tempo
@@ -401,7 +410,9 @@ export function VotingPhase({
                           <Ionicons
                             name="checkmark"
                             size={14}
-                            color={COLORS.background}
+                            color={
+                              theme.isDark ? colors.background : colors.white
+                            }
                           />
                         ) : null}
                       </View>
@@ -451,7 +462,7 @@ export function VotingPhase({
           label={requiredVotes > 1 ? "Confirmar Votos" : "Confirmar Voto"}
           onPress={() => setVoteConfirmVisible(true)}
           disabled={!isSelectionComplete}
-          icon={<Ionicons name="checkmark" size={20} color={COLORS.white} />}
+          icon={<Ionicons name="checkmark" size={20} color={colors.white} />}
         />
       </View>
 
@@ -487,287 +498,288 @@ export function VotingPhase({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  headerSpacer: {
-    width: 38,
-  },
-  headerTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  exitButton: {
-    width: 38,
-    height: 38,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  scrollWrapper: {
-    flex: 1,
-    position: "relative",
-  },
-  stickyTimerBar: {
-    position: "absolute",
-    top: 0,
-    left: SPACING.xl,
-    right: SPACING.xl,
-    zIndex: 10,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    overflow: "hidden",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  stickyTimerMain: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-  },
-  stickyTimerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  stickyDot: {
-    width: 10,
-    height: 10,
-    borderRadius: RADIUS.full,
-  },
-  stickyTimeText: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
-  },
-  stickySubText: {
-    color: COLORS.textSecondary,
-    fontSize: 11,
-    fontWeight: "600",
-  },
-  stickyEndButton: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 8,
-    minHeight: 36,
-    justifyContent: "center",
-  },
-  stickyEndButtonText: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  stickyProgressTrack: {
-    height: 3,
-    backgroundColor: COLORS.border,
-  },
-  stickyProgressFill: {
-    height: "100%",
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.xxl,
-  },
-  timerSection: {
-    alignItems: "center",
-    gap: SPACING.lg,
-    paddingTop: SPACING.xs,
-  },
-  noTimerBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-  },
-  noTimerText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  endVotingPill: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    minHeight: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  endVotingPillText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  votingSection: {
-    gap: SPACING.sm,
-  },
-  questionRecapBox: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: 4,
-    marginBottom: SPACING.xs,
-  },
-  questionRecapLabel: {
-    color: COLORS.warning,
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.2,
-  },
-  questionRecapText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "700",
-  },
-  questionHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-  },
-  questionHeading: {
-    flex: 1,
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "800",
-    letterSpacing: -0.3,
-  },
-  selectionBadge: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 4,
-  },
-  selectionBadgeComplete: {
-    backgroundColor: COLORS.successSoft,
-    borderColor: "rgba(16, 185, 129, 0.45)",
-  },
-  selectionBadgeText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "700",
-    fontVariant: ["tabular-nums"],
-  },
-  selectionBadgeTextComplete: {
-    color: COLORS.success,
-  },
-  questionSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    marginBottom: SPACING.sm,
-  },
-  playersGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  playerCard: {
-    width: "48%",
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.md,
-  },
-  playerCardSelected: {
-    borderColor: COLORS.success,
-    backgroundColor: "rgba(16, 185, 129, 0.08)",
-  },
-  playerCardMuted: {
-    opacity: 0.55,
-  },
-  playerCardTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  radioCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: RADIUS.full,
-    borderWidth: 1.5,
-    borderColor: COLORS.textMuted,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxShape: {
-    borderRadius: RADIUS.sm,
-  },
-  radioCircleSelected: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
-  },
-  playerName: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  playerAnswerPreview: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-    gap: SPACING.md,
-  },
-  voteStatusText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  voteStatusSelected: {
-    color: COLORS.success,
-  },
-});
+const createStyles = ({ colors, shadowOpacity }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    headerSpacer: {
+      width: 38,
+    },
+    headerTitle: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    exitButton: {
+      width: 38,
+      height: 38,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    scrollWrapper: {
+      flex: 1,
+      position: "relative",
+    },
+    stickyTimerBar: {
+      position: "absolute",
+      top: 0,
+      left: SPACING.xl,
+      right: SPACING.xl,
+      zIndex: 10,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      overflow: "hidden",
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity,
+      shadowRadius: 10,
+      elevation: 8,
+    },
+    stickyTimerMain: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+    },
+    stickyTimerLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    stickyDot: {
+      width: 10,
+      height: 10,
+      borderRadius: RADIUS.full,
+    },
+    stickyTimeText: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
+    stickySubText: {
+      color: colors.textSecondary,
+      fontSize: 11,
+      fontWeight: "600",
+    },
+    stickyEndButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 8,
+      minHeight: 36,
+      justifyContent: "center",
+    },
+    stickyEndButtonText: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    stickyProgressTrack: {
+      height: 3,
+      backgroundColor: colors.border,
+    },
+    stickyProgressFill: {
+      height: "100%",
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.xxl,
+    },
+    timerSection: {
+      alignItems: "center",
+      gap: SPACING.lg,
+      paddingTop: SPACING.xs,
+    },
+    noTimerBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+    },
+    noTimerText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    endVotingPill: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
+      minHeight: 44,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    endVotingPillText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    votingSection: {
+      gap: SPACING.sm,
+    },
+    questionRecapBox: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: 4,
+      marginBottom: SPACING.xs,
+    },
+    questionRecapLabel: {
+      color: colors.warning,
+      fontSize: 10,
+      fontWeight: "800",
+      letterSpacing: 1.2,
+    },
+    questionRecapText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "700",
+    },
+    questionHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+    },
+    questionHeading: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+      letterSpacing: -0.3,
+    },
+    selectionBadge: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 4,
+    },
+    selectionBadgeComplete: {
+      backgroundColor: colors.successSoft,
+      borderColor: colors.successBorder,
+    },
+    selectionBadgeText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "700",
+      fontVariant: ["tabular-nums"],
+    },
+    selectionBadgeTextComplete: {
+      color: colors.success,
+    },
+    questionSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      marginBottom: SPACING.sm,
+    },
+    playersGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    playerCard: {
+      width: "48%",
+      backgroundColor: colors.surface,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: SPACING.md,
+    },
+    playerCardSelected: {
+      borderColor: colors.success,
+      backgroundColor: colors.successTint,
+    },
+    playerCardMuted: {
+      opacity: 0.55,
+    },
+    playerCardTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    radioCircle: {
+      width: 24,
+      height: 24,
+      borderRadius: RADIUS.full,
+      borderWidth: 1.5,
+      borderColor: colors.textMuted,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    checkboxShape: {
+      borderRadius: RADIUS.sm,
+    },
+    radioCircleSelected: {
+      backgroundColor: colors.success,
+      borderColor: colors.success,
+    },
+    playerName: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    playerAnswerPreview: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      lineHeight: 17,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+      gap: SPACING.md,
+    },
+    voteStatusText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+      textAlign: "center",
+    },
+    voteStatusSelected: {
+      color: colors.success,
+    },
+  });

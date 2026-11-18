@@ -1,5 +1,5 @@
 import { GAMES_BY_ID } from "@/constants/games";
-import { COLORS } from "@/constants/theme";
+import { AppTheme, DARK_COLORS } from "@/constants/theme";
 import {
   CidadeDormeHistoryEntry,
   CidadeDormeMatchState,
@@ -16,15 +16,51 @@ import {
   shuffleArray,
 } from "@/utils/gameEngine";
 
-export interface CidadeDormeRoleMeta {
+export interface CidadeDormeRoleVisuals {
+  accentColor: string;
+  softBgColor: string;
+  borderColor: string;
+}
+
+export interface CidadeDormeRoleMeta extends CidadeDormeRoleVisuals {
   role: CidadeDormeRole;
   title: string;
   shortDescription: string;
   revealDescription: string;
-  accentColor: string;
-  softBgColor: string;
-  borderColor: string;
   alignment: "assassin" | "innocent";
+}
+
+export function getCidadeDormeRoleVisuals(
+  role: CidadeDormeRole,
+  theme: AppTheme,
+): CidadeDormeRoleVisuals {
+  const { colors, cidadeDorme } = theme;
+  switch (role) {
+    case "assassin":
+      return {
+        accentColor: colors.danger,
+        softBgColor: colors.dangerSoft,
+        borderColor: colors.dangerBorder,
+      };
+    case "detective":
+      return {
+        accentColor: cidadeDorme.night.accent,
+        softBgColor: cidadeDorme.night.accentSoft,
+        borderColor: cidadeDorme.night.accentBorder,
+      };
+    case "guardian_angel":
+      return {
+        accentColor: colors.success,
+        softBgColor: colors.successSoft,
+        borderColor: colors.successBorder,
+      };
+    case "citizen":
+      return {
+        accentColor: colors.primaryText,
+        softBgColor: colors.primarySoft,
+        borderColor: colors.primaryBorder,
+      };
+  }
 }
 
 export const CIDADE_DORME_ROLE_META: Record<
@@ -37,9 +73,9 @@ export const CIDADE_DORME_ROLE_META: Record<
     shortDescription: "Escolhe uma vítima à noite sem ser descoberto.",
     revealDescription:
       "À noite, acorde em segredo para escolher uma vítima. Durante o dia, disfarce para não ser eliminado.",
-    accentColor: COLORS.danger,
-    softBgColor: COLORS.dangerSoft,
-    borderColor: "rgba(244, 63, 94, 0.45)",
+    accentColor: DARK_COLORS.danger,
+    softBgColor: DARK_COLORS.dangerSoft,
+    borderColor: DARK_COLORS.dangerBorder,
     alignment: "assassin",
   },
   detective: {
@@ -61,9 +97,9 @@ export const CIDADE_DORME_ROLE_META: Record<
       "Protege um jogador à noite contra o ataque dos assassinos.",
     revealDescription:
       "À noite, escolha uma pessoa para proteger. Se os assassinos escolherem a mesma pessoa, ninguém morre.",
-    accentColor: COLORS.success,
-    softBgColor: COLORS.successSoft,
-    borderColor: "rgba(16, 185, 129, 0.45)",
+    accentColor: DARK_COLORS.success,
+    softBgColor: DARK_COLORS.successSoft,
+    borderColor: DARK_COLORS.successBorder,
     alignment: "innocent",
   },
   citizen: {
@@ -73,9 +109,9 @@ export const CIDADE_DORME_ROLE_META: Record<
       "Não tem poder noturno; ajuda a descobrir os assassinos no debate.",
     revealDescription:
       "Você não possui poderes noturnos. Observe as reações durante o dia e vote para eliminar os assassinos.",
-    accentColor: COLORS.primaryText,
-    softBgColor: COLORS.primarySoft,
-    borderColor: "rgba(167, 139, 250, 0.4)",
+    accentColor: DARK_COLORS.primaryText,
+    softBgColor: DARK_COLORS.primarySoft,
+    borderColor: DARK_COLORS.primaryBorder,
     alignment: "innocent",
   },
 };

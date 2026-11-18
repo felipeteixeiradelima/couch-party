@@ -1,5 +1,6 @@
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -44,6 +45,8 @@ export function SecretRevealCard({
   revealedContent,
 }: SecretRevealCardProps) {
   const { animationsEnabled } = useAppSettings();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   const [flipAnim] = useState(() => new Animated.Value(0));
   const [scaleAnim] = useState(() => new Animated.Value(1));
@@ -234,9 +237,9 @@ export function SecretRevealCard({
             },
           ]}
         >
-          <View style={[styles.innerFrame, { borderColor: COLORS.border }]}>
+          <View style={[styles.innerFrame, { borderColor: colors.border }]}>
             <View style={styles.cardTopRow}>
-              {renderCornerIcon(COLORS.primaryText)}
+              {renderCornerIcon(colors.primaryText)}
               <Text style={styles.cardTag}>PAPEL SECRETO</Text>
               <View style={styles.cardCornerPlaceholder} />
             </View>
@@ -246,7 +249,7 @@ export function SecretRevealCard({
                 style={[
                   styles.iconCircle,
                   {
-                    backgroundColor: COLORS.primarySoft,
+                    backgroundColor: colors.primarySoft,
                     transform: [{ scale: pulseAnim }],
                   },
                 ]}
@@ -255,7 +258,7 @@ export function SecretRevealCard({
                 <Ionicons
                   name="finger-print-outline"
                   size={42}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
               </Animated.View>
 
@@ -263,7 +266,7 @@ export function SecretRevealCard({
               <View
                 style={[
                   styles.dividerLine,
-                  { backgroundColor: COLORS.primary },
+                  { backgroundColor: colors.primary },
                 ]}
               />
               <Text style={styles.hiddenHint}>{hiddenHint}</Text>
@@ -272,7 +275,7 @@ export function SecretRevealCard({
             <View style={styles.cardBottomRow}>
               <View style={styles.cardCornerPlaceholder} />
               <Text style={styles.cardTag}>SOLTE PARA OCULTAR</Text>
-              {renderCornerIcon(COLORS.primaryText)}
+              {renderCornerIcon(colors.primaryText)}
             </View>
           </View>
         </Animated.View>
@@ -317,85 +320,86 @@ export function SecretRevealCard({
   );
 }
 
-const styles = StyleSheet.create({
-  cardPressable: {
-    flex: 1,
-    maxHeight: 460,
-  },
-  animatedDeckWrapper: {
-    flex: 1,
-    position: "relative",
-  },
-  outerCard: {
-    flex: 1,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.xl,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    padding: 10,
-    backfaceVisibility: "hidden",
-  },
-  frontCard: {
-    borderColor: COLORS.border,
-  },
-  outerCardPressed: {
-    backgroundColor: COLORS.surfaceElevated,
-  },
-  innerFrame: {
-    flex: 1,
-    borderRadius: RADIUS.lg,
-    borderWidth: 1,
-    padding: SPACING.lg,
-    justifyContent: "space-between",
-  },
-  cardTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardBottomRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardCornerPlaceholder: {
-    width: 18,
-  },
-  cardTag: {
-    color: COLORS.textSecondary,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.6,
-  },
-  cardCenter: {
-    alignItems: "center",
-    paddingHorizontal: SPACING.sm,
-  },
-  iconCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.lg,
-  },
-  hiddenTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  dividerLine: {
-    width: 32,
-    height: 3,
-    borderRadius: RADIUS.full,
-    marginVertical: SPACING.md,
-  },
-  hiddenHint: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-    maxWidth: 260,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    cardPressable: {
+      flex: 1,
+      maxHeight: 460,
+    },
+    animatedDeckWrapper: {
+      flex: 1,
+      position: "relative",
+    },
+    outerCard: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRadius: RADIUS.xl,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      padding: 10,
+      backfaceVisibility: "hidden",
+    },
+    frontCard: {
+      borderColor: colors.border,
+    },
+    outerCardPressed: {
+      backgroundColor: colors.surfaceElevated,
+    },
+    innerFrame: {
+      flex: 1,
+      borderRadius: RADIUS.lg,
+      borderWidth: 1,
+      padding: SPACING.lg,
+      justifyContent: "space-between",
+    },
+    cardTopRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    cardBottomRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    cardCornerPlaceholder: {
+      width: 18,
+    },
+    cardTag: {
+      color: colors.textSecondary,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.6,
+    },
+    cardCenter: {
+      alignItems: "center",
+      paddingHorizontal: SPACING.sm,
+    },
+    iconCircle: {
+      width: 84,
+      height: 84,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.lg,
+    },
+    hiddenTitle: {
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    dividerLine: {
+      width: 32,
+      height: 3,
+      borderRadius: RADIUS.full,
+      marginVertical: SPACING.md,
+    },
+    hiddenHint: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+      maxWidth: 260,
+    },
+  });

@@ -9,11 +9,11 @@ import { CidadeDormeResultPhase } from "@/components/games/cidade-dorme/CidadeDo
 import { CidadeDormeRoleRevealPhase } from "@/components/games/cidade-dorme/CidadeDormeRoleRevealPhase";
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { CIDADE_DORME_THEMES, COLORS } from "@/constants/theme";
 import { parsePlayerDbId, recordMatch } from "@/database";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
+import { useTheme } from "@/hooks/useTheme";
 import {
   CidadeDormeMatchState,
   CidadeDormePhase,
@@ -59,6 +59,7 @@ export function CidadeDormeFlow() {
   const db = useSQLiteContext();
   const { players, refreshPlayers } = usePlayers();
   const { animationsEnabled } = useAppSettings();
+  const theme = useTheme();
   const {
     triggerDayTransition,
     triggerNightTransition,
@@ -321,9 +322,9 @@ export function CidadeDormeFlow() {
   const animatedBackgroundColor = themeAnim.interpolate({
     inputRange: [0, 1, 2],
     outputRange: [
-      COLORS.background,
-      CIDADE_DORME_THEMES.night.background,
-      CIDADE_DORME_THEMES.day.background,
+      theme.colors.background,
+      theme.cidadeDorme.night.background,
+      theme.cidadeDorme.day.background,
     ],
   });
 

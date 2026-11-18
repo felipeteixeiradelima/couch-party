@@ -1,8 +1,9 @@
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { ActiveRoundState } from "@/types/game";
 import { Ionicons } from "@expo/vector-icons";
 import React, { ComponentRef, useEffect, useRef, useState } from "react";
@@ -39,6 +40,8 @@ export function QuestionAnswerPhase({
 
   const scrollViewRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const { triggerLightImpact } = useHaptics();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   useEffect(() => {
     if (!isUnlocked) {
@@ -145,7 +148,7 @@ export function QuestionAnswerPhase({
               <Ionicons
                 name="lock-closed-outline"
                 size={14}
-                color={COLORS.warning}
+                color={colors.warning}
               />
               <Text style={styles.privacyPillText}>
                 Sua pergunta e resposta são secretas.
@@ -162,7 +165,7 @@ export function QuestionAnswerPhase({
               <Ionicons
                 name="lock-open-outline"
                 size={20}
-                color={COLORS.white}
+                color={colors.white}
               />
             }
           />
@@ -219,7 +222,7 @@ export function QuestionAnswerPhase({
               <Ionicons
                 name="help-circle-outline"
                 size={32}
-                color={COLORS.warning}
+                color={colors.warning}
               />
             </View>
             <Text style={styles.questionOverline}>SUA PERGUNTA</Text>
@@ -247,7 +250,7 @@ export function QuestionAnswerPhase({
               }}
               onBlur={() => setIsInputFocused(false)}
               placeholder="Digite sua resposta aqui..."
-              placeholderTextColor={COLORS.textMuted}
+              placeholderTextColor={colors.textMuted}
               maxLength={MAX_ANSWER_LENGTH}
               multiline
               returnKeyType="done"
@@ -284,7 +287,7 @@ export function QuestionAnswerPhase({
                     : "arrow-forward-outline"
                 }
                 size={20}
-                color={COLORS.white}
+                color={colors.white}
               />
             }
           />
@@ -305,6 +308,9 @@ function QuestionProgressHeader({
   assignments,
   onRequestExit,
 }: QuestionProgressHeaderProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   return (
     <View style={styles.topBar}>
       <View style={styles.topSpacer} />
@@ -333,254 +339,255 @@ function QuestionProgressHeader({
         style={({ pressed }) => [styles.exitButton, pressed && styles.pressed]}
         hitSlop={8}
       >
-        <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+        <Ionicons name="close" size={20} color={colors.textSecondary} />
       </Pressable>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: SPACING.xl,
-  },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  topSpacer: {
-    width: 38,
-  },
-  progressBlock: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: "center",
-    gap: SPACING.xs,
-  },
-  progressLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  progressTrack: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-    maxWidth: 220,
-    gap: 4,
-  },
-  progressSegment: {
-    flex: 1,
-    minWidth: 4,
-    maxWidth: 22,
-    height: 4,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.border,
-  },
-  progressSegmentActive: {
-    backgroundColor: COLORS.primary,
-  },
-  exitButton: {
-    width: 38,
-    height: 38,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  handoffCenter: {
-    flex: 1,
-    justifyContent: "center",
-    paddingVertical: SPACING.md,
-  },
-  handoffCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-  },
-  handoffOverline: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-    marginTop: SPACING.lg,
-    marginBottom: 4,
-  },
-  handoffPlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 28,
-    fontWeight: "900",
-    textAlign: "center",
-    marginBottom: SPACING.sm,
-  },
-  handoffHint: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    maxWidth: 280,
-    marginBottom: SPACING.lg,
-  },
-  handoffHintBold: {
-    color: COLORS.textPrimary,
-    fontWeight: "700",
-  },
-  privacyPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: COLORS.warningSoft,
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  privacyPillText: {
-    color: COLORS.textPrimary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: SPACING.xs,
-    paddingBottom: SPACING.xl,
-    gap: SPACING.lg,
-  },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-  },
-  playerBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingVertical: 4,
-    paddingLeft: 4,
-    paddingRight: SPACING.md,
-    flexShrink: 1,
-  },
-  playerBadgeText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-    flexShrink: 1,
-  },
-  categoryBadge: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-    flexShrink: 1,
-  },
-  categoryBadgeText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  questionCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1.5,
-    borderColor: "rgba(245, 158, 11, 0.38)",
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xl,
-    alignItems: "center",
-  },
-  questionIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.warningSoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.md,
-  },
-  questionOverline: {
-    color: COLORS.warning,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.4,
-    marginBottom: SPACING.xs,
-  },
-  questionText: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    lineHeight: 28,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  answerCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.sm,
-  },
-  answerHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  answerLabel: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  charCounter: {
-    color: COLORS.textMuted,
-    fontSize: 12,
-    fontWeight: "600",
-    fontVariant: ["tabular-nums"],
-  },
-  answerInput: {
-    minHeight: 96,
-    maxHeight: 150,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.md,
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  answerInputFocused: {
-    borderColor: COLORS.primary,
-  },
-  answerHelper: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  footer: {
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    flex: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: SPACING.xl,
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    topSpacer: {
+      width: 38,
+    },
+    progressBlock: {
+      flex: 1,
+      minWidth: 0,
+      alignItems: "center",
+      gap: SPACING.xs,
+    },
+    progressLabel: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    progressTrack: {
+      flexDirection: "row",
+      justifyContent: "center",
+      width: "100%",
+      maxWidth: 220,
+      gap: 4,
+    },
+    progressSegment: {
+      flex: 1,
+      minWidth: 4,
+      maxWidth: 22,
+      height: 4,
+      borderRadius: RADIUS.full,
+      backgroundColor: colors.border,
+    },
+    progressSegmentActive: {
+      backgroundColor: colors.primary,
+    },
+    exitButton: {
+      width: 38,
+      height: 38,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+    handoffCenter: {
+      flex: 1,
+      justifyContent: "center",
+      paddingVertical: SPACING.md,
+    },
+    handoffCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+    },
+    handoffOverline: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.5,
+      marginTop: SPACING.lg,
+      marginBottom: 4,
+    },
+    handoffPlayerName: {
+      color: colors.textPrimary,
+      fontSize: 28,
+      fontWeight: "900",
+      textAlign: "center",
+      marginBottom: SPACING.sm,
+    },
+    handoffHint: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+      maxWidth: 280,
+      marginBottom: SPACING.lg,
+    },
+    handoffHintBold: {
+      color: colors.textPrimary,
+      fontWeight: "700",
+    },
+    privacyPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.warningSoft,
+      borderWidth: 1,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    privacyPillText: {
+      color: colors.textPrimary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingTop: SPACING.xs,
+      paddingBottom: SPACING.xl,
+      gap: SPACING.lg,
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+    },
+    playerBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingVertical: 4,
+      paddingLeft: 4,
+      paddingRight: SPACING.md,
+      flexShrink: 1,
+    },
+    playerBadgeText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+      flexShrink: 1,
+    },
+    categoryBadge: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+      flexShrink: 1,
+    },
+    categoryBadgeText: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    questionCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1.5,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xl,
+      alignItems: "center",
+    },
+    questionIconCircle: {
+      width: 60,
+      height: 60,
+      borderRadius: RADIUS.full,
+      backgroundColor: colors.warningSoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.md,
+    },
+    questionOverline: {
+      color: colors.warning,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.4,
+      marginBottom: SPACING.xs,
+    },
+    questionText: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      lineHeight: 28,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    answerCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.sm,
+    },
+    answerHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    answerLabel: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    charCounter: {
+      color: colors.textMuted,
+      fontSize: 12,
+      fontWeight: "600",
+      fontVariant: ["tabular-nums"],
+    },
+    answerInput: {
+      minHeight: 96,
+      maxHeight: 150,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: SPACING.md,
+      color: colors.textPrimary,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    answerInputFocused: {
+      borderColor: colors.primary,
+    },
+    answerHelper: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      lineHeight: 17,
+    },
+    footer: {
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+    },
+  });

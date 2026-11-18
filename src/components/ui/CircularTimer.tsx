@@ -1,5 +1,6 @@
-import { COLORS } from "@/constants/theme";
+import { AppTheme, DARK_COLORS, ThemeColors } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { formatTimer } from "@/utils/gameEngine";
 import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
@@ -15,17 +16,18 @@ interface CircularTimerProps {
 export function getTimerColor(
   remainingSeconds: number,
   totalSeconds: number,
+  colors: ThemeColors = DARK_COLORS,
 ): string {
   if (remainingSeconds <= 10) {
-    return COLORS.danger;
+    return colors.danger;
   }
 
   const ratio = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
   if (remainingSeconds <= 30 || ratio <= 0.25) {
-    return COLORS.warning;
+    return colors.warning;
   }
 
-  return COLORS.success;
+  return colors.success;
 }
 
 export function CircularTimer({
@@ -36,6 +38,8 @@ export function CircularTimer({
   strokeWidth = 8,
 }: CircularTimerProps) {
   const { animationsEnabled } = useAppSettings();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [pulseAnim] = useState(() => new Animated.Value(1));
 
   const isDangerZone = remainingSeconds > 0 && remainingSeconds <= 10;
@@ -71,7 +75,7 @@ export function CircularTimer({
 
   const safeTotal = Math.max(1, totalSeconds);
   const progress = Math.min(1, Math.max(0, remainingSeconds / safeTotal));
-  const activeColor = getTimerColor(remainingSeconds, safeTotal);
+  const activeColor = getTimerColor(remainingSeconds, safeTotal, colors);
 
   const halfSize = size / 2;
   const rightRotationDeg = progress >= 0.5 ? 45 : 45 - (0.5 - progress) * 360;
@@ -156,47 +160,48 @@ export function CircularTimer({
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  track: {
-    position: "absolute",
-    borderColor: COLORS.border,
-  },
-  halfClip: {
-    position: "absolute",
-    top: 0,
-    overflow: "hidden",
-  },
-  arcRing: {
-    position: "absolute",
-    top: 0,
-    borderColor: "transparent",
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-  },
-  topPill: {
-    width: 14,
-    height: 4,
-    borderRadius: 2,
-    marginBottom: 8,
-  },
-  timeText: {
-    color: COLORS.textPrimary,
-    fontSize: 40,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
-    letterSpacing: -0.5,
-  },
-  labelText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    marginTop: 4,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    wrapper: {
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+    },
+    track: {
+      position: "absolute",
+      borderColor: colors.border,
+    },
+    halfClip: {
+      position: "absolute",
+      top: 0,
+      overflow: "hidden",
+    },
+    arcRing: {
+      position: "absolute",
+      top: 0,
+      borderColor: "transparent",
+    },
+    centerContent: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 16,
+    },
+    topPill: {
+      width: 14,
+      height: 4,
+      borderRadius: 2,
+      marginBottom: 8,
+    },
+    timeText: {
+      color: colors.textPrimary,
+      fontSize: 40,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+      letterSpacing: -0.5,
+    },
+    labelText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      marginTop: 4,
+    },
+  });

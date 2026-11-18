@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -29,9 +30,12 @@ export function ConfirmModal({
   onCancel,
 }: ConfirmModalProps) {
   const { animationsEnabled } = useAppSettings();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   const isDanger = confirmVariant === "danger";
-  const accentColor = isDanger ? COLORS.danger : COLORS.primaryText;
-  const iconBgColor = isDanger ? COLORS.dangerSoft : COLORS.primarySoft;
+  const accentColor = isDanger ? colors.danger : colors.primaryText;
+  const iconBgColor = isDanger ? colors.dangerSoft : colors.primarySoft;
 
   return (
     <Modal
@@ -80,58 +84,59 @@ export function ConfirmModal({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: SPACING.xl,
-  },
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: "rgba(8, 7, 13, 0.78)",
-  },
-  card: {
-    width: "100%",
-    maxWidth: 400,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-  },
-  iconBox: {
-    width: 54,
-    height: 54,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.lg,
-  },
-  title: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-    textAlign: "center",
-    marginBottom: SPACING.sm,
-  },
-  message: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    marginBottom: SPACING.xxl,
-  },
-  actions: {
-    width: "100%",
-    gap: SPACING.sm,
-  },
-  actionButton: {
-    width: "100%",
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: SPACING.xl,
+    },
+    backdrop: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: colors.modalBackdrop,
+    },
+    card: {
+      width: "100%",
+      maxWidth: 400,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+    },
+    iconBox: {
+      width: 54,
+      height: 54,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.lg,
+    },
+    title: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+      textAlign: "center",
+      marginBottom: SPACING.sm,
+    },
+    message: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+      marginBottom: SPACING.xxl,
+    },
+    actions: {
+      width: "100%",
+      gap: SPACING.sm,
+    },
+    actionButton: {
+      width: "100%",
+    },
+  });

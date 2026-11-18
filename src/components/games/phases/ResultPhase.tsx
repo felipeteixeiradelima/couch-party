@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { ActiveRoundState, RoundResult } from "@/types/game";
 import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,12 +21,13 @@ export function ResultPhase({
   onPlayAgain,
   onBackToLobby,
 }: ResultPhaseProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   const innocentsWon = result.winningRole === "innocent";
-  const accentColor = innocentsWon ? COLORS.success : COLORS.danger;
-  const softBgColor = innocentsWon ? COLORS.successSoft : COLORS.dangerSoft;
-  const borderColor = innocentsWon
-    ? "rgba(16, 185, 129, 0.4)"
-    : "rgba(244, 63, 94, 0.4)";
+  const accentColor = innocentsWon ? colors.success : colors.danger;
+  const softBgColor = innocentsWon ? colors.successSoft : colors.dangerSoft;
+  const borderColor = innocentsWon ? colors.successBorder : colors.dangerBorder;
 
   const { prompt } = round;
   const hasMultipleImpostors = result.impostors.length > 1;
@@ -141,7 +143,7 @@ export function ResultPhase({
               </View>
 
               <View style={styles.revealSubItem}>
-                <Text style={[styles.revealLabel, { color: COLORS.danger }]}>
+                <Text style={[styles.revealLabel, { color: colors.danger }]}>
                   PERGUNTA DO IMPOSTOR
                 </Text>
                 <Text style={styles.revealQuestion}>
@@ -227,7 +229,7 @@ export function ResultPhase({
         <Button
           label="Jogar novamente"
           onPress={onPlayAgain}
-          icon={<Ionicons name="refresh" size={20} color={COLORS.white} />}
+          icon={<Ionicons name="refresh" size={20} color={colors.white} />}
         />
         <Button
           label="Configurações da partida"
@@ -239,216 +241,217 @@ export function ResultPhase({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.md,
-    alignItems: "center",
-  },
-  eyebrow: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-  },
-  headerTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.lg,
-  },
-  winnerCard: {
-    borderWidth: 1.5,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-  },
-  winnerIconCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.md,
-  },
-  woBadge: {
-    backgroundColor: COLORS.warningSoft,
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.45)",
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 4,
-    marginBottom: SPACING.sm,
-  },
-  woBadgeText: {
-    color: COLORS.warning,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  winnerTitle: {
-    fontSize: 26,
-    fontWeight: "900",
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-  },
-  winnerDescription: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.md,
-  },
-  cardHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-  },
-  cardTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  categoryBadge: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 4,
-  },
-  categoryBadgeText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  revealList: {
-    gap: SPACING.md,
-  },
-  revealItem: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderRadius: RADIUS.md,
-    padding: SPACING.md,
-    gap: 4,
-  },
-  revealSubItem: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderRadius: RADIUS.md,
-    padding: SPACING.md,
-    gap: 4,
-  },
-  revealLabel: {
-    color: COLORS.textMuted,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.1,
-  },
-  revealSecretWord: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  revealQuestion: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: "700",
-  },
-  revealValue: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: "600",
-  },
-  playersList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.sm,
-  },
-  impostorChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: "rgba(244, 63, 94, 0.35)",
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.xs,
-    paddingHorizontal: SPACING.md,
-    maxWidth: "100%",
-  },
-  impostorChipText: {
-    flexShrink: 1,
-  },
-  impostorName: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  impostorAnswer: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    marginTop: 1,
-  },
-  voteList: {
-    gap: SPACING.md,
-  },
-  voteRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  voteInfo: {
-    flex: 1,
-  },
-  votePlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  votePlayerRole: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  voteRoleImpostor: {
-    color: COLORS.success,
-  },
-  voteRoleInnocent: {
-    color: COLORS.danger,
-  },
-  noVoteText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-    gap: SPACING.sm,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.md,
+      alignItems: "center",
+    },
+    eyebrow: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+    },
+    headerTitle: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      marginTop: 2,
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.lg,
+    },
+    winnerCard: {
+      borderWidth: 1.5,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+    },
+    winnerIconCircle: {
+      width: 76,
+      height: 76,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.md,
+    },
+    woBadge: {
+      backgroundColor: colors.warningSoft,
+      borderWidth: 1,
+      borderColor: colors.warningBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 4,
+      marginBottom: SPACING.sm,
+    },
+    woBadgeText: {
+      color: colors.warning,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1,
+    },
+    winnerTitle: {
+      fontSize: 26,
+      fontWeight: "900",
+      textAlign: "center",
+      marginBottom: SPACING.xs,
+    },
+    winnerDescription: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.md,
+    },
+    cardHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+    },
+    cardTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    categoryBadge: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 4,
+    },
+    categoryBadgeText: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    revealList: {
+      gap: SPACING.md,
+    },
+    revealItem: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: RADIUS.md,
+      padding: SPACING.md,
+      gap: 4,
+    },
+    revealSubItem: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: RADIUS.md,
+      padding: SPACING.md,
+      gap: 4,
+    },
+    revealLabel: {
+      color: colors.textMuted,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.1,
+    },
+    revealSecretWord: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+    },
+    revealQuestion: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      lineHeight: 22,
+      fontWeight: "700",
+    },
+    revealValue: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      lineHeight: 21,
+      fontWeight: "600",
+    },
+    playersList: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    impostorChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.dangerBorder,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.xs,
+      paddingHorizontal: SPACING.md,
+      maxWidth: "100%",
+    },
+    impostorChipText: {
+      flexShrink: 1,
+    },
+    impostorName: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    impostorAnswer: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      marginTop: 1,
+    },
+    voteList: {
+      gap: SPACING.md,
+    },
+    voteRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    voteInfo: {
+      flex: 1,
+    },
+    votePlayerName: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    votePlayerRole: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+      marginTop: 2,
+    },
+    voteRoleImpostor: {
+      color: colors.success,
+    },
+    voteRoleInnocent: {
+      color: colors.danger,
+    },
+    noVoteText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+      gap: SPACING.sm,
+    },
+  });

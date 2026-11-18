@@ -1,5 +1,31 @@
 import { GameId, GameMetadata } from "@/types/game";
-import { COLORS } from "./theme";
+import { AppTheme, DARK_COLORS } from "./theme";
+
+export interface GameVisuals {
+  accentColor: string;
+  iconBgColor: string;
+}
+
+export function getGameVisuals(gameId: GameId, theme: AppTheme): GameVisuals {
+  const { colors, cidadeDorme } = theme;
+  switch (gameId) {
+    case "impostor":
+      return {
+        accentColor: colors.primaryText,
+        iconBgColor: colors.primarySoft,
+      };
+    case "cidade-dorme":
+      return {
+        accentColor: cidadeDorme.night.accent,
+        iconBgColor: colors.infoSoft,
+      };
+    case "perguntas":
+      return {
+        accentColor: colors.warning,
+        iconBgColor: colors.warningSoft,
+      };
+  }
+}
 
 export const GAMES: GameMetadata[] = [
   {
@@ -9,7 +35,7 @@ export const GAMES: GameMetadata[] = [
     minPlayers: 3,
     maxPlayers: 12,
     route: "/games/impostor",
-    accentColor: "#A78BFA",
+    accentColor: DARK_COLORS.primaryText,
     iconBgColor: "rgba(139, 61, 255, 0.18)",
     rulesSummary: [
       "Todos os jogadores recebem a mesma palavra secreta, exceto o Impostor.",
@@ -41,8 +67,8 @@ export const GAMES: GameMetadata[] = [
     minPlayers: 3,
     maxPlayers: 12,
     route: "/games/perguntas",
-    accentColor: COLORS.warning,
-    iconBgColor: COLORS.warningSoft,
+    accentColor: DARK_COLORS.warning,
+    iconBgColor: DARK_COLORS.warningSoft,
     rulesSummary: [
       "O celular passa de mão em mão: cada jogador confirma que é ele, lê sua pergunta em segredo e registra a resposta no aparelho.",
       "A maioria recebe a mesma pergunta, enquanto um (ou mais) impostor recebe uma pergunta diferente — sem saber que é o impostor.",

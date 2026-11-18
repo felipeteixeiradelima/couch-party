@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { MAX_PLAYER_NAME_LENGTH, MAX_PLAYERS } from "@/contexts/PlayersContext";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Player } from "@/types/player";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -26,6 +27,8 @@ export default function PlayersScreen() {
   const { players, addPlayer, removePlayer, updatePlayerName, clearPlayers } =
     usePlayers();
   const { triggerLightImpact, triggerError } = useHaptics();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   const [nameInput, setNameInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -118,7 +121,7 @@ export default function PlayersScreen() {
               returnKeyType="done"
               onSubmitEditing={handleConfirmEdit}
               placeholder="Nome do jogador"
-              placeholderTextColor={COLORS.textMuted}
+              placeholderTextColor={colors.textMuted}
               style={styles.editInput}
               accessibilityLabel={`Editar nome de ${item.name}`}
             />
@@ -132,7 +135,7 @@ export default function PlayersScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Ionicons name="checkmark" size={18} color={COLORS.success} />
+              <Ionicons name="checkmark" size={18} color={colors.success} />
             </Pressable>
             <Pressable
               onPress={handleCancelEdit}
@@ -143,7 +146,7 @@ export default function PlayersScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Ionicons name="close" size={18} color={COLORS.textSecondary} />
+              <Ionicons name="close" size={18} color={colors.textSecondary} />
             </Pressable>
           </View>
         ) : (
@@ -168,7 +171,7 @@ export default function PlayersScreen() {
                 <Ionicons
                   name="pencil-outline"
                   size={18}
-                  color={COLORS.textSecondary}
+                  color={colors.textSecondary}
                 />
               </Pressable>
               <Pressable
@@ -187,7 +190,7 @@ export default function PlayersScreen() {
                 <Ionicons
                   name="trash-outline"
                   size={18}
-                  color={COLORS.danger}
+                  color={colors.danger}
                 />
               </Pressable>
             </View>
@@ -232,7 +235,7 @@ export default function PlayersScreen() {
                 if (errorMessage) setErrorMessage(null);
               }}
               placeholder="Nome do jogador"
-              placeholderTextColor={COLORS.textMuted}
+              placeholderTextColor={colors.textMuted}
               maxLength={MAX_PLAYER_NAME_LENGTH}
               returnKeyType="done"
               onSubmitEditing={handleAddPlayer}
@@ -249,7 +252,7 @@ export default function PlayersScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Ionicons name="add" size={24} color={COLORS.white} />
+              <Ionicons name="add" size={24} color={colors.white} />
             </Pressable>
           </View>
 
@@ -258,7 +261,7 @@ export default function PlayersScreen() {
               <Ionicons
                 name="alert-circle-outline"
                 size={16}
-                color={COLORS.danger}
+                color={colors.danger}
               />
               <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
@@ -281,7 +284,7 @@ export default function PlayersScreen() {
                 <Ionicons
                   name="people-outline"
                   size={32}
-                  color={COLORS.primaryText}
+                  color={colors.primaryText}
                 />
               </View>
               <Text style={styles.emptyTitle}>Nenhum jogador na mesa</Text>
@@ -301,168 +304,169 @@ export default function PlayersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  flex: {
-    flex: 1,
-  },
-  clearButton: {
-    minHeight: 36,
-    paddingHorizontal: SPACING.md,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: RADIUS.sm,
-    backgroundColor: COLORS.dangerSoft,
-  },
-  clearButtonText: {
-    color: COLORS.danger,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  inputSection: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.md,
-  },
-  inputRow: {
-    flexDirection: "row",
-    gap: SPACING.sm,
-  },
-  input: {
-    flex: 1,
-    minHeight: 50,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.lg,
-    color: COLORS.textPrimary,
-    fontSize: 16,
-  },
-  addButton: {
-    width: 50,
-    height: 50,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  errorBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-    marginTop: SPACING.sm,
-  },
-  errorText: {
-    color: COLORS.danger,
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  listContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.sm,
-  },
-  emptyListContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  separator: {
-    height: SPACING.sm,
-  },
-  playerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.md,
-  },
-  playerInfo: {
-    flex: 1,
-  },
-  playerName: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  playerOrder: {
-    color: COLORS.textMuted,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  actions: {
-    flexDirection: "row",
-    gap: SPACING.xs,
-  },
-  editContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-  },
-  editInput: {
-    flex: 1,
-    minHeight: 40,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    borderRadius: RADIUS.sm,
-    paddingHorizontal: SPACING.md,
-    color: COLORS.textPrimary,
-    fontSize: 15,
-  },
-  iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.sm,
-    backgroundColor: COLORS.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  confirmIconButton: {
-    backgroundColor: COLORS.successSoft,
-  },
-  deleteIconButton: {
-    backgroundColor: COLORS.dangerSoft,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingHorizontal: SPACING.xl,
-  },
-  emptyIconBox: {
-    width: 64,
-    height: 64,
-    borderRadius: RADIUS.xl,
-    backgroundColor: COLORS.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.lg,
-  },
-  emptyTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: SPACING.xs,
-    textAlign: "center",
-  },
-  emptyDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    flex: {
+      flex: 1,
+    },
+    clearButton: {
+      minHeight: 36,
+      paddingHorizontal: SPACING.md,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: RADIUS.sm,
+      backgroundColor: colors.dangerSoft,
+    },
+    clearButtonText: {
+      color: colors.danger,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    inputSection: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.md,
+    },
+    inputRow: {
+      flexDirection: "row",
+      gap: SPACING.sm,
+    },
+    input: {
+      flex: 1,
+      minHeight: 50,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.lg,
+      color: colors.textPrimary,
+      fontSize: 16,
+    },
+    addButton: {
+      width: 50,
+      height: 50,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    errorBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.xs,
+      marginTop: SPACING.sm,
+    },
+    errorText: {
+      color: colors.danger,
+      fontSize: 13,
+      fontWeight: "500",
+    },
+    listContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.sm,
+    },
+    emptyListContent: {
+      flexGrow: 1,
+      justifyContent: "center",
+    },
+    separator: {
+      height: SPACING.sm,
+    },
+    playerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: SPACING.md,
+    },
+    playerInfo: {
+      flex: 1,
+    },
+    playerName: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    playerOrder: {
+      color: colors.textMuted,
+      fontSize: 12,
+      marginTop: 2,
+    },
+    actions: {
+      flexDirection: "row",
+      gap: SPACING.xs,
+    },
+    editContainer: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.xs,
+    },
+    editInput: {
+      flex: 1,
+      minHeight: 40,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderRadius: RADIUS.sm,
+      paddingHorizontal: SPACING.md,
+      color: colors.textPrimary,
+      fontSize: 15,
+    },
+    iconButton: {
+      width: 44,
+      height: 44,
+      borderRadius: RADIUS.sm,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    confirmIconButton: {
+      backgroundColor: colors.successSoft,
+    },
+    deleteIconButton: {
+      backgroundColor: colors.dangerSoft,
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingHorizontal: SPACING.xl,
+    },
+    emptyIconBox: {
+      width: 64,
+      height: 64,
+      borderRadius: RADIUS.xl,
+      backgroundColor: colors.primarySoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.lg,
+    },
+    emptyTitle: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "700",
+      marginBottom: SPACING.xs,
+      textAlign: "center",
+    },
+    emptyDescription: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+  });

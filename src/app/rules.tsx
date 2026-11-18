@@ -1,11 +1,16 @@
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { GAMES } from "@/constants/games";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { GAMES, getGameVisuals } from "@/constants/games";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RulesScreen() {
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useThemedStyles(createStyles);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScreenHeader title="Regras" subtitle="Como funciona o Couch Party" />
@@ -20,7 +25,7 @@ export default function RulesScreen() {
             <Ionicons
               name="phone-portrait-outline"
               size={20}
-              color={COLORS.primaryText}
+              color={colors.primaryText}
             />
             <Text style={styles.introTitle}>Um celular, toda a turma</Text>
           </View>
@@ -30,111 +35,117 @@ export default function RulesScreen() {
           </Text>
         </View>
 
-        {GAMES.map((game) => (
-          <View key={game.id} style={styles.gameCard}>
-            <View style={styles.gameHeader}>
-              <Text style={styles.gameTitle}>{game.title}</Text>
-              <Text style={styles.gamePlayers}>
-                {game.minPlayers}–{game.maxPlayers} jogadores
-              </Text>
-            </View>
+        {GAMES.map((game) => {
+          const visuals = getGameVisuals(game.id, theme);
+          return (
+            <View key={game.id} style={styles.gameCard}>
+              <View style={styles.gameHeader}>
+                <Text style={styles.gameTitle}>{game.title}</Text>
+                <Text style={styles.gamePlayers}>
+                  {game.minPlayers}–{game.maxPlayers} jogadores
+                </Text>
+              </View>
 
-            <View style={styles.rulesList}>
-              {game.rulesSummary.map((rule, index) => (
-                <View key={rule} style={styles.ruleRow}>
-                  <Text style={[styles.ruleIndex, { color: game.accentColor }]}>
-                    {index + 1}.
-                  </Text>
-                  <Text style={styles.ruleText}>{rule}</Text>
-                </View>
-              ))}
+              <View style={styles.rulesList}>
+                {game.rulesSummary.map((rule, index) => (
+                  <View key={rule} style={styles.ruleRow}>
+                    <Text
+                      style={[styles.ruleIndex, { color: visuals.accentColor }]}
+                    >
+                      {index + 1}.
+                    </Text>
+                    <Text style={styles.ruleText}>{rule}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxxl,
-    gap: SPACING.lg,
-  },
-  introCard: {
-    backgroundColor: COLORS.primarySoft,
-    borderWidth: 1,
-    borderColor: "rgba(139, 61, 255, 0.35)",
-    borderRadius: RADIUS.xl,
-    padding: SPACING.lg,
-  },
-  introHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    marginBottom: SPACING.xs,
-  },
-  introTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  introText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  gameCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.lg,
-  },
-  gameHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: SPACING.md,
-  },
-  gameTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  gamePlayers: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-    backgroundColor: COLORS.surfaceElevated,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 4,
-    borderRadius: RADIUS.full,
-  },
-  rulesList: {
-    gap: SPACING.sm,
-  },
-  ruleRow: {
-    flexDirection: "row",
-    gap: SPACING.sm,
-  },
-  ruleIndex: {
-    fontSize: 14,
-    fontWeight: "700",
-    width: 18,
-  },
-  ruleText: {
-    flex: 1,
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scroll: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xxxl,
+      gap: SPACING.lg,
+    },
+    introCard: {
+      backgroundColor: colors.primarySoft,
+      borderWidth: 1,
+      borderColor: colors.primaryBorder,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.lg,
+    },
+    introHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      marginBottom: SPACING.xs,
+    },
+    introTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    introText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    gameCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.lg,
+    },
+    gameHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: SPACING.md,
+    },
+    gameTitle: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    gamePlayers: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+      backgroundColor: colors.surfaceElevated,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 4,
+      borderRadius: RADIUS.full,
+    },
+    rulesList: {
+      gap: SPACING.sm,
+    },
+    ruleRow: {
+      flexDirection: "row",
+      gap: SPACING.sm,
+    },
+    ruleIndex: {
+      fontSize: 14,
+      fontWeight: "700",
+      width: 18,
+    },
+    ruleText: {
+      flex: 1,
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+  });
