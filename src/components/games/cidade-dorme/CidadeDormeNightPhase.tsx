@@ -2,19 +2,18 @@ import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import {
-  CIDADE_DORME_THEMES,
-  COLORS,
-  RADIUS,
-  SPACING,
-} from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import {
   CidadeDormeMatchState,
   CidadeDormePlayerState,
 } from "@/types/cidadeDorme";
-import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
+import {
+  CIDADE_DORME_ROLE_META,
+  getCidadeDormeRoleVisuals,
+} from "@/utils/cidadeDormeEngine";
 import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
@@ -27,8 +26,6 @@ import {
   Text,
   View,
 } from "react-native";
-
-const NIGHT = CIDADE_DORME_THEMES.night;
 
 export interface NightCompletionPayload {
   assassinVotes: Record<string, string>;
@@ -58,6 +55,11 @@ export function CidadeDormeNightPhase({
     triggerSuccess,
     triggerWarning,
   } = useHaptics();
+  const theme = useTheme();
+  const { colors, cidadeDorme } = theme;
+  const night = cidadeDorme.night;
+  const styles = useThemedStyles(createStyles);
+
   const [moonPulseAnim] = useState(() => new Animated.Value(1));
 
   const alivePlayers = useMemo(
@@ -142,7 +144,7 @@ export function CidadeDormeNightPhase({
       <View style={styles.container}>
         <View style={styles.topBar}>
           <View style={styles.nightPill}>
-            <Ionicons name="moon" size={14} color={NIGHT.accent} />
+            <Ionicons name="moon" size={14} color={night.accent} />
             <Text style={styles.nightPillText}>NOITE {match.roundNumber}</Text>
           </View>
 
@@ -156,7 +158,7 @@ export function CidadeDormeNightPhase({
             ]}
             hitSlop={8}
           >
-            <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+            <Ionicons name="close" size={20} color={colors.textSecondary} />
           </Pressable>
         </View>
 
@@ -168,7 +170,7 @@ export function CidadeDormeNightPhase({
             ]}
             accessible={false}
           >
-            <Ionicons name="moon" size={48} color={NIGHT.accent} />
+            <Ionicons name="moon" size={48} color={night.accent} />
           </Animated.View>
 
           <Text style={styles.introTitle}>Cidade Dorme!</Text>
@@ -181,7 +183,7 @@ export function CidadeDormeNightPhase({
               descanse sem dar pistas).
             </Text>
             <View style={styles.aliveCountBadge}>
-              <Ionicons name="people-outline" size={15} color={NIGHT.accent} />
+              <Ionicons name="people-outline" size={15} color={night.accent} />
               <Text style={styles.aliveCountText}>
                 {alivePlayers.length} jogadores vivos esta noite
               </Text>
@@ -203,7 +205,7 @@ export function CidadeDormeNightPhase({
             }}
             style={styles.nightPrimaryButton}
             icon={
-              <Ionicons name="moon-outline" size={20} color={COLORS.white} />
+              <Ionicons name="moon-outline" size={20} color={colors.white} />
             }
           />
         </View>
@@ -234,7 +236,7 @@ export function CidadeDormeNightPhase({
         <View style={styles.handoffCenter}>
           <View style={styles.handoffCard}>
             <View style={styles.handoffMoonBadge} accessible={false}>
-              <Ionicons name="moon-outline" size={20} color={NIGHT.accent} />
+              <Ionicons name="moon-outline" size={20} color={night.accent} />
             </View>
 
             <PlayerAvatar
@@ -269,7 +271,7 @@ export function CidadeDormeNightPhase({
               <Ionicons
                 name="lock-open-outline"
                 size={20}
-                color={COLORS.white}
+                color={colors.white}
               />
             }
           />
@@ -279,7 +281,7 @@ export function CidadeDormeNightPhase({
   }
 
   // Private role action view
-  const roleMeta = CIDADE_DORME_ROLE_META[currentEntry.role];
+  const roleVisuals = getCidadeDormeRoleVisuals(currentEntry.role, theme);
 
   if (currentEntry.role === "citizen") {
     return (
@@ -302,7 +304,7 @@ export function CidadeDormeNightPhase({
               <Ionicons
                 name="cloudy-night-outline"
                 size={42}
-                color={NIGHT.accent}
+                color={night.accent}
               />
             </View>
 
@@ -310,13 +312,16 @@ export function CidadeDormeNightPhase({
               style={[
                 styles.rolePill,
                 {
-                  backgroundColor: roleMeta.softBgColor,
-                  borderColor: roleMeta.borderColor,
+                  backgroundColor: roleVisuals.softBgColor,
+                  borderColor: roleVisuals.borderColor,
                 },
               ]}
             >
               <Text
-                style={[styles.rolePillText, { color: roleMeta.accentColor }]}
+                style={[
+                  styles.rolePillText,
+                  { color: roleVisuals.accentColor },
+                ]}
               >
                 CIDADÃO
               </Text>
@@ -347,7 +352,7 @@ export function CidadeDormeNightPhase({
               <Ionicons
                 name={isLastPlayer ? "sunny-outline" : "arrow-forward-outline"}
                 size={20}
-                color={COLORS.white}
+                color={colors.white}
               />
             }
           />
@@ -408,11 +413,11 @@ export function CidadeDormeNightPhase({
                   styles.verdictBadge,
                   {
                     backgroundColor: isAssassin
-                      ? COLORS.dangerSoft
-                      : COLORS.successSoft,
+                      ? colors.dangerSoft
+                      : colors.successSoft,
                     borderColor: isAssassin
-                      ? "rgba(244, 63, 94, 0.45)"
-                      : "rgba(16, 185, 129, 0.45)",
+                      ? colors.dangerBorder
+                      : colors.successBorder,
                   },
                 ]}
               >
@@ -421,12 +426,12 @@ export function CidadeDormeNightPhase({
                     isAssassin ? "warning-outline" : "shield-checkmark-outline"
                   }
                   size={20}
-                  color={isAssassin ? COLORS.danger : COLORS.success}
+                  color={isAssassin ? colors.danger : colors.success}
                 />
                 <Text
                   style={[
                     styles.verdictBadgeText,
-                    { color: isAssassin ? COLORS.danger : COLORS.success },
+                    { color: isAssassin ? colors.danger : colors.success },
                   ]}
                 >
                   {isAssassin ? "ASSASSINO" : "INOCENTE"}
@@ -458,7 +463,7 @@ export function CidadeDormeNightPhase({
                     isLastPlayer ? "sunny-outline" : "arrow-forward-outline"
                   }
                   size={20}
-                  color={COLORS.white}
+                  color={colors.white}
                 />
               }
             />
@@ -628,10 +633,13 @@ function NightPassHeader({
   totalPlayers,
   onRequestExit,
 }: NightPassHeaderProps) {
+  const { colors, cidadeDorme } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   return (
     <View style={styles.topBar}>
       <View style={styles.nightPill}>
-        <Ionicons name="moon" size={13} color={NIGHT.accent} />
+        <Ionicons name="moon" size={13} color={cidadeDorme.night.accent} />
         <Text style={styles.nightPillText}>NOITE {roundNumber}</Text>
       </View>
 
@@ -659,7 +667,7 @@ function NightPassHeader({
         style={({ pressed }) => [styles.exitButton, pressed && styles.pressed]}
         hitSlop={8}
       >
-        <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+        <Ionicons name="close" size={20} color={colors.textSecondary} />
       </Pressable>
     </View>
   );
@@ -700,7 +708,12 @@ function NightTargetSelectionView({
   onConfirm,
   onRequestExit,
 }: NightTargetSelectionViewProps) {
+  const theme = useTheme();
+  const { colors, cidadeDorme } = theme;
+  const styles = useThemedStyles(createStyles);
+
   const roleMeta = CIDADE_DORME_ROLE_META[role];
+  const roleVisuals = getCidadeDormeRoleVisuals(role, theme);
 
   return (
     <View style={styles.container}>
@@ -720,24 +733,28 @@ function NightTargetSelectionView({
           <View
             style={[
               styles.actionIconCircle,
-              { backgroundColor: roleMeta.softBgColor },
+              { backgroundColor: roleVisuals.softBgColor },
             ]}
             accessible={false}
           >
-            <RoleBadgeIcon role={role} size={30} color={roleMeta.accentColor} />
+            <RoleBadgeIcon
+              role={role}
+              size={30}
+              color={roleVisuals.accentColor}
+            />
           </View>
 
           <View
             style={[
               styles.rolePill,
               {
-                backgroundColor: roleMeta.softBgColor,
-                borderColor: roleMeta.borderColor,
+                backgroundColor: roleVisuals.softBgColor,
+                borderColor: roleVisuals.borderColor,
               },
             ]}
           >
             <Text
-              style={[styles.rolePillText, { color: roleMeta.accentColor }]}
+              style={[styles.rolePillText, { color: roleVisuals.accentColor }]}
             >
               {roleMeta.title.toUpperCase()}
             </Text>
@@ -764,8 +781,8 @@ function NightTargetSelectionView({
                 style={({ pressed }) => [
                   styles.targetCard,
                   isSelected && {
-                    borderColor: roleMeta.accentColor,
-                    backgroundColor: roleMeta.softBgColor,
+                    borderColor: roleVisuals.accentColor,
+                    backgroundColor: roleVisuals.softBgColor,
                   },
                   pressed && styles.pressed,
                 ]}
@@ -780,8 +797,8 @@ function NightTargetSelectionView({
                     style={[
                       styles.radioCircle,
                       isSelected && {
-                        backgroundColor: roleMeta.accentColor,
-                        borderColor: roleMeta.accentColor,
+                        backgroundColor: roleVisuals.accentColor,
+                        borderColor: roleVisuals.accentColor,
                       },
                     ]}
                   >
@@ -789,7 +806,11 @@ function NightTargetSelectionView({
                       <Ionicons
                         name="checkmark"
                         size={14}
-                        color={NIGHT.background}
+                        color={
+                          theme.isDark
+                            ? cidadeDorme.night.background
+                            : colors.white
+                        }
                       />
                     ) : null}
                   </View>
@@ -807,8 +828,8 @@ function NightTargetSelectionView({
                       {
                         color:
                           knownResult === "assassin"
-                            ? COLORS.danger
-                            : COLORS.success,
+                            ? colors.danger
+                            : colors.success,
                       },
                     ]}
                     numberOfLines={1}
@@ -836,376 +857,380 @@ function NightTargetSelectionView({
           onPress={onConfirm}
           disabled={!selectedTargetId}
           style={styles.nightPrimaryButton}
-          icon={<Ionicons name="checkmark" size={20} color={COLORS.white} />}
+          icon={<Ionicons name="checkmark" size={20} color={colors.white} />}
         />
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  animatedFill: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: SPACING.xl,
-  },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  nightPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    backgroundColor: NIGHT.accentSoft,
-    borderWidth: 1,
-    borderColor: NIGHT.accentBorder,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  nightPillText: {
-    color: NIGHT.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.1,
-  },
-  progressBlock: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: "center",
-    gap: 4,
-  },
-  progressLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  progressTrack: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-    maxWidth: 150,
-    gap: 4,
-  },
-  progressSegment: {
-    flex: 1,
-    minWidth: 3,
-    maxWidth: 16,
-    height: 4,
-    borderRadius: RADIUS.full,
-    backgroundColor: NIGHT.border,
-  },
-  progressSegmentActive: {
-    backgroundColor: NIGHT.accent,
-  },
-  exitButton: {
-    width: 38,
-    height: 38,
-    borderRadius: RADIUS.md,
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  introCenter: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: SPACING.xl,
-  },
-  moonHeroCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: RADIUS.full,
-    backgroundColor: NIGHT.accentSoft,
-    borderWidth: 1.5,
-    borderColor: NIGHT.accentBorder,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.xl,
-  },
-  introTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 32,
-    fontWeight: "900",
-    letterSpacing: -0.5,
-    textAlign: "center",
-  },
-  introSubtitle: {
-    color: NIGHT.accent,
-    fontSize: 17,
-    fontWeight: "600",
-    marginTop: 4,
-    marginBottom: SPACING.xxl,
-    textAlign: "center",
-  },
-  introCard: {
-    width: "100%",
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xl,
-    alignItems: "center",
-    gap: SPACING.lg,
-  },
-  introCardText: {
-    color: COLORS.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: "center",
-  },
-  aliveCountBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-    backgroundColor: NIGHT.surfaceElevated,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  aliveCountText: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  handoffCenter: {
-    flex: 1,
-    justifyContent: "center",
-    paddingVertical: SPACING.md,
-  },
-  handoffCard: {
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  handoffMoonBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.full,
-    backgroundColor: NIGHT.accentSoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.xs,
-  },
-  handoffOverline: {
-    color: NIGHT.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.4,
-    marginTop: SPACING.xs,
-  },
-  handoffPlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 28,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  handoffHint: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    maxWidth: 270,
-  },
-  handoffHintBold: {
-    color: COLORS.textPrimary,
-    fontWeight: "700",
-  },
-  sleepCard: {
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  sleepIconCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: RADIUS.full,
-    backgroundColor: NIGHT.accentSoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.xs,
-  },
-  rolePill: {
-    borderWidth: 1,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 5,
-  },
-  rolePillText: {
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.2,
-  },
-  sleepTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    textAlign: "center",
-    lineHeight: 29,
-  },
-  sleepSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    maxWidth: 270,
-  },
-  verdictCard: {
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1.5,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  verdictAssassinCard: {
-    borderColor: "rgba(244, 63, 94, 0.45)",
-  },
-  verdictInnocentCard: {
-    borderColor: "rgba(16, 185, 129, 0.45)",
-  },
-  verdictEyebrow: {
-    color: NIGHT.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.3,
-  },
-  verdictPlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  verdictBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-    borderWidth: 1,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: 8,
-  },
-  verdictBadgeText: {
-    fontSize: 16,
-    fontWeight: "900",
-    letterSpacing: 0.8,
-  },
-  verdictNote: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-    maxWidth: 260,
-  },
-  scroll: {
-    flex: 1,
-  },
-  actionScrollContent: {
-    paddingTop: SPACING.xs,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.lg,
-  },
-  actionHeaderCard: {
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xl,
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  actionIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 4,
-  },
-  actionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 22,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  actionSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  targetsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  targetCard: {
-    width: "48%",
-    backgroundColor: NIGHT.surface,
-    borderWidth: 1.5,
-    borderColor: NIGHT.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.sm,
-  },
-  targetCardTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  radioCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: RADIUS.full,
-    borderWidth: 1.5,
-    borderColor: COLORS.textMuted,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  targetName: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  targetTag: {
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  partnerVoteTag: {
-    color: COLORS.danger,
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  footer: {
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: NIGHT.borderSubtle,
-  },
-  nightPrimaryButton: {
-    backgroundColor: "#2563EB",
-  },
-});
+const createStyles = ({ colors, cidadeDorme }: AppTheme) => {
+  const night = cidadeDorme.night;
+
+  return StyleSheet.create({
+    animatedFill: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: SPACING.xl,
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    nightPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      backgroundColor: night.accentSoft,
+      borderWidth: 1,
+      borderColor: night.accentBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    nightPillText: {
+      color: night.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+    },
+    progressBlock: {
+      flex: 1,
+      minWidth: 0,
+      alignItems: "center",
+      gap: 4,
+    },
+    progressLabel: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    progressTrack: {
+      flexDirection: "row",
+      justifyContent: "center",
+      width: "100%",
+      maxWidth: 150,
+      gap: 4,
+    },
+    progressSegment: {
+      flex: 1,
+      minWidth: 3,
+      maxWidth: 16,
+      height: 4,
+      borderRadius: RADIUS.full,
+      backgroundColor: night.border,
+    },
+    progressSegmentActive: {
+      backgroundColor: night.accent,
+    },
+    exitButton: {
+      width: 38,
+      height: 38,
+      borderRadius: RADIUS.md,
+      backgroundColor: night.surface,
+      borderWidth: 1,
+      borderColor: night.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    introCenter: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingBottom: SPACING.xl,
+    },
+    moonHeroCircle: {
+      width: 100,
+      height: 100,
+      borderRadius: RADIUS.full,
+      backgroundColor: night.accentSoft,
+      borderWidth: 1.5,
+      borderColor: night.accentBorder,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.xl,
+    },
+    introTitle: {
+      color: colors.textPrimary,
+      fontSize: 32,
+      fontWeight: "900",
+      letterSpacing: -0.5,
+      textAlign: "center",
+    },
+    introSubtitle: {
+      color: night.accent,
+      fontSize: 17,
+      fontWeight: "600",
+      marginTop: 4,
+      marginBottom: SPACING.xxl,
+      textAlign: "center",
+    },
+    introCard: {
+      width: "100%",
+      backgroundColor: night.surface,
+      borderWidth: 1,
+      borderColor: night.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xl,
+      alignItems: "center",
+      gap: SPACING.lg,
+    },
+    introCardText: {
+      color: colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 22,
+      textAlign: "center",
+    },
+    aliveCountBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.xs,
+      backgroundColor: night.surfaceElevated,
+      borderWidth: 1,
+      borderColor: night.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    aliveCountText: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    handoffCenter: {
+      flex: 1,
+      justifyContent: "center",
+      paddingVertical: SPACING.md,
+    },
+    handoffCard: {
+      backgroundColor: night.surface,
+      borderWidth: 1,
+      borderColor: night.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    handoffMoonBadge: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.full,
+      backgroundColor: night.accentSoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.xs,
+    },
+    handoffOverline: {
+      color: night.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.4,
+      marginTop: SPACING.xs,
+    },
+    handoffPlayerName: {
+      color: colors.textPrimary,
+      fontSize: 28,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    handoffHint: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+      maxWidth: 270,
+    },
+    handoffHintBold: {
+      color: colors.textPrimary,
+      fontWeight: "700",
+    },
+    sleepCard: {
+      backgroundColor: night.surface,
+      borderWidth: 1,
+      borderColor: night.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    sleepIconCircle: {
+      width: 84,
+      height: 84,
+      borderRadius: RADIUS.full,
+      backgroundColor: night.accentSoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.xs,
+    },
+    rolePill: {
+      borderWidth: 1,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 5,
+    },
+    rolePillText: {
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.2,
+    },
+    sleepTitle: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      textAlign: "center",
+      lineHeight: 29,
+    },
+    sleepSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+      maxWidth: 270,
+    },
+    verdictCard: {
+      backgroundColor: night.surface,
+      borderWidth: 1.5,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    verdictAssassinCard: {
+      borderColor: colors.dangerBorder,
+    },
+    verdictInnocentCard: {
+      borderColor: colors.successBorder,
+    },
+    verdictEyebrow: {
+      color: night.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.3,
+    },
+    verdictPlayerName: {
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    verdictBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.xs,
+      borderWidth: 1,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: 8,
+    },
+    verdictBadgeText: {
+      fontSize: 16,
+      fontWeight: "900",
+      letterSpacing: 0.8,
+    },
+    verdictNote: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+      maxWidth: 260,
+    },
+    scroll: {
+      flex: 1,
+    },
+    actionScrollContent: {
+      paddingTop: SPACING.xs,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.lg,
+    },
+    actionHeaderCard: {
+      backgroundColor: night.surface,
+      borderWidth: 1,
+      borderColor: night.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xl,
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    actionIconCircle: {
+      width: 60,
+      height: 60,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 4,
+    },
+    actionTitle: {
+      color: colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    actionSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+    },
+    targetsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    targetCard: {
+      width: "48%",
+      backgroundColor: night.surface,
+      borderWidth: 1.5,
+      borderColor: night.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: SPACING.sm,
+    },
+    targetCardTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    radioCircle: {
+      width: 24,
+      height: 24,
+      borderRadius: RADIUS.full,
+      borderWidth: 1.5,
+      borderColor: colors.textMuted,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    targetName: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    targetTag: {
+      fontSize: 11,
+      fontWeight: "700",
+    },
+    partnerVoteTag: {
+      color: colors.danger,
+      fontSize: 11,
+      fontWeight: "700",
+    },
+    footer: {
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: night.borderSubtle,
+    },
+    nightPrimaryButton: {
+      backgroundColor: night.primaryButton,
+    },
+  });
+};

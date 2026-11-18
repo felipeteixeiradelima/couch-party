@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { GAMES_BY_ID } from "@/constants/games";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { GAMES_BY_ID, getGameVisuals } from "@/constants/games";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { usePlayers } from "@/hooks/usePlayers";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { GameCategorySummary, GameId, GameSettings } from "@/types/game";
 import { clampImpostorCount, formatDurationLabel } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
@@ -61,7 +62,11 @@ export function GameLobbyTemplate({
   lobbyConfig,
 }: GameLobbyTemplateProps) {
   const { players } = usePlayers();
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useThemedStyles(createStyles);
   const game = GAMES_BY_ID[gameId];
+  const gameVisuals = getGameVisuals(gameId, theme);
 
   const hasEnoughPlayers = players.length >= game.minPlayers;
   const hasTooManyPlayers = players.length > game.maxPlayers;
@@ -132,7 +137,7 @@ export function GameLobbyTemplate({
               <Ionicons
                 name="settings-outline"
                 size={20}
-                color={COLORS.textPrimary}
+                color={colors.textPrimary}
               />
             </Pressable>
           ) : null
@@ -153,7 +158,7 @@ export function GameLobbyTemplate({
           <Ionicons
             name={isReady ? "checkmark-circle-outline" : "alert-circle-outline"}
             size={22}
-            color={isReady ? COLORS.success : COLORS.warning}
+            color={isReady ? colors.success : colors.warning}
           />
           <View style={styles.statusTextBlock}>
             <Text style={styles.statusTitle}>
@@ -247,7 +252,9 @@ export function GameLobbyTemplate({
           <View style={styles.rulesCard}>
             {game.rulesSummary.map((rule, index) => (
               <View key={rule} style={styles.ruleRow}>
-                <Text style={[styles.ruleIndex, { color: game.accentColor }]}>
+                <Text
+                  style={[styles.ruleIndex, { color: gameVisuals.accentColor }]}
+                >
                   {index + 1}.
                 </Text>
                 <Text style={styles.ruleText}>{rule}</Text>
@@ -263,7 +270,7 @@ export function GameLobbyTemplate({
             label="Configurar Jogadores"
             onPress={() => router.push("/players")}
             icon={
-              <Ionicons name="people-outline" size={20} color={COLORS.white} />
+              <Ionicons name="people-outline" size={20} color={colors.white} />
             }
           />
         ) : (
@@ -277,7 +284,7 @@ export function GameLobbyTemplate({
               <Button
                 label="Iniciar Partida"
                 onPress={lobbyConfig.onStartGame}
-                icon={<Ionicons name="play" size={18} color={COLORS.white} />}
+                icon={<Ionicons name="play" size={18} color={colors.white} />}
               />
             ) : (
               <Button
@@ -293,188 +300,189 @@ export function GameLobbyTemplate({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  headerActionButton: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.xl,
-  },
-  statusCard: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: SPACING.md,
-    borderRadius: RADIUS.lg,
-    borderWidth: 1,
-    padding: SPACING.lg,
-  },
-  statusReady: {
-    backgroundColor: COLORS.successSoft,
-    borderColor: "rgba(16, 185, 129, 0.35)",
-  },
-  statusWarning: {
-    backgroundColor: COLORS.warningSoft,
-    borderColor: "rgba(245, 158, 11, 0.35)",
-  },
-  statusTextBlock: {
-    flex: 1,
-  },
-  statusTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  statusDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  section: {
-    gap: SPACING.md,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  sectionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  sectionCount: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  editSettingsLink: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-  },
-  editSettingsLinkText: {
-    color: COLORS.primaryText,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  settingsCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-  },
-  settingsCardPressed: {
-    backgroundColor: COLORS.surfaceElevated,
-  },
-  settingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-    paddingVertical: SPACING.md,
-  },
-  settingLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-  },
-  settingValue: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-    flexShrink: 1,
-    textAlign: "right",
-  },
-  settingDivider: {
-    height: 1,
-    backgroundColor: COLORS.borderSubtle,
-  },
-  emptyBox: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    alignItems: "center",
-  },
-  emptyText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-  },
-  playersGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.sm,
-  },
-  playerChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.md,
-    maxWidth: "48%",
-  },
-  playerChipName: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-    flexShrink: 1,
-  },
-  rulesCard: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.sm,
-  },
-  ruleRow: {
-    flexDirection: "row",
-    gap: SPACING.sm,
-  },
-  ruleIndex: {
-    fontSize: 14,
-    fontWeight: "700",
-    width: 18,
-  },
-  ruleText: {
-    flex: 1,
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-  footerActions: {
-    gap: SPACING.sm,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    headerActionButton: {
+      width: 44,
+      height: 44,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    scroll: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.xl,
+    },
+    statusCard: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: SPACING.md,
+      borderRadius: RADIUS.lg,
+      borderWidth: 1,
+      padding: SPACING.lg,
+    },
+    statusReady: {
+      backgroundColor: colors.successSoft,
+      borderColor: colors.successBorder,
+    },
+    statusWarning: {
+      backgroundColor: colors.warningSoft,
+      borderColor: colors.warningBorder,
+    },
+    statusTextBlock: {
+      flex: 1,
+    },
+    statusTitle: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+      marginBottom: 2,
+    },
+    statusDescription: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 19,
+    },
+    section: {
+      gap: SPACING.md,
+    },
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    sectionCount: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    editSettingsLink: {
+      paddingHorizontal: SPACING.sm,
+      paddingVertical: 4,
+    },
+    editSettingsLinkText: {
+      color: colors.primaryText,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    settingsCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+    },
+    settingsCardPressed: {
+      backgroundColor: colors.surfaceElevated,
+    },
+    settingRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+      paddingVertical: SPACING.md,
+    },
+    settingLabel: {
+      color: colors.textSecondary,
+      fontSize: 14,
+    },
+    settingValue: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+      flexShrink: 1,
+      textAlign: "right",
+    },
+    settingDivider: {
+      height: 1,
+      backgroundColor: colors.borderSubtle,
+    },
+    emptyBox: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      alignItems: "center",
+    },
+    emptyText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+    },
+    playersGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    playerChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.sm,
+      paddingHorizontal: SPACING.md,
+      maxWidth: "48%",
+    },
+    playerChipName: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+      flexShrink: 1,
+    },
+    rulesCard: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.sm,
+    },
+    ruleRow: {
+      flexDirection: "row",
+      gap: SPACING.sm,
+    },
+    ruleIndex: {
+      fontSize: 14,
+      fontWeight: "700",
+      width: 18,
+    },
+    ruleText: {
+      flex: 1,
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+    footerActions: {
+      gap: SPACING.sm,
+    },
+  });

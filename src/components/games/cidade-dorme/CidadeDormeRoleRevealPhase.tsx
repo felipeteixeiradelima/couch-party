@@ -2,11 +2,15 @@ import { SecretRevealCard } from "@/components/games/SecretRevealCard";
 import { RoleBadgeIcon } from "@/components/games/cidade-dorme/RoleBadgeIcon";
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePressHoldReveal } from "@/hooks/usePressHoldReveal";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { CidadeDormeMatchState } from "@/types/cidadeDorme";
-import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
+import {
+  CIDADE_DORME_ROLE_META,
+  getCidadeDormeRoleVisuals,
+} from "@/utils/cidadeDormeEngine";
 import { formatPlayerNames } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -26,6 +30,9 @@ export function CidadeDormeRoleRevealPhase({
   const [currentIndex, setCurrentIndex] = useState(0);
   const { triggerCardReveal, triggerCardHide, triggerLightImpact } =
     useHaptics();
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useThemedStyles(createStyles);
 
   const {
     isHolding,
@@ -48,6 +55,7 @@ export function CidadeDormeRoleRevealPhase({
   }
 
   const roleMeta = CIDADE_DORME_ROLE_META[currentEntry.role];
+  const roleVisuals = getCidadeDormeRoleVisuals(currentEntry.role, theme);
   const partnerAssassins =
     currentEntry.role === "assassin"
       ? match.players
@@ -103,7 +111,7 @@ export function CidadeDormeRoleRevealPhase({
           ]}
           hitSlop={8}
         >
-          <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+          <Ionicons name="close" size={20} color={colors.textSecondary} />
         </Pressable>
       </View>
 
@@ -137,38 +145,43 @@ export function CidadeDormeRoleRevealPhase({
           renderCornerIcon={(color) => (
             <Ionicons name="moon-outline" size={18} color={color} />
           )}
-          revealedAccentColor={roleMeta.accentColor}
-          revealedBorderColor={roleMeta.borderColor}
+          revealedAccentColor={roleVisuals.accentColor}
+          revealedBorderColor={roleVisuals.borderColor}
           hiddenHint="Pressione e segure este card para descobrir seu papel. Ao soltar, ele volta a ocultar."
           revealedContent={
             <>
               <View
                 style={[
                   styles.iconCircle,
-                  { backgroundColor: roleMeta.softBgColor },
+                  { backgroundColor: roleVisuals.softBgColor },
                 ]}
                 accessible={false}
               >
                 <RoleBadgeIcon
                   role={currentEntry.role}
                   size={42}
-                  color={roleMeta.accentColor}
+                  color={roleVisuals.accentColor}
                 />
               </View>
 
               <Text
-                style={[styles.rolePreTitle, { color: roleMeta.accentColor }]}
+                style={[
+                  styles.rolePreTitle,
+                  { color: roleVisuals.accentColor },
+                ]}
               >
                 Seu papel é
               </Text>
-              <Text style={[styles.roleTitle, { color: roleMeta.accentColor }]}>
+              <Text
+                style={[styles.roleTitle, { color: roleVisuals.accentColor }]}
+              >
                 {roleMeta.title.toUpperCase()}
               </Text>
 
               <View
                 style={[
                   styles.dividerLine,
-                  { backgroundColor: roleMeta.accentColor },
+                  { backgroundColor: roleVisuals.accentColor },
                 ]}
               />
 
@@ -203,7 +216,7 @@ export function CidadeDormeRoleRevealPhase({
           <Ionicons
             name="lock-closed-outline"
             size={14}
-            color={hasViewed ? COLORS.textSecondary : COLORS.primaryText}
+            color={hasViewed ? colors.textSecondary : colors.primaryText}
           />
           <Text
             style={[styles.lockText, !hasViewed && styles.lockTextHighlight]}
@@ -226,7 +239,7 @@ export function CidadeDormeRoleRevealPhase({
             <Ionicons
               name={isLastPlayer ? "moon-outline" : "arrow-forward-outline"}
               size={20}
-              color={COLORS.white}
+              color={colors.white}
             />
           }
         />
@@ -235,164 +248,165 @@ export function CidadeDormeRoleRevealPhase({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: SPACING.xl,
-  },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  topSpacer: {
-    width: 38,
-  },
-  progressBlock: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: "center",
-    gap: SPACING.xs,
-  },
-  progressLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  progressTrack: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-    maxWidth: 220,
-    gap: 4,
-  },
-  progressSegment: {
-    flex: 1,
-    minWidth: 4,
-    maxWidth: 22,
-    height: 4,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.border,
-  },
-  progressSegmentActive: {
-    backgroundColor: COLORS.primary,
-  },
-  exitButton: {
-    width: 38,
-    height: 38,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  playerHeader: {
-    alignItems: "center",
-    marginBottom: SPACING.md,
-  },
-  eyebrow: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-    marginBottom: 4,
-  },
-  playerName: {
-    color: COLORS.textPrimary,
-    fontSize: 28,
-    fontWeight: "800",
-    letterSpacing: -0.4,
-  },
-  playerSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    marginTop: 4,
-  },
-  cardArea: {
-    flex: 1,
-    justifyContent: "center",
-    paddingVertical: SPACING.sm,
-  },
-  iconCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.lg,
-  },
-  rolePreTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  roleTitle: {
-    fontSize: 28,
-    fontWeight: "900",
-    letterSpacing: 0.6,
-    marginTop: 2,
-    textAlign: "center",
-  },
-  dividerLine: {
-    width: 32,
-    height: 3,
-    borderRadius: RADIUS.full,
-    marginVertical: SPACING.md,
-  },
-  roleDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    maxWidth: 270,
-  },
-  partnerBox: {
-    marginTop: SPACING.lg,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: "rgba(244, 63, 94, 0.35)",
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    alignItems: "center",
-    gap: 2,
-  },
-  partnerLabel: {
-    color: COLORS.danger,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.1,
-  },
-  partnerValue: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  footer: {
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    gap: SPACING.md,
-  },
-  lockRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-  },
-  lockText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    textAlign: "center",
-  },
-  lockTextHighlight: {
-    color: COLORS.primaryText,
-    fontWeight: "600",
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: SPACING.xl,
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    topSpacer: {
+      width: 38,
+    },
+    progressBlock: {
+      flex: 1,
+      minWidth: 0,
+      alignItems: "center",
+      gap: SPACING.xs,
+    },
+    progressLabel: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    progressTrack: {
+      flexDirection: "row",
+      justifyContent: "center",
+      width: "100%",
+      maxWidth: 220,
+      gap: 4,
+    },
+    progressSegment: {
+      flex: 1,
+      minWidth: 4,
+      maxWidth: 22,
+      height: 4,
+      borderRadius: RADIUS.full,
+      backgroundColor: colors.border,
+    },
+    progressSegmentActive: {
+      backgroundColor: colors.primary,
+    },
+    exitButton: {
+      width: 38,
+      height: 38,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+    playerHeader: {
+      alignItems: "center",
+      marginBottom: SPACING.md,
+    },
+    eyebrow: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+      marginBottom: 4,
+    },
+    playerName: {
+      color: colors.textPrimary,
+      fontSize: 28,
+      fontWeight: "800",
+      letterSpacing: -0.4,
+    },
+    playerSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      marginTop: 4,
+    },
+    cardArea: {
+      flex: 1,
+      justifyContent: "center",
+      paddingVertical: SPACING.sm,
+    },
+    iconCircle: {
+      width: 84,
+      height: 84,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.lg,
+    },
+    rolePreTitle: {
+      fontSize: 15,
+      fontWeight: "600",
+    },
+    roleTitle: {
+      fontSize: 28,
+      fontWeight: "900",
+      letterSpacing: 0.6,
+      marginTop: 2,
+      textAlign: "center",
+    },
+    dividerLine: {
+      width: 32,
+      height: 3,
+      borderRadius: RADIUS.full,
+      marginVertical: SPACING.md,
+    },
+    roleDescription: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+      maxWidth: 270,
+    },
+    partnerBox: {
+      marginTop: SPACING.lg,
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.dangerBorder,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+      alignItems: "center",
+      gap: 2,
+    },
+    partnerLabel: {
+      color: colors.danger,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+    },
+    partnerValue: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+    footer: {
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      gap: SPACING.md,
+    },
+    lockRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+    },
+    lockText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      textAlign: "center",
+    },
+    lockTextHighlight: {
+      color: colors.primaryText,
+      fontWeight: "600",
+    },
+  });

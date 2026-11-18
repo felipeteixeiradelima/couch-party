@@ -2,9 +2,10 @@ import { GameCard } from "@/components/games/GameCard";
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { Button } from "@/components/ui/Button";
 import { GAMES } from "@/constants/games";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -13,6 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const { players } = usePlayers();
   const { triggerLightImpact } = useHaptics();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   const playersButtonLabel =
     players.length > 0
@@ -28,7 +31,7 @@ export default function HomeScreen() {
               <MaterialCommunityIcons
                 name="sofa-outline"
                 size={22}
-                color={COLORS.white}
+                color={colors.white}
               />
             </View>
             <Text style={styles.brandTitle}>Couch Party!</Text>
@@ -51,7 +54,7 @@ export default function HomeScreen() {
               <Ionicons
                 name="help-circle-outline"
                 size={16}
-                color={COLORS.textSecondary}
+                color={colors.textSecondary}
               />
               <Text style={styles.rulesButtonText}>Regras</Text>
             </Pressable>
@@ -72,7 +75,7 @@ export default function HomeScreen() {
               <Ionicons
                 name="settings-outline"
                 size={19}
-                color={COLORS.textPrimary}
+                color={colors.textPrimary}
               />
             </Pressable>
           </View>
@@ -121,7 +124,7 @@ export default function HomeScreen() {
               router.push("/players");
             }}
             icon={
-              <Ionicons name="people-outline" size={20} color={COLORS.white} />
+              <Ionicons name="people-outline" size={20} color={colors.white} />
             }
           />
         </View>
@@ -130,117 +133,118 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  brand: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-    flexShrink: 1,
-  },
-  logoBox: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  brandTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-    letterSpacing: -0.3,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  rulesButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    minHeight: 40,
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerButtonPressed: {
-    backgroundColor: COLORS.surfaceElevated,
-  },
-  rulesButtonText: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.xl,
-  },
-  hero: {
-    marginBottom: SPACING.xl,
-  },
-  eyebrow: {
-    color: COLORS.primaryText,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-    marginBottom: SPACING.xs,
-  },
-  heading: {
-    color: COLORS.textPrimary,
-    fontSize: 30,
-    fontWeight: "800",
-    letterSpacing: -0.5,
-    marginBottom: SPACING.xs,
-  },
-  subtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  cardsList: {
-    gap: SPACING.lg,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    backgroundColor: COLORS.background,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    brand: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+      flexShrink: 1,
+    },
+    logoBox: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    brandTitle: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+      letterSpacing: -0.3,
+    },
+    headerActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    rulesButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: SPACING.sm,
+      minHeight: 40,
+    },
+    settingsButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.full,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerButtonPressed: {
+      backgroundColor: colors.surfaceElevated,
+    },
+    rulesButtonText: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.xl,
+    },
+    hero: {
+      marginBottom: SPACING.xl,
+    },
+    eyebrow: {
+      color: colors.primaryText,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+      marginBottom: SPACING.xs,
+    },
+    heading: {
+      color: colors.textPrimary,
+      fontSize: 30,
+      fontWeight: "800",
+      letterSpacing: -0.5,
+      marginBottom: SPACING.xs,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 22,
+    },
+    cardsList: {
+      gap: SPACING.lg,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      backgroundColor: colors.background,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+  });

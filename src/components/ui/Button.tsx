@@ -1,5 +1,6 @@
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useThemedStyles } from "@/hooks/useTheme";
 import React, { useState } from "react";
 import {
   Animated,
@@ -30,6 +31,7 @@ export function Button({
   accessibilityLabel,
 }: ButtonProps) {
   const { animationsEnabled } = useAppSettings();
+  const styles = useThemedStyles(createStyles);
   const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const animateScale = (toValue: number) => {
@@ -81,47 +83,48 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    minHeight: 54,
-    borderRadius: RADIUS.lg,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primary: {
-    backgroundColor: COLORS.primary,
-  },
-  secondary: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  danger: {
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: COLORS.danger,
-  },
-  pressed: {
-    opacity: 0.86,
-  },
-  disabled: {
-    opacity: 0.45,
-  },
-  iconContainer: {
-    marginRight: SPACING.sm,
-  },
-  label: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  secondaryLabel: {
-    color: COLORS.textPrimary,
-  },
-  dangerLabel: {
-    color: COLORS.danger,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    base: {
+      minHeight: 54,
+      borderRadius: RADIUS.lg,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    primary: {
+      backgroundColor: colors.primary,
+    },
+    secondary: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    danger: {
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.danger,
+    },
+    pressed: {
+      opacity: 0.86,
+    },
+    disabled: {
+      opacity: 0.45,
+    },
+    iconContainer: {
+      marginRight: SPACING.sm,
+    },
+    label: {
+      color: colors.white,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    secondaryLabel: {
+      color: colors.textPrimary,
+    },
+    dangerLabel: {
+      color: colors.danger,
+    },
+  });

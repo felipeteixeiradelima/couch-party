@@ -4,16 +4,15 @@ import { Button } from "@/components/ui/Button";
 import { CircularTimer, getTimerColor } from "@/components/ui/CircularTimer";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import {
-  CIDADE_DORME_THEMES,
-  COLORS,
-  RADIUS,
-  SPACING,
-} from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { CidadeDormeMatchState } from "@/types/cidadeDorme";
-import { CIDADE_DORME_ROLE_META } from "@/utils/cidadeDormeEngine";
+import {
+  CIDADE_DORME_ROLE_META,
+  getCidadeDormeRoleVisuals,
+} from "@/utils/cidadeDormeEngine";
 import { formatTimer } from "@/utils/gameEngine";
 import { Ionicons } from "@expo/vector-icons";
 import React, {
@@ -34,8 +33,6 @@ import {
   View,
 } from "react-native";
 
-const DAY = CIDADE_DORME_THEMES.day;
-
 interface CidadeDormeDayPhaseProps {
   phase: "day-discussion" | "day-voting" | "day-elimination";
   match: CidadeDormeMatchState;
@@ -55,6 +52,8 @@ export function CidadeDormeDayPhase({
   onViewGameOver,
   onRequestExit,
 }: CidadeDormeDayPhaseProps) {
+  const styles = useThemedStyles(createStyles);
+
   if (phase === "day-discussion") {
     return (
       <AnimatedPhaseView
@@ -113,10 +112,13 @@ function DayHeader({
   title: string;
   onRequestExit: () => void;
 }) {
+  const { colors, cidadeDorme } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   return (
     <View style={styles.header}>
       <View style={styles.dayPill}>
-        <Ionicons name="sunny" size={14} color={DAY.accent} />
+        <Ionicons name="sunny" size={14} color={cidadeDorme.day.accent} />
         <Text style={styles.dayPillText}>{eyebrow}</Text>
       </View>
 
@@ -131,7 +133,7 @@ function DayHeader({
         style={({ pressed }) => [styles.exitButton, pressed && styles.pressed]}
         hitSlop={8}
       >
-        <Ionicons name="close" size={20} color={COLORS.textSecondary} />
+        <Ionicons name="close" size={20} color={colors.textSecondary} />
       </Pressable>
     </View>
   );
@@ -149,6 +151,9 @@ function DayDiscussionView({
   onRequestExit: () => void;
 }) {
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const { colors, cidadeDorme } = useTheme();
+  const day = cidadeDorme.day;
+  const styles = useThemedStyles(createStyles);
 
   const alivePlayers = useMemo(
     () => match.players.filter((entry) => entry.alive),
@@ -194,10 +199,10 @@ function DayDiscussionView({
               styles.dawnIconCircle,
               {
                 backgroundColor: killedEntry
-                  ? COLORS.dangerSoft
+                  ? colors.dangerSoft
                   : wasSaved
-                    ? COLORS.successSoft
-                    : DAY.accentSoft,
+                    ? colors.successSoft
+                    : day.accentSoft,
               },
             ]}
             accessible={false}
@@ -213,10 +218,10 @@ function DayDiscussionView({
               size={36}
               color={
                 killedEntry
-                  ? COLORS.danger
+                  ? colors.danger
                   : wasSaved
-                    ? COLORS.success
-                    : DAY.accent
+                    ? colors.success
+                    : day.accent
               }
             />
           </View>
@@ -246,7 +251,7 @@ function DayDiscussionView({
             </>
           ) : wasSaved ? (
             <>
-              <Text style={[styles.dawnTitle, { color: COLORS.success }]}>
+              <Text style={[styles.dawnTitle, { color: colors.success }]}>
                 Ninguém morreu esta noite!
               </Text>
               <Text style={styles.dawnDescription}>
@@ -270,7 +275,7 @@ function DayDiscussionView({
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color={COLORS.danger}
+              color={colors.danger}
             />
             <Text style={styles.endgameBannerText}>
               Com esse resultado, os assassinos igualaram o número de inocentes!
@@ -282,7 +287,7 @@ function DayDiscussionView({
               <Ionicons
                 name="chatbubbles-outline"
                 size={20}
-                color={DAY.accent}
+                color={day.accent}
               />
               <Text style={styles.debateTitle}>Debate livre</Text>
             </View>
@@ -354,7 +359,7 @@ function DayDiscussionView({
             onPress={onViewGameOver}
             style={styles.dayPrimaryButton}
             icon={
-              <Ionicons name="trophy-outline" size={20} color={COLORS.white} />
+              <Ionicons name="trophy-outline" size={20} color={colors.white} />
             }
           />
         ) : (
@@ -366,7 +371,7 @@ function DayDiscussionView({
               <Ionicons
                 name="checkmark-done-outline"
                 size={20}
-                color={COLORS.white}
+                color={colors.white}
               />
             }
           />
@@ -401,6 +406,11 @@ function DayVotingView({
 }) {
   const { animationsEnabled } = useAppSettings();
   const { triggerSelection, triggerWarning } = useHaptics();
+  const theme = useTheme();
+  const { colors, cidadeDorme } = theme;
+  const day = cidadeDorme.day;
+  const styles = useThemedStyles(createStyles);
+
   const { votingTimerEnabled, votingDurationSeconds } = match.settingsSnapshot;
   const alivePlayers = useMemo(
     () => match.players.filter((entry) => entry.alive),
@@ -497,7 +507,11 @@ function DayVotingView({
     }
   };
 
-  const timerColor = getTimerColor(remainingSeconds, votingDurationSeconds);
+  const timerColor = getTimerColor(
+    remainingSeconds,
+    votingDurationSeconds,
+    colors,
+  );
   const progressRatio =
     votingDurationSeconds > 0
       ? Math.min(1, Math.max(0, remainingSeconds / votingDurationSeconds))
@@ -597,7 +611,7 @@ function DayVotingView({
                 <Ionicons
                   name="infinite-outline"
                   size={20}
-                  color={DAY.accent}
+                  color={day.accent}
                 />
                 <Text style={styles.noTimerText}>
                   Votação sem limite de tempo
@@ -669,7 +683,7 @@ function DayVotingView({
                           <Ionicons
                             name="checkmark"
                             size={14}
-                            color={DAY.background}
+                            color={theme.isDark ? day.background : colors.white}
                           />
                         ) : null}
                       </View>
@@ -704,7 +718,7 @@ function DayVotingView({
           onPress={() => setVoteConfirmVisible(true)}
           disabled={!selectedPlayer}
           style={styles.dayPrimaryButton}
-          icon={<Ionicons name="checkmark" size={20} color={COLORS.white} />}
+          icon={<Ionicons name="checkmark" size={20} color={colors.white} />}
         />
       </View>
 
@@ -755,9 +769,16 @@ function DayEliminationView({
   onRequestExit: () => void;
 }) {
   const { triggerWarning, triggerLightImpact } = useHaptics();
+  const theme = useTheme();
+  const { colors, cidadeDorme } = theme;
+  const styles = useThemedStyles(createStyles);
+
   const eliminated = match.lastEliminatedDayPlayer;
   const aliveCount = match.players.filter((entry) => entry.alive).length;
   const roleMeta = eliminated ? CIDADE_DORME_ROLE_META[eliminated.role] : null;
+  const roleVisuals = eliminated
+    ? getCidadeDormeRoleVisuals(eliminated.role, theme)
+    : null;
 
   useEffect(() => {
     if (eliminated) {
@@ -776,11 +797,11 @@ function DayEliminationView({
       />
 
       <View style={styles.eliminationCenter}>
-        {eliminated && roleMeta ? (
+        {eliminated && roleMeta && roleVisuals ? (
           <View
             style={[
               styles.eliminationCard,
-              { borderColor: roleMeta.borderColor },
+              { borderColor: roleVisuals.borderColor },
             ]}
           >
             <Text style={styles.eliminationEyebrow}>JOGADOR ELIMINADO</Text>
@@ -800,20 +821,20 @@ function DayEliminationView({
               style={[
                 styles.revealedRoleBox,
                 {
-                  backgroundColor: roleMeta.softBgColor,
-                  borderColor: roleMeta.borderColor,
+                  backgroundColor: roleVisuals.softBgColor,
+                  borderColor: roleVisuals.borderColor,
                 },
               ]}
             >
               <RoleBadgeIcon
                 role={eliminated.role}
                 size={26}
-                color={roleMeta.accentColor}
+                color={roleVisuals.accentColor}
               />
               <Text
                 style={[
                   styles.revealedRoleText,
-                  { color: roleMeta.accentColor },
+                  { color: roleVisuals.accentColor },
                 ]}
               >
                 {roleMeta.title.toUpperCase()}
@@ -823,7 +844,11 @@ function DayEliminationView({
         ) : (
           <View style={styles.eliminationCard}>
             <View style={styles.noEliminationIcon} accessible={false}>
-              <Ionicons name="scale-outline" size={38} color={DAY.accent} />
+              <Ionicons
+                name="scale-outline"
+                size={38}
+                color={cidadeDorme.day.accent}
+              />
             </View>
             <Text style={styles.eliminationEyebrow}>VOTAÇÃO ENCERRADA</Text>
             <Text style={styles.eliminationName}>Ninguém foi eliminado</Text>
@@ -852,7 +877,7 @@ function DayEliminationView({
             onPress={onViewGameOver}
             style={styles.dayPrimaryButton}
             icon={
-              <Ionicons name="trophy-outline" size={20} color={COLORS.white} />
+              <Ionicons name="trophy-outline" size={20} color={colors.white} />
             }
           />
         ) : (
@@ -861,7 +886,7 @@ function DayEliminationView({
             onPress={onProceedToNextNight}
             style={styles.dayToNightButton}
             icon={
-              <Ionicons name="moon-outline" size={20} color={COLORS.white} />
+              <Ionicons name="moon-outline" size={20} color={colors.white} />
             }
           />
         )}
@@ -870,498 +895,502 @@ function DayEliminationView({
   );
 }
 
-const styles = StyleSheet.create({
-  animatedFill: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: SPACING.xl,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.sm,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-  },
-  dayPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    backgroundColor: DAY.accentSoft,
-    borderWidth: 1,
-    borderColor: DAY.accentBorder,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  dayPillText: {
-    color: DAY.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.1,
-  },
-  headerTitle: {
-    flex: 1,
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  exitButton: {
-    width: 38,
-    height: 38,
-    borderRadius: RADIUS.md,
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  scrollWrapper: {
-    flex: 1,
-    position: "relative",
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: SPACING.xs,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.lg,
-  },
-  votingScrollContent: {
-    paddingTop: SPACING.xs,
-    paddingBottom: SPACING.xxl,
-    gap: SPACING.xxl,
-  },
-  dawnCard: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1.5,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  dawnCardDanger: {
-    borderColor: "rgba(244, 63, 94, 0.45)",
-  },
-  dawnCardSaved: {
-    borderColor: "rgba(16, 185, 129, 0.45)",
-  },
-  dawnCardNeutral: {
-    borderColor: DAY.accentBorder,
-  },
-  dawnIconCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: RADIUS.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SPACING.xs,
-  },
-  dawnEyebrow: {
-    color: DAY.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.3,
-  },
-  dawnTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "900",
-    textAlign: "center",
-  },
-  dawnDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-  },
-  boldText: {
-    color: COLORS.textPrimary,
-    fontWeight: "700",
-  },
-  victimChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: "rgba(244, 63, 94, 0.35)",
-    borderRadius: RADIUS.lg,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    marginTop: SPACING.xs,
-  },
-  victimName: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "800",
-  },
-  victimStatus: {
-    color: COLORS.danger,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  endgameBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: "rgba(244, 63, 94, 0.4)",
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-  },
-  endgameBannerText: {
-    flex: 1,
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "600",
-    lineHeight: 19,
-  },
-  debateCard: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.xs,
-  },
-  debateHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-  },
-  debateTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  debateText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  section: {
-    gap: SPACING.sm,
-  },
-  sectionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  sectionTitleMuted: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  playersGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.sm,
-  },
-  playerChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.md,
-    maxWidth: "48%",
-  },
-  playerChipName: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-    flexShrink: 1,
-  },
-  eliminatedChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.borderSubtle,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.xs,
-    paddingHorizontal: SPACING.md,
-    opacity: 0.65,
-    maxWidth: "48%",
-  },
-  eliminatedInfo: {
-    flexShrink: 1,
-  },
-  eliminatedChipName: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-    textDecorationLine: "line-through",
-  },
-  eliminatedChipSub: {
-    color: COLORS.textMuted,
-    fontSize: 11,
-  },
-  stickyTimerBar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    backgroundColor: DAY.surfaceElevated,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.lg,
-    overflow: "hidden",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  stickyTimerMain: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-  },
-  stickyTimerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  stickyDot: {
-    width: 10,
-    height: 10,
-    borderRadius: RADIUS.full,
-  },
-  stickyTimeText: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
-  },
-  stickySubText: {
-    color: COLORS.textSecondary,
-    fontSize: 11,
-    fontWeight: "600",
-  },
-  stickyEndButton: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 8,
-    minHeight: 36,
-    justifyContent: "center",
-  },
-  stickyEndButtonText: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  stickyProgressTrack: {
-    height: 3,
-    backgroundColor: DAY.border,
-  },
-  stickyProgressFill: {
-    height: "100%",
-  },
-  timerSection: {
-    alignItems: "center",
-    gap: SPACING.lg,
-    paddingTop: SPACING.xs,
-  },
-  noTimerBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-  },
-  noTimerText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  endVotingPill: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    minHeight: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  endVotingPillText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  votingSection: {
-    gap: SPACING.sm,
-  },
-  questionHeading: {
-    color: COLORS.textPrimary,
-    fontSize: 24,
-    fontWeight: "800",
-    letterSpacing: -0.3,
-  },
-  questionSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    marginBottom: SPACING.sm,
-  },
-  voteGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  voteCard: {
-    width: "48%",
-    backgroundColor: DAY.surface,
-    borderWidth: 1.5,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    gap: SPACING.md,
-  },
-  voteCardSelected: {
-    borderColor: DAY.accent,
-    backgroundColor: DAY.accentSoft,
-  },
-  voteCardTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  radioCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: RADIUS.full,
-    borderWidth: 1.5,
-    borderColor: COLORS.textMuted,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  radioCircleSelected: {
-    backgroundColor: DAY.accent,
-    borderColor: DAY.accent,
-  },
-  votePlayerName: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  voteStatusText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  voteStatusSelected: {
-    color: DAY.accent,
-  },
-  eliminationCenter: {
-    flex: 1,
-    justifyContent: "center",
-    gap: SPACING.lg,
-    paddingBottom: SPACING.lg,
-  },
-  eliminationCard: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1.5,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: "center",
-    gap: SPACING.md,
-  },
-  noEliminationIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: RADIUS.full,
-    backgroundColor: DAY.accentSoft,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  eliminationEyebrow: {
-    color: DAY.accent,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.3,
-  },
-  eliminationName: {
-    color: COLORS.textPrimary,
-    fontSize: 28,
-    fontWeight: "900",
-    textAlign: "center",
-  },
-  eliminationSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-    maxWidth: 270,
-  },
-  revealedRoleBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    borderWidth: 1,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    marginTop: SPACING.xs,
-  },
-  revealedRoleText: {
-    fontSize: 18,
-    fontWeight: "900",
-    letterSpacing: 0.8,
-  },
-  statusSummaryPill: {
-    backgroundColor: DAY.surface,
-    borderWidth: 1,
-    borderColor: DAY.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    alignItems: "center",
-  },
-  statusSummaryText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  footer: {
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: DAY.borderSubtle,
-    gap: SPACING.md,
-  },
-  dayPrimaryButton: {
-    backgroundColor: "#B45309",
-  },
-  dayToNightButton: {
-    backgroundColor: "#2563EB",
-  },
-});
+const createStyles = ({ colors, cidadeDorme, shadowOpacity }: AppTheme) => {
+  const day = cidadeDorme.day;
+
+  return StyleSheet.create({
+    animatedFill: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: SPACING.xl,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.sm,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+    },
+    dayPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      backgroundColor: day.accentSoft,
+      borderWidth: 1,
+      borderColor: day.accentBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    dayPillText: {
+      color: day.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+    },
+    headerTitle: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "800",
+      textAlign: "center",
+    },
+    exitButton: {
+      width: 38,
+      height: 38,
+      borderRadius: RADIUS.md,
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    scrollWrapper: {
+      flex: 1,
+      position: "relative",
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingTop: SPACING.xs,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.lg,
+    },
+    votingScrollContent: {
+      paddingTop: SPACING.xs,
+      paddingBottom: SPACING.xxl,
+      gap: SPACING.xxl,
+    },
+    dawnCard: {
+      backgroundColor: day.surface,
+      borderWidth: 1.5,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    dawnCardDanger: {
+      borderColor: colors.dangerBorder,
+    },
+    dawnCardSaved: {
+      borderColor: colors.successBorder,
+    },
+    dawnCardNeutral: {
+      borderColor: day.accentBorder,
+    },
+    dawnIconCircle: {
+      width: 76,
+      height: 76,
+      borderRadius: RADIUS.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SPACING.xs,
+    },
+    dawnEyebrow: {
+      color: day.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.3,
+    },
+    dawnTitle: {
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "900",
+      textAlign: "center",
+    },
+    dawnDescription: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+      textAlign: "center",
+    },
+    boldText: {
+      color: colors.textPrimary,
+      fontWeight: "700",
+    },
+    victimChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.dangerBorder,
+      borderRadius: RADIUS.lg,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.md,
+      marginTop: SPACING.xs,
+    },
+    victimName: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "800",
+    },
+    victimStatus: {
+      color: colors.danger,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    endgameBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.dangerBorder,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+    },
+    endgameBannerText: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "600",
+      lineHeight: 19,
+    },
+    debateCard: {
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.xs,
+    },
+    debateHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.xs,
+    },
+    debateTitle: {
+      color: colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    debateText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    section: {
+      gap: SPACING.sm,
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    sectionTitleMuted: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    playersGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    playerChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.sm,
+      paddingHorizontal: SPACING.md,
+      maxWidth: "48%",
+    },
+    playerChipName: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+      flexShrink: 1,
+    },
+    eliminatedChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.borderSubtle,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.xs,
+      paddingHorizontal: SPACING.md,
+      opacity: 0.65,
+      maxWidth: "48%",
+    },
+    eliminatedInfo: {
+      flexShrink: 1,
+    },
+    eliminatedChipName: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+      textDecorationLine: "line-through",
+    },
+    eliminatedChipSub: {
+      color: colors.textMuted,
+      fontSize: 11,
+    },
+    stickyTimerBar: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      backgroundColor: day.surfaceElevated,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.lg,
+      overflow: "hidden",
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity,
+      shadowRadius: 10,
+      elevation: 8,
+    },
+    stickyTimerMain: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+    },
+    stickyTimerLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    stickyDot: {
+      width: 10,
+      height: 10,
+      borderRadius: RADIUS.full,
+    },
+    stickyTimeText: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
+    stickySubText: {
+      color: colors.textSecondary,
+      fontSize: 11,
+      fontWeight: "600",
+    },
+    stickyEndButton: {
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 8,
+      minHeight: 36,
+      justifyContent: "center",
+    },
+    stickyEndButtonText: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    stickyProgressTrack: {
+      height: 3,
+      backgroundColor: day.border,
+    },
+    stickyProgressFill: {
+      height: "100%",
+    },
+    timerSection: {
+      alignItems: "center",
+      gap: SPACING.lg,
+      paddingTop: SPACING.xs,
+    },
+    noTimerBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.sm,
+    },
+    noTimerText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    endVotingPill: {
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
+      minHeight: 44,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    endVotingPillText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    votingSection: {
+      gap: SPACING.sm,
+    },
+    questionHeading: {
+      color: colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+      letterSpacing: -0.3,
+    },
+    questionSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      marginBottom: SPACING.sm,
+    },
+    voteGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    voteCard: {
+      width: "48%",
+      backgroundColor: day.surface,
+      borderWidth: 1.5,
+      borderColor: day.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      gap: SPACING.md,
+    },
+    voteCardSelected: {
+      borderColor: day.accent,
+      backgroundColor: day.accentSoft,
+    },
+    voteCardTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    radioCircle: {
+      width: 24,
+      height: 24,
+      borderRadius: RADIUS.full,
+      borderWidth: 1.5,
+      borderColor: colors.textMuted,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    radioCircleSelected: {
+      backgroundColor: day.accent,
+      borderColor: day.accent,
+    },
+    votePlayerName: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    voteStatusText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+      textAlign: "center",
+    },
+    voteStatusSelected: {
+      color: day.accent,
+    },
+    eliminationCenter: {
+      flex: 1,
+      justifyContent: "center",
+      gap: SPACING.lg,
+      paddingBottom: SPACING.lg,
+    },
+    eliminationCard: {
+      backgroundColor: day.surface,
+      borderWidth: 1.5,
+      borderColor: day.border,
+      borderRadius: RADIUS.xl,
+      padding: SPACING.xxl,
+      alignItems: "center",
+      gap: SPACING.md,
+    },
+    noEliminationIcon: {
+      width: 72,
+      height: 72,
+      borderRadius: RADIUS.full,
+      backgroundColor: day.accentSoft,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    eliminationEyebrow: {
+      color: day.accent,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.3,
+    },
+    eliminationName: {
+      color: colors.textPrimary,
+      fontSize: 28,
+      fontWeight: "900",
+      textAlign: "center",
+    },
+    eliminationSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+      maxWidth: 270,
+    },
+    revealedRoleBox: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+      borderWidth: 1,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
+      marginTop: SPACING.xs,
+    },
+    revealedRoleText: {
+      fontSize: 18,
+      fontWeight: "900",
+      letterSpacing: 0.8,
+    },
+    statusSummaryPill: {
+      backgroundColor: day.surface,
+      borderWidth: 1,
+      borderColor: day.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.md,
+      alignItems: "center",
+    },
+    statusSummaryText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+      textAlign: "center",
+    },
+    footer: {
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.lg,
+      borderTopWidth: 1,
+      borderTopColor: day.borderSubtle,
+      gap: SPACING.md,
+    },
+    dayPrimaryButton: {
+      backgroundColor: day.primaryButton,
+    },
+    dayToNightButton: {
+      backgroundColor: day.transitionToNightButton ?? day.primaryButton,
+    },
+  });
+};

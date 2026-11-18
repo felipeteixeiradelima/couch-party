@@ -1,4 +1,5 @@
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
@@ -17,6 +18,8 @@ export function ScreenHeader({
   onBack,
   rightSlot,
 }: ScreenHeaderProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const handleBack = onBack ?? (() => router.back());
 
   return (
@@ -28,7 +31,7 @@ export function ScreenHeader({
         style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
         hitSlop={8}
       >
-        <Ionicons name="chevron-back" size={22} color={COLORS.textPrimary} />
+        <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
       </Pressable>
 
       <View style={styles.titleBlock}>
@@ -47,42 +50,43 @@ export function ScreenHeader({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    gap: SPACING.md,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  titleBlock: {
-    flex: 1,
-  },
-  title: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  subtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    marginTop: 2,
-  },
-  rightSlot: {
-    minWidth: 44,
-    alignItems: "flex-end",
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
+      gap: SPACING.md,
+    },
+    backButton: {
+      width: 44,
+      height: 44,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+    titleBlock: {
+      flex: 1,
+    },
+    title: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "700",
+    },
+    subtitle: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      marginTop: 2,
+    },
+    rightSlot: {
+      minWidth: 44,
+      alignItems: "flex-end",
+    },
+  });

@@ -7,7 +7,7 @@ import { SecretRolePhase } from "@/components/games/phases/SecretRolePhase";
 import { VotingPhase } from "@/components/games/phases/VotingPhase";
 import { AnimatedPhaseView } from "@/components/ui/AnimatedPhaseView";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { COLORS } from "@/constants/theme";
+import { AppTheme } from "@/constants/theme";
 import { getGameCategories } from "@/data/gameContent";
 import {
   getCategoriesByGame,
@@ -18,6 +18,7 @@ import {
 } from "@/database";
 import { useHaptics } from "@/hooks/useHaptics";
 import { usePlayers } from "@/hooks/usePlayers";
+import { useThemedStyles } from "@/hooks/useTheme";
 import {
   ActiveRoundState,
   GameCategorySummary,
@@ -54,6 +55,8 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
   const db = useSQLiteContext();
   const { players, refreshPlayers } = usePlayers();
   const { triggerSuccess, triggerWarning } = useHaptics();
+  const styles = useThemedStyles(createStyles);
+
   const [categories, setCategories] = useState<GameCategorySummary[]>(() =>
     getGameCategories(gameId),
   );
@@ -337,12 +340,13 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  phaseFill: {
-    flex: 1,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    phaseFill: {
+      flex: 1,
+    },
+  });

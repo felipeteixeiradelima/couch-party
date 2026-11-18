@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { GameCategorySummary, GameSettings } from "@/types/game";
 import {
   clampImpostorCount,
@@ -59,6 +60,9 @@ function GameSettingsModalContent({
   onSave,
   onClose,
 }: GameSettingsModalProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   const [draft, setDraft] = useState<GameSettings>(() => ({
     ...settings,
     impostorCount: clampImpostorCount(settings.impostorCount, playerCount),
@@ -137,7 +141,7 @@ function GameSettingsModalContent({
             ]}
             hitSlop={8}
           >
-            <Ionicons name="close" size={20} color={COLORS.textPrimary} />
+            <Ionicons name="close" size={20} color={colors.textPrimary} />
           </Pressable>
         </View>
 
@@ -171,7 +175,7 @@ function GameSettingsModalContent({
                   <Ionicons
                     name="remove"
                     size={18}
-                    color={COLORS.textPrimary}
+                    color={colors.textPrimary}
                   />
                 </Pressable>
 
@@ -189,7 +193,7 @@ function GameSettingsModalContent({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Ionicons name="add" size={18} color={COLORS.textPrimary} />
+                  <Ionicons name="add" size={18} color={colors.textPrimary} />
                 </Pressable>
               </View>
             </View>
@@ -217,7 +221,7 @@ function GameSettingsModalContent({
                 <Ionicons
                   name="shuffle-outline"
                   size={15}
-                  color={isRandomCategory ? COLORS.white : COLORS.textSecondary}
+                  color={isRandomCategory ? colors.white : colors.textSecondary}
                 />
                 <Text
                   style={[
@@ -278,10 +282,10 @@ function GameSettingsModalContent({
                     setDraft((prev) => ({ ...prev, hintEnabled: value }))
                   }
                   trackColor={{
-                    false: COLORS.border,
-                    true: COLORS.primary,
+                    false: colors.switchTrackOff,
+                    true: colors.primary,
                   }}
-                  thumbColor={COLORS.white}
+                  thumbColor={colors.white}
                   accessibilityLabel="Habilitar dica para o impostor"
                 />
               </View>
@@ -307,10 +311,10 @@ function GameSettingsModalContent({
                   }))
                 }
                 trackColor={{
-                  false: COLORS.border,
-                  true: COLORS.primary,
+                  false: colors.switchTrackOff,
+                  true: colors.primary,
                 }}
-                thumbColor={COLORS.white}
+                thumbColor={colors.white}
                 accessibilityLabel="Habilitar tempo de votação"
               />
             </View>
@@ -402,214 +406,215 @@ function GameSettingsModalContent({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: "rgba(8, 7, 13, 0.72)",
-  },
-  sheet: {
-    backgroundColor: COLORS.background,
-    borderTopLeftRadius: RADIUS.xl,
-    borderTopRightRadius: RADIUS.xl,
-    borderTopWidth: 1,
-    borderColor: COLORS.border,
-    maxHeight: "88%",
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.xl,
-    paddingBottom: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.borderSubtle,
-  },
-  sheetTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-  },
-  sheetSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    marginTop: 2,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  scroll: {
-    flexShrink: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.lg,
-    gap: SPACING.md,
-  },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.md,
-  },
-  rowBetween: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  labelBlock: {
-    flex: 1,
-  },
-  optionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  optionDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 3,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  stepperButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepperDisabled: {
-    opacity: 0.35,
-  },
-  stepperValue: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "800",
-    minWidth: 26,
-    textAlign: "center",
-  },
-  chipsWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.sm,
-  },
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 8,
-    minHeight: 36,
-  },
-  chipSelected: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  chipText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  chipTextSelected: {
-    color: COLORS.white,
-  },
-  timerConfigBlock: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-    paddingTop: SPACING.md,
-    gap: SPACING.md,
-  },
-  timerStepperRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  durationStepButton: {
-    minWidth: 68,
-    height: 42,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: SPACING.md,
-  },
-  durationStepText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  durationValue: {
-    color: COLORS.primaryText,
-    fontSize: 20,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
-  },
-  presetsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.xs,
-  },
-  presetChip: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.sm,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  presetChipActive: {
-    backgroundColor: COLORS.primarySoft,
-    borderColor: COLORS.primary,
-  },
-  presetChipText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  presetChipTextActive: {
-    color: COLORS.primaryText,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.xxl,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "flex-end",
+    },
+    backdrop: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: colors.sheetBackdrop,
+    },
+    sheet: {
+      backgroundColor: colors.background,
+      borderTopLeftRadius: RADIUS.xl,
+      borderTopRightRadius: RADIUS.xl,
+      borderTopWidth: 1,
+      borderColor: colors.border,
+      maxHeight: "88%",
+    },
+    sheetHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.xl,
+      paddingBottom: SPACING.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderSubtle,
+    },
+    sheetTitle: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+    },
+    sheetSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      marginTop: 2,
+    },
+    closeButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    scroll: {
+      flexShrink: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.lg,
+      gap: SPACING.md,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.md,
+    },
+    rowBetween: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    labelBlock: {
+      flex: 1,
+    },
+    optionTitle: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    optionDescription: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 18,
+      marginTop: 3,
+    },
+    stepper: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    stepperButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepperDisabled: {
+      opacity: 0.35,
+    },
+    stepperValue: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "800",
+      minWidth: 26,
+      textAlign: "center",
+    },
+    chipsWrap: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    chip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 8,
+      minHeight: 36,
+    },
+    chipSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    chipText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    chipTextSelected: {
+      color: colors.white,
+    },
+    timerConfigBlock: {
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+      paddingTop: SPACING.md,
+      gap: SPACING.md,
+    },
+    timerStepperRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    durationStepButton: {
+      minWidth: 68,
+      height: 42,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: SPACING.md,
+    },
+    durationStepText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    durationValue: {
+      color: colors.primaryText,
+      fontSize: 20,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
+    presetsRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.xs,
+    },
+    presetChip: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.sm,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    presetChipActive: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    presetChipText: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    presetChipTextActive: {
+      color: colors.primaryText,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.xxl,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+  });

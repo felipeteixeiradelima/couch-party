@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { AppTheme, RADIUS, SPACING } from "@/constants/theme";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { CidadeDormeSettings } from "@/types/cidadeDorme";
 import {
   clampAssassinCount,
@@ -61,6 +62,9 @@ function CidadeDormeSettingsContent({
   onSave,
   onClose,
 }: CidadeDormeSettingsModalProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
   const [draft, setDraft] = useState<CidadeDormeSettings>(() =>
     normalizeCidadeDormeSettings(settings, playerCount),
   );
@@ -156,7 +160,7 @@ function CidadeDormeSettingsContent({
             ]}
             hitSlop={8}
           >
-            <Ionicons name="close" size={20} color={COLORS.textPrimary} />
+            <Ionicons name="close" size={20} color={colors.textPrimary} />
           </Pressable>
         </View>
 
@@ -201,7 +205,7 @@ function CidadeDormeSettingsContent({
                 <Ionicons
                   name="warning-outline"
                   size={15}
-                  color={COLORS.warning}
+                  color={colors.warning}
                 />
                 <Text style={styles.warningNoteText}>
                   Com {draft.assassinCount} assassinos para {safePlayerCount}{" "}
@@ -237,7 +241,7 @@ function CidadeDormeSettingsContent({
                   <Ionicons
                     name="remove"
                     size={18}
-                    color={COLORS.textPrimary}
+                    color={colors.textPrimary}
                   />
                 </Pressable>
 
@@ -255,7 +259,7 @@ function CidadeDormeSettingsContent({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Ionicons name="add" size={18} color={COLORS.textPrimary} />
+                  <Ionicons name="add" size={18} color={colors.textPrimary} />
                 </Pressable>
               </View>
             </View>
@@ -288,7 +292,7 @@ function CidadeDormeSettingsContent({
                   <Ionicons
                     name="remove"
                     size={18}
-                    color={COLORS.textPrimary}
+                    color={colors.textPrimary}
                   />
                 </Pressable>
 
@@ -306,7 +310,7 @@ function CidadeDormeSettingsContent({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Ionicons name="add" size={18} color={COLORS.textPrimary} />
+                  <Ionicons name="add" size={18} color={colors.textPrimary} />
                 </Pressable>
               </View>
             </View>
@@ -340,7 +344,7 @@ function CidadeDormeSettingsContent({
                   <Ionicons
                     name="remove"
                     size={18}
-                    color={COLORS.textPrimary}
+                    color={colors.textPrimary}
                   />
                 </Pressable>
 
@@ -362,7 +366,7 @@ function CidadeDormeSettingsContent({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Ionicons name="add" size={18} color={COLORS.textPrimary} />
+                  <Ionicons name="add" size={18} color={colors.textPrimary} />
                 </Pressable>
               </View>
             </View>
@@ -387,10 +391,10 @@ function CidadeDormeSettingsContent({
                   }))
                 }
                 trackColor={{
-                  false: COLORS.border,
-                  true: COLORS.primary,
+                  false: colors.switchTrackOff,
+                  true: colors.primary,
                 }}
-                thumbColor={COLORS.white}
+                thumbColor={colors.white}
                 accessibilityLabel="Habilitar tempo de votação"
               />
             </View>
@@ -482,246 +486,276 @@ function CidadeDormeSettingsContent({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: "rgba(8, 7, 13, 0.72)",
-  },
-  sheet: {
-    backgroundColor: COLORS.background,
-    borderTopLeftRadius: RADIUS.xl,
-    borderTopRightRadius: RADIUS.xl,
-    borderTopWidth: 1,
-    borderColor: COLORS.border,
-    maxHeight: "88%",
-  },
-  sheetHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.xl,
-    paddingBottom: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.borderSubtle,
-  },
-  sheetTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 20,
-    fontWeight: "800",
-  },
-  sheetSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    marginTop: 2,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.78,
-  },
-  scroll: {
-    flexShrink: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.lg,
-    gap: SPACING.md,
-  },
-  summaryCard: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.sm,
-  },
-  summaryTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 0.4,
-  },
-  summaryBadges: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.xs,
-  },
-  summaryBadge: {
-    borderRadius: RADIUS.full,
-    borderWidth: 1,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 5,
-  },
-  assassinBadge: {
-    backgroundColor: COLORS.dangerSoft,
-    borderColor: "rgba(244, 63, 94, 0.35)",
-  },
-  detectiveBadge: {
-    backgroundColor: COLORS.infoSoft,
-    borderColor: "rgba(59, 130, 246, 0.35)",
-  },
-  angelBadge: {
-    backgroundColor: COLORS.successSoft,
-    borderColor: "rgba(16, 185, 129, 0.35)",
-  },
-  citizenBadge: {
-    backgroundColor: COLORS.primarySoft,
-    borderColor: "rgba(139, 61, 255, 0.35)",
-  },
-  summaryBadgeText: {
-    color: COLORS.textPrimary,
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  warningNote: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: SPACING.xs,
-    backgroundColor: COLORS.warningSoft,
-    borderRadius: RADIUS.md,
-    padding: SPACING.sm,
-    marginTop: 2,
-  },
-  warningNoteText: {
-    flex: 1,
-    color: COLORS.textPrimary,
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    gap: SPACING.md,
-  },
-  rowBetween: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  labelBlock: {
-    flex: 1,
-  },
-  optionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  optionDescription: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 3,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  stepperButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepperDisabled: {
-    opacity: 0.35,
-  },
-  stepperValue: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: "800",
-    minWidth: 26,
-    textAlign: "center",
-  },
-  timerConfigBlock: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-    paddingTop: SPACING.md,
-    gap: SPACING.md,
-  },
-  timerStepperRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SPACING.md,
-  },
-  durationStepButton: {
-    minWidth: 68,
-    height: 42,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: SPACING.md,
-  },
-  durationStepText: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  durationValue: {
-    color: COLORS.primaryText,
-    fontSize: 20,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
-  },
-  presetsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SPACING.xs,
-  },
-  presetChip: {
-    backgroundColor: COLORS.surfaceElevated,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.sm,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-  },
-  presetChipActive: {
-    backgroundColor: COLORS.primarySoft,
-    borderColor: COLORS.primary,
-  },
-  presetChipText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  presetChipTextActive: {
-    color: COLORS.primaryText,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.xxl,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderSubtle,
-  },
-});
+const createStyles = ({ colors }: AppTheme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "flex-end",
+    },
+    backdrop: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: colors.sheetBackdrop,
+    },
+    sheet: {
+      backgroundColor: colors.background,
+      borderTopLeftRadius: RADIUS.xl,
+      borderTopRightRadius: RADIUS.xl,
+      borderTopWidth: 1,
+      borderColor: colors.border,
+      maxHeight: "88%",
+    },
+    sheetHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.xl,
+      paddingBottom: SPACING.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderSubtle,
+    },
+    sheetTitle: {
+      color: colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+    },
+    sheetSubtitle: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      marginTop: 2,
+    },
+    closeButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.78,
+    },
+    scroll: {
+      flexShrink: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.lg,
+      gap: SPACING.md,
+    },
+    summaryCard: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.sm,
+    },
+    summaryTitle: {
+      color: colors.textPrimary,
+      fontSize: 13,
+      fontWeight: "700",
+      letterSpacing: 0.4,
+    },
+    summaryBadges: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.xs,
+    },
+    summaryBadge: {
+      borderRadius: RADIUS.full,
+      borderWidth: 1,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 5,
+    },
+    assassinBadge: {
+      backgroundColor: colors.dangerSoft,
+      borderColor: colors.dangerBorder,
+    },
+    detectiveBadge: {
+      backgroundColor: colors.infoSoft,
+      borderColor: colors.infoBorder,
+    },
+    angelBadge: {
+      backgroundColor: colors.successSoft,
+      borderColor: colors.successBorder,
+    },
+    citizenBadge: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primaryBorder,
+    },
+    summaryBadgeText: {
+      color: colors.textPrimary,
+      fontSize: 12,
+      fontWeight: "700",
+    },
+    warningNote: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: SPACING.xs,
+      backgroundColor: colors.warningSoft,
+      borderRadius: RADIUS.md,
+      padding: SPACING.sm,
+      marginTop: 2,
+    },
+    warningNoteText: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontSize: 12,
+      lineHeight: 17,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.lg,
+      padding: SPACING.lg,
+      gap: SPACING.md,
+    },
+    rowBetween: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    labelBlock: {
+      flex: 1,
+    },
+    optionTitle: {
+      color: colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    optionDescription: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 18,
+      marginTop: 3,
+    },
+    stepper: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.sm,
+    },
+    stepperButton: {
+      width: 40,
+      height: 40,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepperDisabled: {
+      opacity: 0.35,
+    },
+    stepperValue: {
+      color: colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "800",
+      minWidth: 26,
+      textAlign: "center",
+    },
+    chipsWrap: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    chip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 8,
+      minHeight: 36,
+    },
+    chipSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    chipText: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    chipTextSelected: {
+      color: colors.white,
+    },
+    timerConfigBlock: {
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+      paddingTop: SPACING.md,
+      gap: SPACING.md,
+    },
+    timerStepperRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: SPACING.md,
+    },
+    durationStepButton: {
+      minWidth: 68,
+      height: 42,
+      borderRadius: RADIUS.md,
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: SPACING.md,
+    },
+    durationStepText: {
+      color: colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    durationValue: {
+      color: colors.primaryText,
+      fontSize: 20,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
+    presetsRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SPACING.xs,
+    },
+    presetChip: {
+      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.sm,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 6,
+    },
+    presetChipActive: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+    },
+    presetChipText: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    presetChipTextActive: {
+      color: colors.primaryText,
+    },
+    footer: {
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.md,
+      paddingBottom: SPACING.xxl,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderSubtle,
+    },
+  });
