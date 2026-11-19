@@ -95,6 +95,8 @@ export interface GameSettings {
   /** Empty array means randomize across all available categories. */
   selectedCategoryIds: string[];
   hintEnabled: boolean;
+  discussionTimerEnabled: boolean;
+  discussionDurationSeconds: number;
   votingTimerEnabled: boolean;
   votingDurationSeconds: number;
 }
@@ -133,6 +135,8 @@ export interface ActiveRoundState {
   settingsSnapshot: GameSettings;
   /** Recorded answers keyed by player ID (used in Perguntas). */
   answers: Record<string, string>;
+  /** Randomly selected starting player ID for Impostor discussion. */
+  startingPlayerId: string | null;
 }
 
 export type GamePhase = "lobby" | "reveal" | "discussion" | "voting" | "result";

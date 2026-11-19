@@ -4,11 +4,16 @@ import { useAppSettings } from "@/hooks/useAppSettings";
 import { useTheme, useThemedStyles } from "@/hooks/useTheme";
 import { GameCategorySummary, GameSettings } from "@/types/game";
 import {
+  clampDiscussionSeconds,
   clampImpostorCount,
   clampVotingSeconds,
+  DISCUSSION_PRESET_SECONDS,
+  DISCUSSION_STEP_SECONDS,
   formatDurationLabel,
   getMaxImpostors,
+  MAX_DISCUSSION_SECONDS,
   MAX_VOTING_SECONDS,
+  MIN_DISCUSSION_SECONDS,
   MIN_VOTING_SECONDS,
   VOTING_PRESET_SECONDS,
   VOTING_STEP_SECONDS,
@@ -31,6 +36,7 @@ interface GameSettingsModalProps {
   categories: GameCategorySummary[];
   playerCount: number;
   showHintSetting?: boolean;
+  showDiscussionTimerSetting?: boolean;
   onSave: (nextSettings: GameSettings) => void;
   onClose: () => void;
 }
@@ -57,6 +63,7 @@ function GameSettingsModalContent({
   categories,
   playerCount,
   showHintSetting = true,
+  showDiscussionTimerSetting = false,
   onSave,
   onClose,
 }: GameSettingsModalProps) {
@@ -66,6 +73,9 @@ function GameSettingsModalContent({
   const [draft, setDraft] = useState<GameSettings>(() => ({
     ...settings,
     impostorCount: clampImpostorCount(settings.impostorCount, playerCount),
+    discussionDurationSeconds: clampDiscussionSeconds(
+      settings.discussionDurationSeconds,
+    ),
     votingDurationSeconds: clampVotingSeconds(settings.votingDurationSeconds),
   }));
 
@@ -97,6 +107,15 @@ function GameSettingsModalContent({
     });
   };
 
+  const handleChangeDiscussionDuration = (delta: number) => {
+    setDraft((prev) => ({
+      ...prev,
+      discussionDurationSeconds: clampDiscussionSeconds(
+        prev.discussionDurationSeconds + delta,
+      ),
+    }));
+  };
+
   const handleChangeVotingDuration = (delta: number) => {
     setDraft((prev) => ({
       ...prev,
@@ -110,6 +129,9 @@ function GameSettingsModalContent({
     onSave({
       ...draft,
       impostorCount: clampImpostorCount(draft.impostorCount, playerCount),
+      discussionDurationSeconds: clampDiscussionSeconds(
+        draft.discussionDurationSeconds,
+      ),
       votingDurationSeconds: clampVotingSeconds(draft.votingDurationSeconds),
     });
   };
@@ -292,116 +314,194 @@ function GameSettingsModalContent({
             </View>
           ) : null}
 
+          {/* Tempo de discussão (Impostor) */}
+          {showDiscussionTimerSetting ? (
+            <TimerSettingCard
+              title="Tempo de discussão"
+              description="Cronômetro entre 30s e 10min durante o debate antes da votação."
+              switchAccessibilityLabel="Habilitar tempo de discussão"
+              decreaseAccessibilityLabel="Diminuir tempo de discussão em 30 segundos"
+              increaseAccessibilityLabel="Aumentar tempo de discussão em 30 segundos"
+              enabled={draft.discussionTimerEnabled}
+              durationSeconds={draft.discussionDurationSeconds}
+              minSeconds={MIN_DISCUSSION_SECONDS}
+              maxSeconds={MAX_DISCUSSION_SECONDS}
+              stepSeconds={DISCUSSION_STEP_SECONDS}
+              presets={DISCUSSION_PRESET_SECONDS}
+              onToggle={(value) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  discussionTimerEnabled: value,
+                }))
+              }
+              onStep={handleChangeDiscussionDuration}
+              onSelectPreset={(preset) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  discussionDurationSeconds: preset,
+                }))
+              }
+            />
+          ) : null}
+
           {/* Tempo de votação */}
-          <View style={styles.card}>
-            <View style={styles.rowBetween}>
-              <View style={styles.labelBlock}>
-                <Text style={styles.optionTitle}>Tempo de votação</Text>
-                <Text style={styles.optionDescription}>
-                  Cronômetro entre 30s e 10min durante a votação.
-                </Text>
-              </View>
-
-              <Switch
-                value={draft.votingTimerEnabled}
-                onValueChange={(value) =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    votingTimerEnabled: value,
-                  }))
-                }
-                trackColor={{
-                  false: colors.switchTrackOff,
-                  true: colors.primary,
-                }}
-                thumbColor={colors.white}
-                accessibilityLabel="Habilitar tempo de votação"
-              />
-            </View>
-
-            {draft.votingTimerEnabled ? (
-              <View style={styles.timerConfigBlock}>
-                <View style={styles.timerStepperRow}>
-                  <Pressable
-                    onPress={() =>
-                      handleChangeVotingDuration(-VOTING_STEP_SECONDS)
-                    }
-                    disabled={draft.votingDurationSeconds <= MIN_VOTING_SECONDS}
-                    accessibilityRole="button"
-                    accessibilityLabel="Diminuir tempo de votação em 30 segundos"
-                    style={({ pressed }) => [
-                      styles.durationStepButton,
-                      draft.votingDurationSeconds <= MIN_VOTING_SECONDS &&
-                        styles.stepperDisabled,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.durationStepText}>-30s</Text>
-                  </Pressable>
-
-                  <Text style={styles.durationValue}>
-                    {formatDurationLabel(draft.votingDurationSeconds)}
-                  </Text>
-
-                  <Pressable
-                    onPress={() =>
-                      handleChangeVotingDuration(VOTING_STEP_SECONDS)
-                    }
-                    disabled={draft.votingDurationSeconds >= MAX_VOTING_SECONDS}
-                    accessibilityRole="button"
-                    accessibilityLabel="Aumentar tempo de votação em 30 segundos"
-                    style={({ pressed }) => [
-                      styles.durationStepButton,
-                      draft.votingDurationSeconds >= MAX_VOTING_SECONDS &&
-                        styles.stepperDisabled,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.durationStepText}>+30s</Text>
-                  </Pressable>
-                </View>
-
-                <View style={styles.presetsRow}>
-                  {VOTING_PRESET_SECONDS.map((preset) => {
-                    const isActive = draft.votingDurationSeconds === preset;
-                    return (
-                      <Pressable
-                        key={preset}
-                        onPress={() =>
-                          setDraft((prev) => ({
-                            ...prev,
-                            votingDurationSeconds: preset,
-                          }))
-                        }
-                        accessibilityRole="button"
-                        accessibilityState={{ selected: isActive }}
-                        style={({ pressed }) => [
-                          styles.presetChip,
-                          isActive && styles.presetChipActive,
-                          pressed && styles.pressed,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.presetChipText,
-                            isActive && styles.presetChipTextActive,
-                          ]}
-                        >
-                          {formatDurationLabel(preset)}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-            ) : null}
-          </View>
+          <TimerSettingCard
+            title="Tempo de votação"
+            description="Cronômetro entre 30s e 10min durante a votação."
+            switchAccessibilityLabel="Habilitar tempo de votação"
+            decreaseAccessibilityLabel="Diminuir tempo de votação em 30 segundos"
+            increaseAccessibilityLabel="Aumentar tempo de votação em 30 segundos"
+            enabled={draft.votingTimerEnabled}
+            durationSeconds={draft.votingDurationSeconds}
+            minSeconds={MIN_VOTING_SECONDS}
+            maxSeconds={MAX_VOTING_SECONDS}
+            stepSeconds={VOTING_STEP_SECONDS}
+            presets={VOTING_PRESET_SECONDS}
+            onToggle={(value) =>
+              setDraft((prev) => ({
+                ...prev,
+                votingTimerEnabled: value,
+              }))
+            }
+            onStep={handleChangeVotingDuration}
+            onSelectPreset={(preset) =>
+              setDraft((prev) => ({
+                ...prev,
+                votingDurationSeconds: preset,
+              }))
+            }
+          />
         </ScrollView>
 
         <View style={styles.footer}>
           <Button label="Salvar configurações" onPress={handleSave} />
         </View>
       </View>
+    </View>
+  );
+}
+
+interface TimerSettingCardProps {
+  title: string;
+  description: string;
+  switchAccessibilityLabel: string;
+  decreaseAccessibilityLabel: string;
+  increaseAccessibilityLabel: string;
+  enabled: boolean;
+  durationSeconds: number;
+  minSeconds: number;
+  maxSeconds: number;
+  stepSeconds: number;
+  presets: readonly number[];
+  onToggle: (value: boolean) => void;
+  onStep: (delta: number) => void;
+  onSelectPreset: (seconds: number) => void;
+}
+
+function TimerSettingCard({
+  title,
+  description,
+  switchAccessibilityLabel,
+  decreaseAccessibilityLabel,
+  increaseAccessibilityLabel,
+  enabled,
+  durationSeconds,
+  minSeconds,
+  maxSeconds,
+  stepSeconds,
+  presets,
+  onToggle,
+  onStep,
+  onSelectPreset,
+}: TimerSettingCardProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.rowBetween}>
+        <View style={styles.labelBlock}>
+          <Text style={styles.optionTitle}>{title}</Text>
+          <Text style={styles.optionDescription}>{description}</Text>
+        </View>
+
+        <Switch
+          value={enabled}
+          onValueChange={onToggle}
+          trackColor={{
+            false: colors.switchTrackOff,
+            true: colors.primary,
+          }}
+          thumbColor={colors.white}
+          accessibilityLabel={switchAccessibilityLabel}
+        />
+      </View>
+
+      {enabled ? (
+        <View style={styles.timerConfigBlock}>
+          <View style={styles.timerStepperRow}>
+            <Pressable
+              onPress={() => onStep(-stepSeconds)}
+              disabled={durationSeconds <= minSeconds}
+              accessibilityRole="button"
+              accessibilityLabel={decreaseAccessibilityLabel}
+              style={({ pressed }) => [
+                styles.durationStepButton,
+                durationSeconds <= minSeconds && styles.stepperDisabled,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Text style={styles.durationStepText}>-{stepSeconds}s</Text>
+            </Pressable>
+
+            <Text style={styles.durationValue}>
+              {formatDurationLabel(durationSeconds)}
+            </Text>
+
+            <Pressable
+              onPress={() => onStep(stepSeconds)}
+              disabled={durationSeconds >= maxSeconds}
+              accessibilityRole="button"
+              accessibilityLabel={increaseAccessibilityLabel}
+              style={({ pressed }) => [
+                styles.durationStepButton,
+                durationSeconds >= maxSeconds && styles.stepperDisabled,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Text style={styles.durationStepText}>+{stepSeconds}s</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.presetsRow}>
+            {presets.map((preset) => {
+              const isActive = durationSeconds === preset;
+              return (
+                <Pressable
+                  key={preset}
+                  onPress={() => onSelectPreset(preset)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isActive }}
+                  style={({ pressed }) => [
+                    styles.presetChip,
+                    isActive && styles.presetChipActive,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.presetChipText,
+                      isActive && styles.presetChipTextActive,
+                    ]}
+                  >
+                    {formatDurationLabel(preset)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }

@@ -525,7 +525,7 @@ function DayVotingView({
     <View style={styles.container}>
       <DayHeader
         eyebrow={`DIA ${match.roundNumber}`}
-        title="Votação"
+        title="Votação do grupo"
         onRequestExit={onRequestExit}
       />
 
@@ -637,12 +637,19 @@ function DayVotingView({
           </View>
 
           <View style={styles.votingSection}>
+            <View style={styles.groupChoicePill}>
+              <Ionicons name="people-outline" size={14} color={day.accent} />
+              <Text style={styles.groupChoicePillText}>
+                Decisão coletiva do grupo
+              </Text>
+            </View>
+
             <Text style={styles.questionHeading}>
               Quem a cidade vai eliminar?
             </Text>
             <Text style={styles.questionSubtitle}>
-              Escolha o jogador mais suspeito entre os vivos para revelar seu
-              papel.
+              Debatam em roda e registrem aqui o jogador que o grupo decidiu
+              eliminar para revelar seu papel.
             </Text>
 
             <View style={styles.voteGrid}>
@@ -659,7 +666,7 @@ function DayVotingView({
                     }}
                     accessibilityRole="radio"
                     accessibilityState={{ selected: isSelected }}
-                    accessibilityLabel={`Votar em ${player.name}`}
+                    accessibilityLabel={`Selecionar ${player.name} na escolha do grupo`}
                     style={({ pressed }) => [
                       styles.voteCard,
                       isSelected && styles.voteCardSelected,
@@ -709,12 +716,12 @@ function DayVotingView({
           numberOfLines={1}
         >
           {selectedPlayer
-            ? `Mais suspeito(a): ${selectedPlayer.name}`
-            : "Nenhum jogador selecionado"}
+            ? `Escolha do grupo: ${selectedPlayer.name}`
+            : "Nenhum jogador escolhido pelo grupo"}
         </Text>
 
         <Button
-          label="Confirmar Eliminação"
+          label="Confirmar Escolha do Grupo"
           onPress={() => setVoteConfirmVisible(true)}
           disabled={!selectedPlayer}
           style={styles.dayPrimaryButton}
@@ -743,8 +750,8 @@ function DayVotingView({
         title={selectedPlayer ? "Encerrar votação?" : "Pular votação?"}
         message={
           selectedPlayer
-            ? `Deseja encerrar a votação e eliminar ${selectedPlayer.name}?`
-            : "Nenhum jogador foi selecionado. Se encerrar agora, ninguém será eliminado hoje e a cidade voltará a dormir."
+            ? `Deseja encerrar a votação e eliminar a escolha do grupo (${selectedPlayer.name})?`
+            : "Nenhum jogador foi escolhido pelo grupo. Se encerrar agora, ninguém será eliminado hoje e a cidade voltará a dormir."
         }
         confirmLabel={selectedPlayer ? "Eliminar e encerrar" : "Ninguém sai"}
         cancelLabel="Voltar à votação"
@@ -1245,6 +1252,24 @@ const createStyles = ({ colors, cidadeDorme, shadowOpacity }: AppTheme) => {
     },
     votingSection: {
       gap: SPACING.sm,
+    },
+    groupChoicePill: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      gap: 6,
+      backgroundColor: day.accentSoft,
+      borderWidth: 1,
+      borderColor: day.accentBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 5,
+      marginBottom: 2,
+    },
+    groupChoicePillText: {
+      color: day.accent,
+      fontSize: 12,
+      fontWeight: "700",
     },
     questionHeading: {
       color: colors.textPrimary,

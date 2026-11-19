@@ -29,6 +29,7 @@ import {
 } from "@/utils/cidadeDormeEngine";
 import { formatDurationLabel } from "@/utils/gameEngine";
 import { useSQLiteContext } from "expo-sqlite";
+import { router } from "expo-router";
 import React, {
   useCallback,
   useEffect,
@@ -242,6 +243,12 @@ export function CidadeDormeFlow() {
     setPhase("lobby");
   }, []);
 
+  const handleBackToMenu = useCallback(() => {
+    setExitConfirmVisible(false);
+    setMatch(null);
+    router.dismissTo("/");
+  }, []);
+
   useEffect(() => {
     if (phase === "lobby") {
       return;
@@ -399,6 +406,7 @@ export function CidadeDormeFlow() {
             match={match}
             onPlayAgain={startNewMatch}
             onBackToLobby={handleReturnToLobby}
+            onBackToMenu={handleBackToMenu}
           />
         </AnimatedPhaseView>
       ) : null}

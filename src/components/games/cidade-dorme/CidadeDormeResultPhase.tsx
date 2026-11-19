@@ -10,18 +10,20 @@ import {
 } from "@/utils/cidadeDormeEngine";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 interface CidadeDormeResultPhaseProps {
   match: CidadeDormeMatchState;
   onPlayAgain: () => void;
   onBackToLobby: () => void;
+  onBackToMenu: () => void;
 }
 
 export function CidadeDormeResultPhase({
   match,
   onPlayAgain,
   onBackToLobby,
+  onBackToMenu,
 }: CidadeDormeResultPhaseProps) {
   const theme = useTheme();
   const { colors, cidadeDorme } = theme;
@@ -206,6 +208,22 @@ export function CidadeDormeResultPhase({
           variant="secondary"
           onPress={onBackToLobby}
         />
+        <Pressable
+          onPress={onBackToMenu}
+          accessibilityRole="button"
+          accessibilityLabel="Voltar ao menu principal"
+          style={({ pressed }) => [
+            styles.menuButton,
+            pressed && styles.menuButtonPressed,
+          ]}
+        >
+          <Ionicons
+            name="home-outline"
+            size={18}
+            color={colors.textSecondary}
+          />
+          <Text style={styles.menuButtonText}>Voltar ao menu principal</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -349,5 +367,22 @@ const createStyles = ({ colors }: AppTheme) =>
       borderTopWidth: 1,
       borderTopColor: colors.borderSubtle,
       gap: SPACING.sm,
+    },
+    menuButton: {
+      minHeight: 44,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: SPACING.xs,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.md,
+    },
+    menuButtonPressed: {
+      opacity: 0.7,
+    },
+    menuButtonText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      fontWeight: "600",
     },
   });

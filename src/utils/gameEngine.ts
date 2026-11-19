@@ -19,6 +19,15 @@ export const VOTING_STEP_SECONDS = 30;
 
 export const VOTING_PRESET_SECONDS = [30, 60, 120, 180, 300, 600] as const;
 
+export const MIN_DISCUSSION_SECONDS = 30;
+export const MAX_DISCUSSION_SECONDS = 600;
+export const DEFAULT_DISCUSSION_SECONDS = 180;
+export const DISCUSSION_STEP_SECONDS = 30;
+
+export const DISCUSSION_PRESET_SECONDS = [30, 60, 120, 180, 300, 600] as const;
+
+export const SECONDS_PER_PLAYER_QUESTION_READING = 8;
+
 export type UsedHintHistory = Record<string, string[]>;
 
 export function getMaxImpostors(playerCount: number): number {
@@ -30,19 +39,47 @@ export function clampImpostorCount(count: number, playerCount: number): number {
   return Math.min(Math.max(1, Math.round(count)), maxImpostors);
 }
 
+function clampDurationSeconds(
+  seconds: number,
+  min: number,
+  max: number,
+): number {
+  return Math.min(Math.max(min, Math.round(seconds)), max);
+}
+
 export function clampVotingSeconds(seconds: number): number {
-  return Math.min(
-    Math.max(MIN_VOTING_SECONDS, Math.round(seconds)),
-    MAX_VOTING_SECONDS,
+  return clampDurationSeconds(seconds, MIN_VOTING_SECONDS, MAX_VOTING_SECONDS);
+}
+
+export function clampDiscussionSeconds(seconds: number): number {
+  return clampDurationSeconds(
+    seconds,
+    MIN_DISCUSSION_SECONDS,
+    MAX_DISCUSSION_SECONDS,
   );
 }
 
-export function getDefaultGameSettings(playerCount: number): GameSettings {
+/**
+ * Returns the non-customizable reading timer duration for Perguntas proportional to player count.
+ */
+export function getQuestionReadingSeconds(playerCount: number): number {
+  return Math.max(
+    SECONDS_PER_PLAYER_QUESTION_READING,
+    Math.round(playerCount) * SECONDS_PER_PLAYER_QUESTION_READING,
+  );
+}
+
+export function getDefaultGameSettings(
+  playerCount: number,
+  gameId?: SupportedPartyGameId,
+): GameSettings {
   return {
     impostorCount: clampImpostorCount(1, playerCount),
     selectedCategoryIds: [],
     hintEnabled: true,
-    votingTimerEnabled: true,
+    discussionTimerEnabled: false,
+    discussionDurationSeconds: DEFAULT_DISCUSSION_SECONDS,
+    votingTimerEnabled: gameId !== "impostor",
     votingDurationSeconds: DEFAULT_VOTING_SECONDS,
   };
 }
@@ -180,6 +217,9 @@ export function createRound({
   const normalizedSettings: GameSettings = {
     ...settings,
     impostorCount: clampImpostorCount(settings.impostorCount, players.length),
+    discussionDurationSeconds: clampDiscussionSeconds(
+      settings.discussionDurationSeconds,
+    ),
     votingDurationSeconds: clampVotingSeconds(settings.votingDurationSeconds),
   };
 
@@ -254,6 +294,9 @@ export function createRound({
     role: impostorIds.has(player.id) ? "impostor" : "innocent",
   }));
 
+  const startingPlayerId =
+    gameId === "impostor" ? pickRandomElement(players).id : null;
+
   return {
     round: {
       roundNumber,
@@ -261,6 +304,7 @@ export function createRound({
       prompt,
       settingsSnapshot: normalizedSettings,
       answers: {},
+      startingPlayerId,
     },
     nextHintHistory,
   };
