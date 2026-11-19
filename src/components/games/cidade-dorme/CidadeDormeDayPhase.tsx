@@ -150,7 +150,6 @@ function DayDiscussionView({
   onViewGameOver: () => void;
   onRequestExit: () => void;
 }) {
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const { colors, cidadeDorme } = useTheme();
   const day = cidadeDorme.day;
   const styles = useThemedStyles(createStyles);
@@ -365,7 +364,7 @@ function DayDiscussionView({
         ) : (
           <Button
             label="Iniciar votação"
-            onPress={() => setConfirmVisible(true)}
+            onPress={onAdvanceToVoting}
             style={styles.dayPrimaryButton}
             icon={
               <Ionicons
@@ -377,20 +376,6 @@ function DayDiscussionView({
           />
         )}
       </View>
-
-      <ConfirmModal
-        visible={confirmVisible}
-        title="Abrir votação?"
-        message="Confirme quando o grupo estiver pronto para votar em quem será eliminado hoje."
-        confirmLabel="Ir para votação"
-        cancelLabel="Continuar debate"
-        iconName="people-outline"
-        onConfirm={() => {
-          setConfirmVisible(false);
-          onAdvanceToVoting();
-        }}
-        onCancel={() => setConfirmVisible(false)}
-      />
     </View>
   );
 }
