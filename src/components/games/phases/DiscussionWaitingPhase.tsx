@@ -260,7 +260,7 @@ export function DiscussionWaitingPhase({
                   />
                   <View style={styles.starterTextBlock}>
                     <Text style={styles.starterEyebrow}>QUEM COMEÇA</Text>
-                    <Text style={styles.starterName} numberOfLines={1}>
+                    <Text style={styles.starterName}>
                       {startingPlayer.name} começa dando a primeira dica!
                     </Text>
                   </View>
