@@ -22,7 +22,20 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon-light.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F4FA",
+          "dark": {
+            "image": "./assets/splash-icon-dark.png",
+            "backgroundColor": "#111017"
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {
