@@ -57,6 +57,7 @@ export interface AppTheme {
   mode: ResolvedTheme;
   isDark: boolean;
   colors: ThemeColors;
+  splashGradient: readonly [string, string, string];
   cidadeDorme: CidadeDormeThemeSet;
   shadowOpacity: number;
 }
@@ -216,6 +217,7 @@ export const DARK_THEME: AppTheme = {
   mode: "dark",
   isDark: true,
   colors: DARK_COLORS,
+  splashGradient: ["#111017", "#1B162C", "#111017"],
   cidadeDorme: CIDADE_DORME_THEMES_DARK,
   shadowOpacity: 0.35,
 };
@@ -224,6 +226,7 @@ export const LIGHT_THEME: AppTheme = {
   mode: "light",
   isDark: false,
   colors: LIGHT_COLORS,
+  splashGradient: ["#F5F4FA", "#EAE4FA", "#F5F4FA"],
   cidadeDorme: CIDADE_DORME_THEMES_LIGHT,
   shadowOpacity: 0.12,
 };
