@@ -37,6 +37,7 @@ import {
   UsedHintHistory,
 } from "@/utils/gameEngine";
 import { useSQLiteContext } from "expo-sqlite";
+import { router } from "expo-router";
 import React, {
   useCallback,
   useEffect,
@@ -69,7 +70,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
 
   const [phase, setPhase] = useState<GamePhase>("lobby");
   const [settings, setSettings] = useState<GameSettings>(() =>
-    getDefaultGameSettings(players.length),
+    getDefaultGameSettings(players.length, gameId),
   );
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [exitConfirmVisible, setExitConfirmVisible] = useState(false);
@@ -208,6 +209,13 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
     setPhase("lobby");
   }, []);
 
+  const handleBackToMenu = useCallback(() => {
+    setExitConfirmVisible(false);
+    setActiveRound(null);
+    setRoundResult(null);
+    router.dismissTo("/");
+  }, []);
+
   // Intercept Android hardware back during active match phases.
   useEffect(() => {
     if (phase === "lobby") {
@@ -248,6 +256,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
           categories={categories}
           playerCount={players.length}
           showHintSetting={gameId === "impostor"}
+          showDiscussionTimerSetting={gameId === "impostor"}
           onSave={(nextSettings) => {
             setSettings(nextSettings);
             setSettingsModalVisible(false);
@@ -321,6 +330,7 @@ export function PartyGameFlow({ gameId }: PartyGameFlowProps) {
             result={roundResult}
             onPlayAgain={startNewRound}
             onBackToLobby={handleReturnToLobby}
+            onBackToMenu={handleBackToMenu}
           />
         </AnimatedPhaseView>
       ) : null}

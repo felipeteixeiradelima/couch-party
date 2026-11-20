@@ -177,12 +177,12 @@ export function VotingPhase({
 
   const endModalMessage =
     selectedPlayers.length === 0
-      ? "Nenhum jogador foi selecionado. Se encerrar agora, os impostores vencerão por W.O. Deseja continuar?"
+      ? "Nenhum jogador foi escolhido pelo grupo. Se encerrar agora, os impostores vencerão por W.O. Deseja continuar?"
       : selectedPlayers.length < requiredVotes
-        ? `Apenas ${selectedPlayers.length} de ${requiredVotes} votos foram selecionados (${selectedNamesText}). Se encerrar agora sem completar os votos, os impostores vencerão. Deseja encerrar mesmo assim?`
+        ? `Apenas ${selectedPlayers.length} de ${requiredVotes} escolhas do grupo foram marcadas (${selectedNamesText}). Se encerrar agora sem completar os votos, os impostores vencerão. Deseja encerrar mesmo assim?`
         : requiredVotes === 1
-          ? `Deseja encerrar a votação agora e confirmar o voto em ${selectedNamesText}?`
-          : `Deseja encerrar a votação agora e confirmar os votos em ${selectedNamesText}?`;
+          ? `Deseja encerrar a votação e confirmar a escolha do grupo em ${selectedNamesText}?`
+          : `Deseja encerrar a votação e confirmar as escolhas do grupo em ${selectedNamesText}?`;
 
   const stickyTranslateY = stickyAnim.interpolate({
     inputRange: [0, 1],
@@ -194,7 +194,7 @@ export function VotingPhase({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerSpacer} />
-        <Text style={styles.headerTitle}>Discussão e votação</Text>
+        <Text style={styles.headerTitle}>Votação do grupo</Text>
         <Pressable
           onPress={onRequestExit}
           accessibilityRole="button"
@@ -235,7 +235,7 @@ export function VotingPhase({
                   <Text style={styles.stickyTimeText}>
                     {formatTimer(remainingSeconds)}
                   </Text>
-                  <Text style={styles.stickySubText}>Tempo de discussão</Text>
+                  <Text style={styles.stickySubText}>Tempo de votação</Text>
                 </View>
               </View>
 
@@ -285,7 +285,7 @@ export function VotingPhase({
                 <CircularTimer
                   remainingSeconds={remainingSeconds}
                   totalSeconds={votingDurationSeconds}
-                  label="Tempo de discussão"
+                  label="Tempo de votação"
                 />
               </View>
             ) : (
@@ -327,11 +327,22 @@ export function VotingPhase({
               </View>
             ) : null}
 
+            <View style={styles.groupChoicePill}>
+              <Ionicons
+                name="people-outline"
+                size={14}
+                color={colors.primaryText}
+              />
+              <Text style={styles.groupChoicePillText}>
+                Decisão coletiva do grupo
+              </Text>
+            </View>
+
             <View style={styles.questionHeaderRow}>
               <Text style={styles.questionHeading}>
                 {requiredVotes > 1
-                  ? "Quem são os impostores?"
-                  : "Quem é o impostor?"}
+                  ? "Quem o grupo vai votar?"
+                  : "Quem o grupo escolheu?"}
               </Text>
               {requiredVotes > 1 ? (
                 <View
@@ -355,13 +366,13 @@ export function VotingPhase({
             <Text style={styles.questionSubtitle}>
               {round.prompt.gameId === "perguntas"
                 ? requiredVotes > 1
-                  ? `Escolha as ${requiredVotes} pessoas que receberam a pergunta diferente.`
-                  : "Escolha quem você acha que recebeu a pergunta diferente."
+                  ? `Registre aqui os ${requiredVotes} jogadores que o grupo decidiu que receberam a pergunta diferente.`
+                  : "Registre aqui quem o grupo decidiu que recebeu a pergunta diferente."
                 : requiredVotes > 1
                   ? isAtSelectionLimit
-                    ? `${requiredVotes} jogadores selecionados. Toque em um selecionado para trocar.`
-                    : `Escolha ${requiredVotes} pessoas para votar.`
-                  : "Escolha uma pessoa para votar."}
+                    ? `${requiredVotes} jogadores escolhidos pelo grupo. Toque em um selecionado para trocar.`
+                    : `Registre aqui os ${requiredVotes} jogadores escolhidos pelo grupo.`
+                  : "Registre aqui o jogador escolhido pelo grupo para eliminar."}
             </Text>
 
             <View style={styles.playersGrid}>
@@ -384,7 +395,7 @@ export function VotingPhase({
                       checked: isSelected,
                       disabled: isLockedOut,
                     }}
-                    accessibilityLabel={`Votar em ${player.name}`}
+                    accessibilityLabel={`Selecionar ${player.name} na escolha do grupo`}
                     style={({ pressed }) => [
                       styles.playerCard,
                       isSelected && styles.playerCardSelected,
@@ -449,17 +460,21 @@ export function VotingPhase({
         >
           {selectedPlayers.length === 0
             ? requiredVotes > 1
-              ? `Nenhum jogador selecionado (escolha ${requiredVotes})`
-              : "Nenhum jogador selecionado"
+              ? `Nenhum jogador escolhido pelo grupo (escolha ${requiredVotes})`
+              : "Nenhum jogador escolhido pelo grupo"
             : requiredVotes === 1
-              ? `Seu voto: ${selectedNamesText}`
+              ? `Escolha do grupo: ${selectedNamesText}`
               : isSelectionComplete
-                ? `Seus votos (${requiredVotes}/${requiredVotes}): ${selectedNamesText}`
-                : `Selecionados (${selectedPlayers.length}/${requiredVotes}): ${selectedNamesText}`}
+                ? `Escolhas do grupo (${requiredVotes}/${requiredVotes}): ${selectedNamesText}`
+                : `Escolhidos pelo grupo (${selectedPlayers.length}/${requiredVotes}): ${selectedNamesText}`}
         </Text>
 
         <Button
-          label={requiredVotes > 1 ? "Confirmar Votos" : "Confirmar Voto"}
+          label={
+            requiredVotes > 1
+              ? "Confirmar Escolhas do Grupo"
+              : "Confirmar Escolha do Grupo"
+          }
           onPress={() => setVoteConfirmVisible(true)}
           disabled={!isSelectionComplete}
           icon={<Ionicons name="checkmark" size={20} color={colors.white} />}
@@ -468,13 +483,19 @@ export function VotingPhase({
 
       <ConfirmModal
         visible={voteConfirmVisible}
-        title={requiredVotes > 1 ? "Confirmar votos?" : "Confirmar voto?"}
+        title={
+          requiredVotes > 1
+            ? "Confirmar escolhas do grupo?"
+            : "Confirmar escolha do grupo?"
+        }
         message={
           requiredVotes > 1
-            ? `Deseja confirmar os votos do grupo em ${selectedNamesText}?`
-            : `Deseja confirmar o voto do grupo em ${selectedNamesText}?`
+            ? `Deseja confirmar as escolhas do grupo em ${selectedNamesText}?`
+            : `Deseja confirmar a escolha do grupo em ${selectedNamesText}?`
         }
-        confirmLabel={requiredVotes > 1 ? "Confirmar votos" : "Confirmar voto"}
+        confirmLabel={
+          requiredVotes > 1 ? "Confirmar escolhas" : "Confirmar escolha"
+        }
         cancelLabel="Voltar"
         iconName="checkmark-circle-outline"
         onConfirm={() => finishOnce(selectedPlayerIds)}
@@ -651,6 +672,24 @@ const createStyles = ({ colors, shadowOpacity }: AppTheme) =>
     },
     votingSection: {
       gap: SPACING.sm,
+    },
+    groupChoicePill: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      gap: 6,
+      backgroundColor: colors.primarySoft,
+      borderWidth: 1,
+      borderColor: colors.primaryBorder,
+      borderRadius: RADIUS.full,
+      paddingHorizontal: SPACING.md,
+      paddingVertical: 5,
+      marginBottom: 2,
+    },
+    groupChoicePillText: {
+      color: colors.primaryText,
+      fontSize: 12,
+      fontWeight: "700",
     },
     questionRecapBox: {
       backgroundColor: colors.surface,

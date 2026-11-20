@@ -103,6 +103,14 @@ export function GameLobbyTemplate({
                       ? "Ativada"
                       : "Desativada",
                   },
+                  {
+                    label: "Tempo de discussão",
+                    value: lobbyConfig.settings.discussionTimerEnabled
+                      ? formatDurationLabel(
+                          lobbyConfig.settings.discussionDurationSeconds,
+                        )
+                      : "Desativado",
+                  },
                 ]
               : []),
             {
