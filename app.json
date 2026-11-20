@@ -9,14 +9,16 @@
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#111017",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.couchpartyteam.couchparty"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#14171E"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.couchpartyteam.couchparty"
     },
     "plugins": [
       "expo-router",
